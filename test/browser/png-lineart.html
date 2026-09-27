@@ -1,0 +1,78 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>PNG Auto and Line Art browser test</title>
+<pre id="result">RUNNING</pre>
+<script type="module">
+import { analyzePixels } from "/assets/js/png-core.js";
+
+const result = document.querySelector("#result");
+const width = 160;
+const height = 120;
+const canvas = document.createElement("canvas");
+canvas.width = width;
+canvas.height = height;
+const context = canvas.getContext("2d", { willReadFrequently: true });
+context.fillStyle = "white";
+context.fillRect(0, 0, width, height);
+context.strokeStyle = "black";
+context.lineWidth = 1;
+for (let y = 15; y < 108; y += 9) {
+  context.beginPath();
+  context.moveTo(12, y + .35);
+  context.bezierCurveTo(48, y - 8, 105, y + 8, 148, y + .35);
+  context.stroke();
+}
+context.fillStyle = "rgb(220,20,40)";
+context.fillRect(142, 8, 4, 4);
+context.clearRect(0, 0, 6, 6);
+const source = context.getImageData(0, 0, width, height);
+const analysis = analyzePixels(source.data, width, height);
+const originalBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+const worker = new Worker("/assets/dist/png-optimizer-worker.js", { type: "module" });
+try {
+  const pixels = source.data.slice();
+  const buffer = await new Promise((resolve, reject) => {
+    worker.addEventListener("message", event => event.data.error ? reject(new Error(event.data.error)) : resolve(event.data.result), { once: true });
+    worker.addEventListener("error", event => reject(new Error(event.message)), { once: true });
+    worker.postMessage({ id: 1, type: "lineart", buffer: pixels.buffer, width, height, level: 3 }, [pixels.buffer]);
+  });
+  const blob = new Blob([buffer], { type: "image/png" });
+  const bitmap = await createImageBitmap(blob);
+  const decodedCanvas = document.createElement("canvas");
+  decodedCanvas.width = width;
+  decodedCanvas.height = height;
+  const decodedContext = decodedCanvas.getContext("2d", { willReadFrequently: true });
+  decodedContext.drawImage(bitmap, 0, 0);
+  bitmap.close();
+  const decoded = decodedContext.getImageData(0, 0, width, height).data;
+  let squaredError = 0;
+  let maxAlphaError = 0;
+  for (let i = 0; i < decoded.length; i += 4) {
+    for (let channel = 0; channel < 3; channel += 1) {
+      const delta = source.data[i + channel] - decoded[i + channel];
+      squaredError += delta * delta;
+    }
+    maxAlphaError = Math.max(maxAlphaError, Math.abs(source.data[i + 3] - decoded[i + 3]));
+  }
+  const accent = (9 * width + 143) * 4;
+  const accentPreserved = decoded[accent] === 220 && decoded[accent + 1] === 20 && decoded[accent + 2] === 40;
+  const rmse = Math.sqrt(squaredError / (width * height * 3));
+  const pass = analysis.kind === "lineart" && analysis.preset === "lineart" &&
+    maxAlphaError === 0 && accentPreserved && rmse < 2;
+  result.textContent = JSON.stringify({
+    status: pass ? "PASS" : "FAIL",
+    detected: analysis.kind,
+    preset: analysis.preset,
+    originalBytes: originalBlob.size,
+    outputBytes: blob.size,
+    rmse,
+    maxAlphaError,
+    accentPreserved
+  });
+} catch (error) {
+  result.textContent = JSON.stringify({ status: "ERROR", error: error.message });
+} finally {
+  worker.terminate();
+}
+</script>

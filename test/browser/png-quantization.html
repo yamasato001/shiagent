@@ -1,0 +1,81 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>PNG quantization browser test</title>
+<pre id="result">RUNNING</pre>
+<script type="module">
+const result = document.querySelector("#result");
+const width = 192;
+const height = 128;
+const canvas = document.createElement("canvas");
+canvas.width = width;
+canvas.height = height;
+const context = canvas.getContext("2d", { willReadFrequently: true });
+const gradient = context.createLinearGradient(0, 0, width, height);
+gradient.addColorStop(0, "#174f90");
+gradient.addColorStop(0.45, "#f4c35a");
+gradient.addColorStop(1, "#d83e69");
+context.fillStyle = gradient;
+context.fillRect(0, 0, width, height);
+context.fillStyle = "rgba(255,255,255,.55)";
+context.beginPath();
+context.arc(60, 62, 42, 0, Math.PI * 2);
+context.fill();
+context.strokeStyle = "rgba(10,10,10,.8)";
+context.lineWidth = 3;
+context.stroke();
+const source = context.getImageData(0, 0, width, height);
+const originalBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+async function run(mode) {
+  const worker = new Worker("/assets/dist/png-optimizer-worker.js", { type: "module" });
+  const pixels = source.data.slice();
+  const buffer = await new Promise((resolve, reject) => {
+    worker.addEventListener("message", event => event.data.error ? reject(new Error(event.data.error)) : resolve(event.data.result), { once: true });
+    worker.addEventListener("error", event => reject(new Error(event.message)), { once: true });
+    worker.postMessage({ id: 1, type: "quantize", buffer: pixels.buffer, width, height, mode, level: 3 }, [pixels.buffer]);
+  });
+  worker.terminate();
+  const blob = new Blob([buffer], { type: "image/png" });
+  const bitmap = await createImageBitmap(blob);
+  const decodedCanvas = document.createElement("canvas");
+  decodedCanvas.width = width;
+  decodedCanvas.height = height;
+  const decodedContext = decodedCanvas.getContext("2d", { willReadFrequently: true });
+  decodedContext.drawImage(bitmap, 0, 0);
+  bitmap.close();
+  const decoded = decodedContext.getImageData(0, 0, width, height).data;
+  const colors = new Set();
+  let squaredError = 0;
+  let alphaError = 0;
+  for (let i = 0; i < decoded.length; i += 4) {
+    colors.add(`${decoded[i]},${decoded[i + 1]},${decoded[i + 2]},${decoded[i + 3]}`);
+    for (let channel = 0; channel < 4; channel += 1) {
+      const delta = source.data[i + channel] - decoded[i + channel];
+      squaredError += delta * delta;
+    }
+    alphaError = Math.max(alphaError, Math.abs(source.data[i + 3] - decoded[i + 3]));
+  }
+  return {
+    bytes: blob.size,
+    colors: colors.size,
+    rmse: Math.sqrt(squaredError / decoded.length),
+    maxAlphaError: alphaError
+  };
+}
+
+try {
+  const balanced = await run("balanced");
+  const smallest = await run("smallest");
+  const pass = balanced.colors <= 256 && smallest.colors <= 64 &&
+    balanced.rmse < 10 && smallest.rmse < 18 &&
+    balanced.maxAlphaError < 24 && smallest.maxAlphaError < 48;
+  result.textContent = JSON.stringify({
+    status: pass ? "PASS" : "FAIL",
+    originalBytes: originalBlob.size,
+    balanced,
+    smallest
+  });
+} catch (error) {
+  result.textContent = JSON.stringify({ status: "ERROR", error: error.message });
+}
+</script>

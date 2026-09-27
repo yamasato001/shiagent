@@ -1,0 +1,181 @@
+export const MODES = Object.freeze({
+  exact: { rgbStep: 1, alphaStep: 1 },
+  balanced: { rgbStep: 8, alphaStep: 8 },
+  smallest: { rgbStep: 24, alphaStep: 24 },
+  lineart: { rgbStep: 4, alphaStep: 1 }
+});
+
+const clamp = value => Math.max(0, Math.min(255, value));
+const quantize = (value, step) => step <= 1 ? value : clamp(Math.round(value / step) * step);
+
+export function analyzePixels(data, width, height) {
+  const totalPixels = Math.max(1, width * height);
+  const stride = Math.max(1, Math.floor(totalPixels / 50000));
+  const buckets = new Set();
+  let sampled = 0;
+  let grayscale = 0;
+  let white = 0;
+  let background = 0;
+  let dark = 0;
+  let transparent = 0;
+  let saturationSum = 0;
+  let edgeHits = 0;
+  let edgeTests = 0;
+
+  for (let pixel = 0; pixel < totalPixels; pixel += stride) {
+    const i = pixel * 4;
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const a = data[i + 3];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    sampled += 1;
+    if (max - min < 12) grayscale += 1;
+    if (r > 244 && g > 244 && b > 244 && a > 245) white += 1;
+    if (a < 245) transparent += 1;
+    if ((r > 244 && g > 244 && b > 244 && a > 245) || a < 16) background += 1;
+    if ((r * 0.2126 + g * 0.7152 + b * 0.0722) < 96 && a > 16) dark += 1;
+    saturationSum += max === 0 ? 0 : (max - min) / max;
+    buckets.add(`${r >> 4},${g >> 4},${b >> 4},${a >> 5}`);
+
+    if (pixel + 1 < totalPixels && pixel % width !== width - 1) {
+      const j = i + 4;
+      const luma = (r * 3 + g * 6 + b) / 10;
+      const next = (data[j] * 3 + data[j + 1] * 6 + data[j + 2]) / 10;
+      edgeHits += Math.abs(luma - next) > 48 ? 1 : 0;
+      edgeTests += 1;
+    }
+    if (pixel + width < totalPixels) {
+      const j = i + width * 4;
+      const luma = (r * 3 + g * 6 + b) / 10;
+      const next = (data[j] * 3 + data[j + 1] * 6 + data[j + 2]) / 10;
+      edgeHits += Math.abs(luma - next) > 48 ? 1 : 0;
+      edgeTests += 1;
+    }
+  }
+
+  const metrics = {
+    grayscaleRatio: grayscale / sampled,
+    whiteRatio: white / sampled,
+    backgroundRatio: background / sampled,
+    darkRatio: dark / sampled,
+    transparentRatio: transparent / sampled,
+    averageSaturation: saturationSum / sampled,
+    edgeRatio: edgeTests ? edgeHits / edgeTests : 0,
+    colorBuckets: buckets.size
+  };
+  const isLineArt = metrics.grayscaleRatio > 0.78 &&
+    metrics.backgroundRatio > 0.35 &&
+    metrics.darkRatio > 0.003 &&
+    metrics.edgeRatio > 0.004 &&
+    metrics.averageSaturation < 0.12;
+  const isFlatIllustration = metrics.colorBuckets < Math.min(160, sampled * 0.08);
+  const isIllustration = isFlatIllustration || (
+    metrics.averageSaturation > 0.28 &&
+    metrics.edgeRatio > 0.015 &&
+    metrics.edgeRatio < 0.25
+  );
+  const kind = isLineArt ? "lineart" : isIllustration ? "illustration" : "photo";
+  const preset = isLineArt ? "lineart" : isFlatIllustration ? "smallest" : "balanced";
+  return { preset, kind, metrics };
+}
+
+export function processPixels(source, mode) {
+  const output = new Uint8ClampedArray(source);
+  const settings = MODES[mode] || MODES.balanced;
+  for (let i = 0; i < output.length; i += 4) {
+    if (mode === "lineart") {
+      const r = output[i];
+      const g = output[i + 1];
+      const b = output[i + 2];
+      const spread = Math.max(r, g, b) - Math.min(r, g, b);
+      if (spread < 32) {
+        const luma = r * 0.2126 + g * 0.7152 + b * 0.0722;
+        const gray = luma > 248 ? 255 : luma < 7 ? 0 : Math.round(luma / settings.rgbStep) * settings.rgbStep;
+        output[i] = output[i + 1] = output[i + 2] = clamp(gray);
+      }
+    } else {
+      output[i] = quantize(output[i], settings.rgbStep);
+      output[i + 1] = quantize(output[i + 1], settings.rgbStep);
+      output[i + 2] = quantize(output[i + 2], settings.rgbStep);
+    }
+    output[i + 3] = quantize(output[i + 3], settings.alphaStep);
+  }
+  return output;
+}
+
+export function formatBytes(bytes, locale = "ja-JP") {
+  if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const value = bytes / 1024 ** index;
+  return `${new Intl.NumberFormat(locale, { maximumFractionDigits: index ? 1 : 0 }).format(value)} ${units[index]}`;
+}
+
+export function savedPercent(before, after) {
+  return before > 0 ? ((before - after) / before) * 100 : 0;
+}
+
+const crcTable = (() => {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n += 1) {
+    let c = n;
+    for (let k = 0; k < 8; k += 1) c = (c & 1) ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    table[n] = c >>> 0;
+  }
+  return table;
+})();
+
+export function crc32(bytes) {
+  let crc = 0xffffffff;
+  for (const byte of bytes) crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function dosTime(date) {
+  return ((date.getHours() & 31) << 11) | ((date.getMinutes() & 63) << 5) | ((date.getSeconds() / 2) & 31);
+}
+
+function dosDate(date) {
+  return (((Math.max(1980, date.getFullYear()) - 1980) & 127) << 9) | (((date.getMonth() + 1) & 15) << 5) | (date.getDate() & 31);
+}
+
+export function createZip(entries, modified = new Date()) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  for (const entry of entries) {
+    const name = encoder.encode(entry.name);
+    const data = entry.data instanceof Uint8Array ? entry.data : new Uint8Array(entry.data);
+    const crc = crc32(data);
+    const local = new Uint8Array(30 + name.length);
+    const lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0x0800, true);
+    lv.setUint16(8, 0, true); lv.setUint16(10, dosTime(modified), true); lv.setUint16(12, dosDate(modified), true);
+    lv.setUint32(14, crc, true); lv.setUint32(18, data.length, true); lv.setUint32(22, data.length, true);
+    lv.setUint16(26, name.length, true); lv.setUint16(28, 0, true);
+    local.set(name, 30);
+    localParts.push(local, data);
+
+    const central = new Uint8Array(46 + name.length);
+    const cv = new DataView(central.buffer);
+    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true); cv.setUint16(10, 0, true); cv.setUint16(12, dosTime(modified), true); cv.setUint16(14, dosDate(modified), true);
+    cv.setUint32(16, crc, true); cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true);
+    cv.setUint16(28, name.length, true); cv.setUint16(30, 0, true); cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true); cv.setUint16(36, 0, true); cv.setUint32(38, 0, true); cv.setUint32(42, offset, true);
+    central.set(name, 46); centralParts.push(central);
+    offset += local.length + data.length;
+  }
+
+  const centralSize = centralParts.reduce((sum, part) => sum + part.length, 0);
+  const end = new Uint8Array(22);
+  const ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true); ev.setUint16(4, 0, true); ev.setUint16(6, 0, true);
+  ev.setUint16(8, entries.length, true); ev.setUint16(10, entries.length, true);
+  ev.setUint32(12, centralSize, true); ev.setUint32(16, offset, true); ev.setUint16(20, 0, true);
+  return new Blob([...localParts, ...centralParts, end], { type: "application/zip" });
+}

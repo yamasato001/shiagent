@@ -1,0 +1,21 @@
+{
+  "name": "shiagent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "node --check assets/js/png-core.js && node --check assets/js/png-compressor.js && node --check assets/js/line-art-core.js && node --check assets/js/line-art-generator.js && node --check src/png-optimizer-worker.js && node --check src/line-art-worker.js && node --check scripts/serve.mjs && node --check scripts/build.mjs",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "4.3.0",
+    "esbuild": "0.25.10",
+    "onnxruntime-web": "1.22.0"
+  },
+  "dependencies": {
+    "@jsquash/oxipng": "2.3.0",
+    "image-q": "4.0.0"
+  }
+}

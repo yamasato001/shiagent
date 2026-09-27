@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>PNG Exact browser test</title>
+<body><pre id="result">RUNNING</pre>
+<script type="module">
+const result = document.querySelector("#result");
+const canvas = document.createElement("canvas");
+canvas.width = 64;
+canvas.height = 64;
+const context = canvas.getContext("2d", { alpha: true, willReadFrequently: true });
+context.clearRect(0, 0, 64, 64);
+context.fillStyle = "rgba(255, 255, 255, 1)";
+context.fillRect(0, 0, 64, 64);
+context.strokeStyle = "rgba(0, 0, 0, 1)";
+context.lineWidth = 1;
+context.beginPath();
+context.arc(32, 32, 23, 0, Math.PI * 2);
+context.stroke();
+context.fillStyle = "rgba(20, 40, 60, .5)";
+context.fillRect(20, 20, 24, 24);
+const expected = context.getImageData(0, 0, 64, 64).data;
+const source = await new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("encode failed")), "image/png"));
+
+const worker = new Worker("/assets/dist/png-optimizer-worker.js", { type: "module" });
+const buffer = await source.arrayBuffer();
+const optimisedBuffer = await new Promise((resolve, reject) => {
+  worker.addEventListener("message", event => event.data.error ? reject(new Error(event.data.error)) : resolve(event.data.result), { once: true });
+  worker.addEventListener("error", event => reject(new Error(event.message)), { once: true });
+  worker.postMessage({ id: 1, buffer, level: 3, optimiseAlpha: false }, [buffer]);
+});
+worker.terminate();
+
+const output = new Blob([optimisedBuffer], { type: "image/png" });
+const bitmap = await createImageBitmap(output);
+const decoded = document.createElement("canvas");
+decoded.width = bitmap.width;
+decoded.height = bitmap.height;
+const decodedContext = decoded.getContext("2d", { alpha: true, willReadFrequently: true });
+decodedContext.drawImage(bitmap, 0, 0);
+bitmap.close();
+const actual = decodedContext.getImageData(0, 0, 64, 64).data;
+let differences = 0;
+for (let index = 0; index < expected.length; index += 1) if (expected[index] !== actual[index]) differences += 1;
+result.textContent = JSON.stringify({ status: differences === 0 ? "PASS" : "FAIL", differences, before: source.size, after: output.size });
+</script>
+</body>
+</html>

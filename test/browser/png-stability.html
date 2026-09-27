@@ -1,0 +1,92 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>PNG batch and large-image browser test</title>
+<pre id="result">RUNNING</pre>
+<script type="module">
+const result = document.querySelector("#result");
+let worker;
+let requestId = 0;
+
+function startWorker() {
+  worker = new Worker("/assets/dist/png-optimizer-worker.js", { type: "module" });
+}
+
+function makePixels(width, height, seed) {
+  const pixels = new Uint8ClampedArray(width * height * 4);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const i = (y * width + x) * 4;
+      pixels[i] = (x * 3 + seed * 17) & 255;
+      pixels[i + 1] = (y * 5 + seed * 29) & 255;
+      pixels[i + 2] = ((x + y) * 2 + seed * 11) & 255;
+      pixels[i + 3] = (x + y) % 31 === 0 ? 160 : 255;
+    }
+  }
+  return pixels;
+}
+
+function send(type, pixels, width, height, mode = "balanced") {
+  const id = ++requestId;
+  return new Promise((resolve, reject) => {
+    const onMessage = event => {
+      if (event.data.id !== id) return;
+      worker.removeEventListener("message", onMessage);
+      event.data.error ? reject(new Error(event.data.error)) : resolve(event.data.result);
+    };
+    worker.addEventListener("message", onMessage);
+    worker.postMessage({ id, type, buffer: pixels.buffer, width, height, mode, level: 2 }, [pixels.buffer]);
+  });
+}
+
+async function verifyPng(buffer, width, height) {
+  const blob = new Blob([buffer], { type: "image/png" });
+  const bitmap = await createImageBitmap(blob);
+  const valid = bitmap.width === width && bitmap.height === height;
+  bitmap.close();
+  return { valid, bytes: blob.size };
+}
+
+try {
+  startWorker();
+  const started = performance.now();
+  const batch = [];
+  for (let index = 0; index < 10; index += 1) {
+    const width = 240 + index * 3;
+    const height = 160 + index * 2;
+    const mode = index % 2 ? "smallest" : "balanced";
+    const buffer = await send("quantize", makePixels(width, height, index + 1), width, height, mode);
+    batch.push(await verifyPng(buffer, width, height));
+  }
+
+  const largeWidth = 2100;
+  const largeHeight = 1000;
+  const largeBuffer = await send("quantize", makePixels(largeWidth, largeHeight, 99), largeWidth, largeHeight, "balanced");
+  const large = await verifyPng(largeBuffer, largeWidth, largeHeight);
+
+  // Abort a queued heavy request, replace the worker, then prove processing can
+  // resume. This mirrors the compressor's cancel-and-restart behavior.
+  const abandoned = makePixels(1500, 1000, 77);
+  worker.postMessage({ id: ++requestId, type: "quantize", buffer: abandoned.buffer, width: 1500, height: 1000, mode: "balanced", level: 2 }, [abandoned.buffer]);
+  worker.terminate();
+  startWorker();
+  const recoveryWidth = 128;
+  const recoveryHeight = 96;
+  const recoveryBuffer = await send("lineart", makePixels(recoveryWidth, recoveryHeight, 7), recoveryWidth, recoveryHeight);
+  const recovery = await verifyPng(recoveryBuffer, recoveryWidth, recoveryHeight);
+
+  const pass = batch.length === 10 && batch.every(item => item.valid && item.bytes > 0) &&
+    large.valid && large.bytes > 0 && recovery.valid && recovery.bytes > 0;
+  result.textContent = JSON.stringify({
+    status: pass ? "PASS" : "FAIL",
+    batchCompleted: batch.length,
+    batchBytes: batch.reduce((sum, item) => sum + item.bytes, 0),
+    large: { dimensions: `${largeWidth}x${largeHeight}`, bytes: large.bytes },
+    cancelRecovery: recovery.valid,
+    elapsedMs: Math.round(performance.now() - started)
+  });
+} catch (error) {
+  result.textContent = JSON.stringify({ status: "ERROR", error: error.message });
+} finally {
+  worker?.terminate();
+}
+</script>
