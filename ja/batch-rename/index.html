@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja" data-page-lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>一括リネーム — 画像・SVGを連番で整理 | SHIAGENT</title>
+  <meta name="description" content="画像とSVGをブラウザ内で一括リネーム。接頭辞、基本名、連番、接尾辞を指定し、ZIPで保存または別のSHIAGENTツールへ渡せます。">
+  <link rel="canonical" href="/ja/batch-rename/">
+  <link rel="stylesheet" href="/assets/css/site.css">
+  <script type="module" src="/assets/js/batch-rename.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">ツールへ移動</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="SHIAGENT ホーム"><span>SHIAGENT</span><small>シアゲント</small></a>
+    <nav aria-label="メインナビゲーション"><a href="#workflow">ワークフロー</a><a href="#about">仕様</a></nav>
+    <div class="language" aria-label="言語"><span aria-current="page">日本語</span></div>
+  </header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">画像ツール</a><span>/</span><span>一括リネーム</span></div>
+      <div class="eyebrow"><span>FILE TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>一括リネーム</h1>
+      <p class="lead">複数ファイルを、わかりやすい名前と連番でまとめて整理。<br>結果はZIPで保存するか、そのまま次のツールへ渡せます。</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>ファイルはブラウザの外に出ません。</span></div>
+
+      <div class="compressor-card rename-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/svg+xml,.png,.jpg,.jpeg,.svg" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>画像・SVGをここにドロップ</h2>
+          <p id="dropHelp">または</p>
+          <button class="button button-dark" id="selectButton" type="button">ファイルを選択</button>
+          <p class="drop-note">PNG / JPG / SVG・複数ファイル対応</p>
+        </div>
+
+        <div class="settings-panel">
+          <div class="setting-heading"><div><span class="setting-number">01</span><h2>命名ルール</h2></div><button class="text-button" id="resetButton" type="button">初期値に戻す</button></div>
+          <div class="rename-rule-grid">
+            <label><span>接頭辞 <small>任意</small></span><input id="prefixInput" type="text" placeholder="例: grade1" maxlength="80"></label>
+            <label><span>基本名</span><input id="baseInput" type="text" value="image" maxlength="80"></label>
+            <label><span>開始番号</span><input id="startInput" type="number" value="1" min="0" max="999999"></label>
+            <label><span>桁数</span><select id="digitsInput"><option value="1">1桁</option><option value="2" selected>2桁</option><option value="3">3桁</option><option value="4">4桁</option></select></label>
+            <label><span>接尾辞 <small>任意</small></span><input id="suffixInput" type="text" placeholder="例: icon" maxlength="80"></label>
+            <label><span>区切り文字</span><select id="separatorInput"><option value="_" selected>_ アンダースコア</option><option value="-">- ハイフン</option><option value="none">なし</option></select></label>
+          </div>
+          <p class="setting-note">拡張子は元のまま保持します。使用できない記号は自動で除去します。</p>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">02</span><h2>変更内容</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ 追加</button><button class="text-button" id="removeAllButton" type="button">すべて削除</button></div></div>
+          <div class="rename-list" id="fileList"></div>
+          <div class="run-actions"><span class="vector-progress" id="statusText" role="status"></span><button class="button button-accent" id="applyButton" type="button">名前を確定 <span>→</span></button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle">
+          <div class="results-heading"><div><span class="setting-number">03</span><div><h2 id="resultsTitle">リネーム結果</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid vector-summary"><div><span>変更したファイル</span><strong id="resultCount">—</strong></div><div><span>合計サイズ</span><strong id="resultSize">—</strong></div></div>
+          <div class="rename-next-actions">
+            <button class="button button-accent" id="downloadButton" type="button">ZIPで保存 <small>.zip</small></button>
+            <div><p>続けて処理</p><button class="button button-light" id="toSplitterButton" type="button">画像分割へ →</button><button class="button button-light" id="toSvgButton" type="button">PNG → SVGへ →</button></div>
+          </div>
+          <p class="setting-note" id="handoffNote">対応するファイルだけを次のツールへ渡します。</p>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow"><div class="section-kicker">HOW IT WORKS</div><h2>追加する。名前を整える。次へ渡す。</h2><div class="steps"><article><span>01</span><h3>ファイルを追加</h3><p>端末内の画像・SVG、または別ツールの処理結果を読み込みます。</p></article><article><span>02</span><h3>命名ルールを指定</h3><p>基本名や連番を指定し、変更前後を一覧で確認します。</p></article><article><span>03</span><h3>保存または連携</h3><p>ZIPで保存するか、画像分割やPNG → SVGへそのまま渡します。</p></article></div></section>
+    <section class="content-section split-section" id="about"><div><div class="section-kicker">WORK TRAY</div><h2>ツールをまたいでも、再選択は不要。</h2></div><div><p>受け渡すファイルは、このブラウザ内の一時的な作業トレイへ保存します。サーバーへのアップロードは行いません。</p><p class="note">ブラウザのサイトデータを消去すると、作業トレイの内容も消去されます。</p></div></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/image-splitter/">画像分割</a><a href="/ja/png-to-svg/">PNG → SVG</a><a href="#workflow">ワークフロー</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
+

@@ -11,9 +11,19 @@ npm run dev
 Open `http://localhost:4173/ja/png-compressor/` for Japanese or
 `http://localhost:4173/png-compressor/` for English.
 
-The Local AI line-art proof of concept is available at
-`http://localhost:4173/ja/line-art-generator/`. Run `npm run build` after
-changing its worker source.
+The Japanese PNG-to-SVG tool is available at
+`http://localhost:4173/ja/png-to-svg/`. It reproduces the Matopuri conversion
+pipeline in the browser: white compositing, quality-specific preprocessing,
+optional whitespace splitting, Potrace vectorization and 512 × 512 canvas
+normalization.
+
+The image splitter is available at `http://localhost:4173/ja/image-splitter/`.
+It reproduces Matopuri's whitespace projection splitting with the same three
+presets, 245 foreground threshold, 16 px crop padding, detection preview and
+individual PNG or ZIP export.
+
+The Local AI line-art experiment is currently pending. Its route remains as a
+lightweight status page, but model/runtime dependencies are not installed.
 
 ## Checks
 
@@ -36,7 +46,3 @@ Batch jobs run sequentially. Images above two million pixels use a bounded-memor
 typed-array path, and cancelling a job terminates the active worker so processing
 can restart cleanly.
 
-The current line-art generator is a technical proof of concept based on an
-SD-Turbo ONNX model. Its model download is about 2.58 GB and uses a
-non-commercial model license; replace it with a commercially usable,
-line-art-specific model before production release.

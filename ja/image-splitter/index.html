@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja" data-page-lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>画像分割 — 複数イラストを自動で切り出す | SHIAGENT</title>
+  <meta name="description" content="1枚のPNG・JPGから複数のイラストを余白で自動分割。ブラウザ内で処理し、個別PNGまたはZIPで保存できます。">
+  <link rel="canonical" href="/ja/image-splitter/">
+  <link rel="stylesheet" href="/assets/css/site.css">
+  <script type="module" src="/assets/js/image-splitter.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">ツールへ移動</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="SHIAGENT ホーム"><span>SHIAGENT</span><small>シアゲント</small></a>
+    <nav aria-label="メインナビゲーション"><a href="#workflow">ワークフロー</a><a href="#about">仕様</a></nav>
+    <div class="language" aria-label="言語"><span aria-current="page">日本語</span></div>
+  </header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">画像ツール</a><span>/</span><span>画像分割</span></div>
+      <div class="eyebrow"><span>IMAGE TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>画像分割</h1>
+      <p class="lead">1枚に並んだ複数のイラストを、白い余白で自動分割。<br>切り出したPNGを、そのまま個別またはZIPで保存できます。</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>画像はブラウザの外に出ません。</span></div>
+
+      <div class="compressor-card splitter-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>PNG・JPGをここにドロップ</h2>
+          <p id="dropHelp">または</p>
+          <button class="button button-dark" id="selectButton" type="button">ファイルを選択</button>
+          <p class="drop-note">PNG / JPG・複数ファイル対応</p>
+        </div>
+
+        <div class="settings-panel">
+          <div class="setting-heading"><div><span class="setting-number">01</span><h2>分割方法</h2></div><button class="text-button" id="clearButton" type="button">すべてクリア</button></div>
+          <fieldset class="mode-grid vector-quality-grid splitter-options">
+            <legend class="sr-only">分割方法を選択</legend>
+            <label class="mode-option"><input type="radio" name="split" value="fine"><span><b>細かく</b><small>間隔が狭い画像向け</small></span></label>
+            <label class="mode-option"><input type="radio" name="split" value="standard" checked><span><b>標準</b><small>通常はこちら</small></span></label>
+            <label class="mode-option"><input type="radio" name="split" value="grouped"><span><b>まとめ気味</b><small>離れた小パーツを残しやすい</small></span></label>
+          </fieldset>
+          <p class="setting-note">黒線や色のある部分を検出し、16pxの余白を付けて切り出します。</p>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">02</span><h2>ファイル</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ 追加</button><button class="text-button" id="removeAllButton" type="button">すべて削除</button></div></div>
+          <div class="file-list" id="fileList"></div>
+          <div class="run-actions"><span class="vector-progress" id="progressText" role="status"></span><button class="button button-accent" id="splitButton" type="button">画像を分割 <span>→</span></button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle">
+          <div class="results-heading"><div><span class="setting-number">03</span><div><h2 id="resultsTitle">分割結果</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid vector-summary"><div><span>切り出したPNG</span><strong id="resultCount">—</strong></div><div><span>合計サイズ</span><strong id="resultSize">—</strong></div></div>
+          <h3 class="splitter-subtitle">検出位置</h3>
+          <div class="splitter-detection-list" id="detectionList"></div>
+          <h3 class="splitter-subtitle">切り出した画像</h3>
+          <div class="splitter-result-list" id="resultList"></div>
+          <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">すべてダウンロード <small>.zip</small></button><p>各PNGも個別に保存できます</p></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow">
+      <div class="section-kicker">HOW IT WORKS</div><h2>選ぶ。検出する。切り出す。</h2>
+      <div class="steps"><article><span>01</span><h3>画像を選ぶ</h3><p>1枚に複数の素材が並んだPNGまたはJPGを追加します。</p></article><article><span>02</span><h3>余白を検出</h3><p>白い空間を再帰的に探し、各イラストの範囲と順番を決めます。</p></article><article><span>03</span><h3>PNGで保存</h3><p>白背景と16pxの余白を付け、個別PNGまたはZIPで保存します。</p></article></div>
+    </section>
+    <section class="content-section split-section" id="about"><div><div class="section-kicker">SPLIT RULE</div><h2>線画素材シート向けの、余白分割。</h2></div><div><p>白背景上に、互いに離して配置されたイラストの切り出しに向いています。写真の被写体認識や、重なったオブジェクトの分離は行いません。</p><p class="note">判定・プレビュー・PNG保存はすべて端末内で行います。</p></div></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/png-compressor/">PNG圧縮</a><a href="/ja/png-to-svg/">PNG → SVG</a><a href="#workflow">ワークフロー</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

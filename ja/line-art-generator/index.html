@@ -1,61 +1,52 @@
 <!doctype html>
 <html lang="ja" data-page-lang="ja">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ローカルAI線画ジェネレーター | SHIAGENT</title>
-  <meta name="description" content="プロンプトから線画を生成。AIモデルも生成処理もユーザー端末内で動作します。">
-  <link rel="canonical" href="/ja/line-art-generator/"><link rel="alternate" hreflang="ja" href="/ja/line-art-generator/"><link rel="alternate" hreflang="en" href="/line-art-generator/">
-  <link rel="stylesheet" href="/assets/css/site.css"><script type="module" src="/assets/js/line-art-generator.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ローカルAI線画ジェネレーター — 保留中 | SHIAGENT</title>
+  <meta name="description" content="ローカルAI線画ジェネレーターは品質と一般的なPC環境での実用性を再検討するため、現在保留中です。">
+  <link rel="canonical" href="/ja/line-art-generator/">
+  <link rel="alternate" hreflang="ja" href="/ja/line-art-generator/">
+  <link rel="alternate" hreflang="en" href="/line-art-generator/">
+  <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
-  <a class="skip-link" href="#generator">ジェネレーターへ移動</a>
-  <header class="site-header"><a class="brand" href="/"><span>SHIAGENT</span><small>シアゲント</small></a><nav><a href="#generator">ツール</a><a href="#workflow">ワークフロー</a><a href="#">料金</a></nav><div class="language"><a href="/line-art-generator/">EN</a><span aria-current="page">日本語</span></div></header>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="SHIAGENT ホーム"><span>SHIAGENT</span><small>シアゲント</small></a>
+    <nav aria-label="メインナビゲーション"><a href="/ja/png-compressor/">ツール</a></nav>
+    <div class="language" aria-label="言語"><a href="/line-art-generator/">EN</a><span aria-current="page">日本語</span></div>
+  </header>
   <main>
-    <section class="tool-hero" id="generator">
-      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="#">AIツール</a><span>/</span><span>線画ジェネレーター</span></div>
-      <div class="eyebrow"><span>AI TOOL</span><span class="on-device">LOCAL AI</span><span class="experimental">EXPERIMENTAL</span></div>
-      <h1>線画ジェネレーター</h1>
-      <p class="lead">言葉から、使いやすい線画を。<br>AIも画像も、あなたの端末の中だけで動きます。</p>
-      <div class="privacy-line"><span class="privacy-icon">⌁</span><strong>Runs on your device</strong><span>生成時にプロンプトや画像を外部へ送信しません。</span></div>
-
-      <div class="generator-shell">
-        <section class="model-panel" aria-labelledby="modelTitle">
-          <div class="model-panel-head"><div><span class="setting-number">00</span><div><h2 id="modelTitle">ローカルAIの準備</h2><p>初回のみ、モデルを端末へ保存します。</p></div></div><span class="model-license">POC · NON-COMMERCIAL MODEL</span></div>
-          <div class="device-grid">
-            <div class="device-state"><span class="device-icon">GPU</span><div><strong id="gpuStatus">確認中…</strong><small id="gpuDetail">WebGPU</small></div></div>
-            <div class="device-state"><span class="device-icon">AI</span><div><strong id="modelState">モデルを確認中…</strong><small id="modelProgress">2.58 GB · SD-Turbo ONNX</small><div class="model-progress-track"><span id="modelProgressBar"></span></div></div></div>
-          </div>
-          <div class="model-actions"><button class="button button-dark" id="downloadModel" type="button" disabled>モデルを取得</button><button class="text-button danger-link" id="deleteModel" type="button" hidden>端末からモデルを削除</button><p>取得時のみHugging Faceへ接続します。取得後の生成は端末内で完結します。</p></div>
-        </section>
-
-        <section class="prompt-panel">
-          <div class="setting-heading"><div><span class="setting-number">01</span><h2>つくりたいもの</h2></div><span id="promptCount" class="file-count">0件のプロンプト</span></div>
-          <label class="prompt-label" for="prompts">1行に1つずつ入力</label>
-          <textarea id="prompts" rows="6" placeholder="a friendly rabbit reading a book&#10;a small town bakery with flowers&#10;three children planting a tree"></textarea>
-          <div class="prompt-help"><span>英語プロンプト推奨</span><span>最大20件</span><span>Ctrl / ⌘ + Enterで生成</span></div>
-
-          <fieldset class="style-options" id="styleOptions"><legend><span class="setting-number">02</span>線画のスタイル</legend>
-            <label><input type="radio" name="style" value="worksheet" checked><span><b>Worksheet</b><small>教材向け・太めで明快</small></span></label>
-            <label><input type="radio" name="style" value="delicate"><span><b>Delicate</b><small>細く繊細な描線</small></span></label>
-            <label><input type="radio" name="style" value="comic"><span><b>Comic Ink</b><small>表情のあるインク線</small></span></label>
-            <label><input type="radio" name="style" value="icon"><span><b>Outline Icon</b><small>均一線のシンプル素材</small></span></label>
-          </fieldset>
-
-          <details class="advanced"><summary>詳細設定 <span>＋</span></summary><div class="advanced-body generator-advanced"><label>線の強さ <input id="lineStrength" type="range" min="0.3" max="1.2" value="0.72" step="0.05"></label><label>Seed <input id="seed" type="number" min="0" max="2147483647" placeholder="ランダム"></label><p>出力サイズ 512 × 512 px · 1-step generation</p></div></details>
-          <div class="generation-actions"><button class="button button-accent" id="generateButton" type="button" disabled>線画を生成 <span>→</span></button><button class="button button-light" id="cancelGeneration" type="button" hidden>中止</button><p>生成画像は自動保存されません。</p></div>
-        </section>
-
-        <section class="generation-results-section" id="resultsSection" hidden>
-          <div class="results-heading"><div><span class="setting-number">03</span><div><h2>生成結果</h2><p id="resultSummary"></p></div></div><button class="button button-accent" id="downloadAccepted" type="button" disabled>採用画像をZIP保存</button></div>
-          <div class="generation-results" id="generationResults" aria-live="polite"></div>
-        </section>
-      </div>
+    <section class="tool-hero">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><span>ローカルAI線画ジェネレーター</span></div>
+      <div class="eyebrow"><span>R&amp;D</span><span class="on-device">PENDING</span></div>
+      <h1>線画生成は<br>いったん保留。</h1>
+      <p class="lead">一般的なPC環境で使える品質と速度に届かなかったため、<br>ローカルAI版の公開実装を取り外しました。</p>
+      <p><a class="button button-dark" href="/ja/png-compressor/">PNG圧縮を使う →</a></p>
     </section>
-
-    <section class="content-section split-section" id="workflow"><div><div class="section-kicker">Human in the loop</div><h2>最後の一割だけ、選ぶ。</h2></div><div><p>生成は順番に端末内で進みます。結果を見ながら採用・再生成・削除を選び、必要な画像だけをZIPで保存できます。</p><div class="mini-stats"><span><b>87</b> 採用</span><span><b>9</b> 再生成</span><span><b>4</b> 削除</span></div></div></section>
-    <section class="content-section"><div class="section-kicker">Local AI</div><h2>モデルは必要なときだけ。</h2><div class="steps"><article><span>01</span><h3>確認して取得</h3><p>モデル容量と用途を確認し、操作したときだけダウンロードします。</p></article><article><span>02</span><h3>GPUで生成</h3><p>WebGPUを使い、プロンプトも生成画像もサーバーへ送りません。</p></article><article><span>03</span><h3>いつでも削除</h3><p>保存したモデルはブラウザのCache Storageから削除できます。</p></article></div></section>
-    <section class="content-section faq-section"><div class="section-kicker">Current PoC</div><h2>技術検証版について</h2><details open><summary>現在のモデルを製品版でも使えますか？<span>＋</span></summary><p>現在接続しているSD-Turbo ONNXモデルは非商用ライセンスの技術検証用です。製品公開前に、商用利用可能な線画特化モデルへ置き換えます。</p></details><details><summary>対応ブラウザは？<span>＋</span></summary><p>WebGPUとshader-f16に対応した新しいChrome／Edgeを主対象としています。大容量モデルのため、十分なGPUメモリと空きストレージが必要です。</p></details><details><summary>生成中に通信しますか？<span>＋</span></summary><p>モデル取得後の推論は端末内です。初回モデル取得と、未保存のTokenizer取得時のみネットワークへ接続します。</p></details></section>
+    <section class="content-section">
+      <div class="section-kicker">STATUS</div>
+      <h2>軽さと実用性を満たす方法が見つかるまで再検討します。</h2>
+      <p id="modelCacheStatus">旧モデルキャッシュを確認しています。</p>
+      <button class="button button-dark" id="removeModelCache" type="button" disabled>旧AIモデルキャッシュを削除</button>
+    </section>
   </main>
-  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/png-compressor/">PNG圧縮</a><a href="#generator">線画生成</a><a href="#">プライバシー</a></div><small>© 2026 SHIAGENT</small></footer><div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><small>© SHIAGENT</small></footer>
+  <script type="module">
+    const cacheName = "shiagent-local-ai-sd-turbo-v1";
+    const status = document.querySelector("#modelCacheStatus");
+    const button = document.querySelector("#removeModelCache");
+    const refresh = async () => {
+      const exists = await caches.has(cacheName);
+      status.textContent = exists ? "このブラウザに旧AIモデルが保存されています。" : "旧AIモデルはこのブラウザに保存されていません。";
+      button.disabled = !exists;
+    };
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      await caches.delete(cacheName);
+      await refresh();
+    });
+    refresh();
+  </script>
 </body>
 </html>
