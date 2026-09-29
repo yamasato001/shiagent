@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-page-lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build Your Own Workflow (Beta) | SHIAGENT</title>
+  <meta name="description" content="Connect image, SVG, PDF and file tools into your own workflow. Incompatible steps are blocked automatically and definitions are saved locally in your browser."><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://shiagent.com/workflows/custom/"><meta property="og:title" content="Build Your Own Workflow (Beta) | SHIAGENT"><meta property="og:description" content="Connect image, SVG, PDF and file tools into your own workflow. Incompatible steps are blocked automatically and definitions are saved locally in your browser."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Build Your Own Workflow (Beta) | SHIAGENT"><meta name="twitter:description" content="Connect image, SVG, PDF and file tools into your own workflow. Incompatible steps are blocked automatically and definitions are saved locally in your browser."><link rel="canonical" href="https://shiagent.com/workflows/custom/"><link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/custom/"><link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/custom/"><link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/custom/">
+  <script src="/assets/js/language.js"></script><link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css"><link rel="stylesheet" href="/assets/css/custom-workflow.css"><link rel="stylesheet" href="/assets/css/custom-workflow-tabs.css"><script type="module" src="/assets/js/custom-workflow-builder.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#customWorkflowBuilder">Skip to builder</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/workflows/custom/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+  <main>
+    <section class="tool-hero">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/?tab=workflows#tools">Workflows</a><span>/</span><span>Original</span></div>
+      <div class="eyebrow"><span>ORIGINAL WORKFLOW</span><span class="on-device">BETA</span></div><h1>Build your own Workflow</h1>
+      <p class="lead">Connect the tools you need in the order you use them.<br>Save your personal process in this browser.</p>
+      <div class="custom-builder-card" id="customWorkflowBuilder">
+        <div class="builder-head">
+          <label>Workflow name<input id="workflowName" type="text" maxlength="60" placeholder="e.g. Product image publishing"></label>
+          <label>Starting file type<select id="inputType"><option value="" selected disabled>Choose a file type</option><option value="raster">Images, including HEIC</option><option value="webRaster">PNG, JPEG or WebP</option><option value="svg">SVG</option><option value="pdf">PDF</option><option value="files">Any file</option></select></label>
+          <div class="builder-head-actions"><button class="button button-light" id="newWorkflow" type="button">New</button><button class="button button-dark" id="saveWorkflowTop" type="button">Save locally</button></div>
+        </div>
+        <div class="builder-layout">
+          <aside class="builder-palette"><h2>Add tools</h2><p>Tools that cannot accept the current output are disabled.</p><div id="toolPalette"></div></aside>
+          <section class="builder-canvas"><div class="builder-canvas-head"><div><h2>Processing order</h2><p>Reorder steps by dragging or using the arrows.</p></div><div class="builder-canvas-actions"><button class="text-button" id="clearWorkflow" type="button">Clear all</button></div></div><div class="builder-steps is-empty" id="workflowSteps"></div><div class="builder-footer"><p id="builderStatus" role="status"></p><div><button class="button button-light" id="saveWorkflowBottom" type="button">Save locally</button><button class="button button-accent" id="runWorkflow" type="button">Start this Workflow <span>→</span></button></div></div></section>
+        </div>
+      </div>
+      <p class="custom-workflow-note">Only the workflow name and tool order are saved. Your files are never saved or uploaded. This beta uses free local browser storage and is ready for future cloud-sync options.</p>
+    </section>
+    <section class="content-section saved-workflows"><div class="section-kicker">SAVED LOCALLY</div><h2>Saved workflows</h2><p>These live in this browser and are removed if you clear its site data.</p><div class="saved-workflows-list" id="savedWorkflows"></div></section>
+    <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>Frequently asked questions</h2><details><summary>What is stored locally?<span>＋</span></summary><p>Only the workflow name, starting file type and tool order. Image and PDF files are not stored as part of the workflow.</p></details><details><summary>Why are some tools unavailable?<span>＋</span></summary><p>A tool is disabled when it cannot read the previous step's output. The full chain is checked again whenever you reorder it.</p></details><details><summary>Can I use a saved workflow in another browser?<span>＋</span></summary><p>The beta saves to this browser's local storage. Cross-device sync is a possible future extension.</p></details></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></div><small>© 2026 SHIAGENT</small></footer>
+</body></html>

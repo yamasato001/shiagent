@@ -3,44 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>一括リネーム — 画像・SVGを連番で整理 | SHIAGENT</title>
-  <meta name="description" content="画像とSVGをブラウザ内で一括リネーム。接頭辞、基本名、連番、接尾辞を指定し、ZIPで保存または別のSHIAGENTツールへ渡せます。">
-  <link rel="canonical" href="/ja/batch-rename/">
-  <link rel="stylesheet" href="/assets/css/site.css">
+  <title>ファイル名を一括変更｜連番でまとめてリネーム | SHIAGENT</title>
+  <meta name="description" content="画像、PDF、文書、音声、動画などのファイル名を連番で一括変更。接頭辞、開始番号、桁数、区切り文字を指定し、拡張子を維持して保存できます。"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:url" content="https://shiagent.com/ja/batch-rename/"><meta property="og:title" content="ファイル名を一括変更｜連番でまとめてリネーム | SHIAGENT"><meta property="og:description" content="画像、PDF、文書、音声、動画などのファイル名を連番で一括変更。接頭辞、開始番号、桁数、区切り文字を指定し、拡張子を維持して保存できます。"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="ファイル名を一括変更｜連番でまとめてリネーム | SHIAGENT"><meta name="twitter:description" content="画像、PDF、文書、音声、動画などのファイル名を連番で一括変更。接頭辞、開始番号、桁数、区切り文字を指定し、拡張子を維持して保存できます。"><link rel="canonical" href="https://shiagent.com/ja/batch-rename/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/batch-rename/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/batch-rename/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/batch-rename/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
   <script type="module" src="/assets/js/batch-rename.js"></script>
   <script type="module" src="/assets/js/workflow-handoff.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#tool">ツールへ移動</a>
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="SHIAGENT ホーム"><span>SHIAGENT</span><small>シアゲント</small></a>
-    <nav aria-label="メインナビゲーション"><a href="#workflow">ワークフロー</a><a href="#about">仕様</a></nav>
-    <div class="language" aria-label="言語"><span aria-current="page">日本語</span></div>
-  </header>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/batch-rename/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
 
   <main>
     <section class="tool-hero" id="tool">
-      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">画像ツール</a><span>/</span><span>一括リネーム</span></div>
+      <div class="breadcrumb"><a href="/ja/">SHIAGENT</a><span>/</span><a href="/ja/#tools">ファイルツール</a><span>/</span><span>一括リネーム</span></div>
       <div class="eyebrow"><span>FILE TOOL</span><span class="on-device">ON DEVICE</span></div>
       <h1>一括リネーム</h1>
-      <p class="lead">複数ファイルを、わかりやすい名前と連番でまとめて整理。<br>結果はZIPで保存するか、そのまま次のツールへ渡せます。</p>
+      <p class="lead">画像、PDF、文書、音声、動画などのファイル名をルールと連番で一括変更。<br>元の拡張子とファイル内容は変えず、整理した名前でまとめて保存します。</p>
       <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>ファイルはブラウザの外に出ません。</span></div>
 
       <div class="compressor-card rename-card">
         <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
-          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/svg+xml,.png,.jpg,.jpeg,.svg" multiple hidden>
+          <input id="fileInput" type="file" multiple hidden>
           <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
-          <h2>画像・SVGをここにドロップ</h2>
+          <h2>あらゆるファイルをここにドロップ</h2>
           <p id="dropHelp">または</p>
           <button class="button button-dark" id="selectButton" type="button">ファイルを選択</button>
-          <p class="drop-note">PNG / JPG / SVG・複数ファイル対応</p>
+          <p class="drop-note">画像 / PDF / 文書 / 音声 / 動画 / 圧縮ファイル / その他</p>
         </div>
 
         <div class="settings-panel">
-          <div class="setting-heading"><div><span class="setting-number">01</span><h2>命名ルール</h2></div><button class="text-button" id="resetButton" type="button">初期値に戻す</button></div>
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>命名ルール</h2></div><button class="text-button" id="resetButton" type="button">初期値に戻す</button></div>
           <div class="rename-rule-grid">
             <label><span>接頭辞 <small>任意</small></span><input id="prefixInput" type="text" placeholder="例: grade1" maxlength="80"></label>
-            <label><span>基本名</span><input id="baseInput" type="text" value="image" maxlength="80"></label>
+            <label><span>基本名</span><input id="baseInput" type="text" value="file" maxlength="80"></label>
             <label><span>開始番号</span><input id="startInput" type="number" value="1" min="0" max="999999"></label>
             <label><span>桁数</span><select id="digitsInput"><option value="1">1桁</option><option value="2" selected>2桁</option><option value="3">3桁</option><option value="4">4桁</option></select></label>
             <label><span>接尾辞 <small>任意</small></span><input id="suffixInput" type="text" placeholder="例: icon" maxlength="80"></label>
@@ -50,7 +49,7 @@
         </div>
 
         <div class="queue-panel" id="queuePanel" hidden>
-          <div class="queue-top"><div><span class="setting-number">02</span><h2>変更内容</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ 追加</button><button class="text-button" id="removeAllButton" type="button">すべて削除</button></div></div>
+          <div class="queue-top"><div><span class="setting-number">01</span><h2>変更内容</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ 追加</button><button class="text-button" id="removeAllButton" type="button">すべて削除</button></div></div>
           <div class="rename-list" id="fileList"></div>
           <div class="run-actions"><span class="vector-progress" id="statusText" role="status"></span><button class="button button-accent" id="applyButton" type="button">名前を確定 <span>→</span></button></div>
         </div>
@@ -60,18 +59,17 @@
           <div class="summary-grid vector-summary"><div><span>変更したファイル</span><strong id="resultCount">—</strong></div><div><span>合計サイズ</span><strong id="resultSize">—</strong></div></div>
           <div class="rename-next-actions">
             <button class="button button-accent" id="downloadButton" type="button">ZIPで保存 <small>.zip</small></button>
-            <div><p>続けて処理</p><button class="button button-light" id="toSplitterButton" type="button">画像分割へ →</button><button class="button button-light" id="toSvgButton" type="button">PNG → SVGへ →</button></div>
+            <div><p>続けて処理</p><button class="button button-light" id="toSplitterButton" type="button">画像分割へ →</button><button class="button button-light" id="toSvgButton" type="button">画像 → SVG変換へ →</button></div>
           </div>
           <p class="setting-note" id="handoffNote">対応するファイルだけを次のツールへ渡します。</p>
         </section>
       </div>
     </section>
 
-    <section class="content-section" id="workflow"><div class="section-kicker">HOW IT WORKS</div><h2>追加する。名前を整える。次へ渡す。</h2><div class="steps"><article><span>01</span><h3>ファイルを追加</h3><p>端末内の画像・SVG、または別ツールの処理結果を読み込みます。</p></article><article><span>02</span><h3>命名ルールを指定</h3><p>基本名や連番を指定し、変更前後を一覧で確認します。</p></article><article><span>03</span><h3>保存または連携</h3><p>ZIPで保存するか、画像分割やPNG → SVGへそのまま渡します。</p></article></div></section>
+    <section class="content-section" id="workflow"><div class="section-kicker">HOW IT WORKS</div><h2>追加する。名前を整える。保存する。</h2><div class="steps"><article><span>01</span><h3>あらゆるファイルを追加</h3><p>画像、PDF、文書、音声、動画、圧縮ファイル、拡張子のないファイルを混在できます。</p></article><article><span>02</span><h3>命名ルールを指定</h3><p>基本名や連番を指定し、変更前後を一覧で確認します。</p></article><article><span>03</span><h3>保存または連携</h3><p>すべてZIPで保存できます。対応する画像だけを画像ツールへ渡すこともできます。</p></article></div></section>
     <section class="content-section split-section" id="about"><div><div class="section-kicker">WORK TRAY</div><h2>ツールをまたいでも、再選択は不要。</h2></div><div><p>受け渡すファイルは、このブラウザ内の一時的な作業トレイへ保存します。サーバーへのアップロードは行いません。</p><p class="note">ブラウザのサイトデータを消去すると、作業トレイの内容も消去されます。</p></div></section>
-  </main>
-  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/image-splitter/">画像分割</a><a href="/ja/png-to-svg/">PNG → SVG</a><a href="#workflow">ワークフロー</a></div><small>© 2026 SHIAGENT</small></footer>
+  <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>よくある質問</h2><details><summary>どのファイル形式に対応していますか？<span>＋</span></summary><p>ブラウザで選択できるあらゆるファイルに対応します。画像、PDF、Office文書、テキスト、音声、動画、ZIPなどの圧縮ファイル、拡張子のないファイルも扱えます。</p></details><details><summary>ファイルはサーバーへ送信されますか？<span>＋</span></summary><p>送信されません。名前の変更、ZIP作成、対応ファイルの次ツールへの受け渡しはすべてブラウザ内で行います。</p></details><details><summary>連番はどの順番で付きますか？<span>＋</span></summary><p>変更内容の一覧に表示されている順番、つまりファイルを追加した順に付きます。</p></details><details><summary>拡張子は変わりますか？<span>＋</span></summary><p>変わりません。大文字・小文字を含め、元の拡張子をそのまま保持します。ファイルの中身も変更しません。</p></details><details><summary>使えない記号はどうなりますか？<span>＋</span></summary><p>\ / : * ? " &lt; &gt; | など、ファイル名に使えない記号は自動で取り除きます。</p></details><details><summary>同じ名前になった場合は？<span>＋</span></summary><p>重複する名前ができるときはエラーを表示し、確定しません。基本名や開始番号を変えてください。</p></details></section></main>
+  <footer><div><a class="brand footer-brand" href="/ja/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/image-splitter/">画像分割</a><a href="/ja/image-to-svg/">画像 → SVG変換</a><a href="#workflow">ワークフロー</a></div><small>© 2026 SHIAGENT</small></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
-

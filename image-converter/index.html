@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" data-page-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HEIC to JPG, PNG &amp; WebP Converter — Batch, In Your Browser | SHIAGENT</title>
+  <meta name="description" content="Convert HEIC, HEIF, AVIF, WebP, PNG, JPEG, GIF, BMP and TIFF to PNG, JPEG or WebP in bulk. Runs locally in your browser, so your photos are never uploaded."><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://shiagent.com/image-converter/"><meta property="og:title" content="HEIC to JPG, PNG &amp; WebP Converter — Batch, In Your Browser | SHIAGENT"><meta property="og:description" content="Convert HEIC, HEIF, AVIF, WebP, PNG, JPEG, GIF, BMP and TIFF to PNG, JPEG or WebP in bulk. Runs locally in your browser, so your photos are never uploaded."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="HEIC to JPG, PNG &amp; WebP Converter — Batch, In Your Browser | SHIAGENT"><meta name="twitter:description" content="Convert HEIC, HEIF, AVIF, WebP, PNG, JPEG, GIF, BMP and TIFF to PNG, JPEG or WebP in bulk. Runs locally in your browser, so your photos are never uploaded."><link rel="canonical" href="https://shiagent.com/image-converter/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-converter/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/image-converter/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-converter/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/js/image-converter.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">Skip to tool</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/image-converter/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">Image tools</a><span>/</span><span>Image Converter</span></div>
+      <div class="eyebrow"><span>IMAGE TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>Image Converter</h1>
+      <p class="lead">Add images in any mix of formats.<br>Convert them all to the one format you choose.</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your images, including HEIC photos, stay in your browser.</span></div>
+
+      <div class="compressor-card converter-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,image/avif,image/gif,image/bmp,image/tiff,.png,.jpg,.jpeg,.webp,.heic,.heif,.avif,.gif,.bmp,.tif,.tiff" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>Drop image files here</h2>
+          <p id="dropHelp">or</p>
+          <button class="button button-dark" id="selectButton" type="button">Select files</button>
+          <p class="drop-note">PNG / JPEG / WebP / HEIC / HEIF / AVIF / GIF / BMP / TIFF</p>
+        </div>
+
+        <div class="settings-panel">
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>Output format</h2></div><button class="text-button" id="clearButton" type="button">Clear all</button></div>
+          <fieldset class="mode-grid converter-output-grid" id="outputGrid">
+            <legend class="sr-only">Choose the output format</legend>
+            <label class="mode-option"><input type="radio" name="outputFormat" value="png"><span><b>PNG</b><small>Keeps transparency and quality</small></span></label>
+            <label class="mode-option"><input type="radio" name="outputFormat" value="jpeg" checked><span><b>JPEG</b><small>Small photos, works everywhere</small></span></label>
+            <label class="mode-option"><input type="radio" name="outputFormat" value="webp"><span><b>WebP</b><small>Small, supports transparency</small></span></label>
+          </fieldset>
+          <div class="converter-quality" id="qualityWrap"><label for="quality">Quality</label><select id="quality"><option value="compact">Smaller files</option><option value="standard" selected>Standard</option><option value="high">Higher quality</option></select></div>
+          <p class="setting-note">When converting to JPEG, transparent areas become white. For GIFs and HEIC sequences, the first still image is converted.</p>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">01</span><h2>Files</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ Add</button><button class="text-button" id="removeAllButton" type="button">Remove all</button></div></div>
+          <div class="file-list" id="fileList" aria-live="polite"></div>
+          <div class="run-actions"><span class="vector-progress" id="progressText" role="status"></span><button class="button button-accent" id="convertButton" type="button">Convert all <span>→</span></button><button class="button button-light" id="cancelButton" type="button" hidden>Cancel</button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle">
+          <div class="results-heading"><div><span class="setting-number">03</span><div><h2 id="resultsTitle">Results</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid"><div><span>Before</span><strong id="beforeTotal">—</strong></div><div><span>After</span><strong id="afterTotal">—</strong></div><div class="saved"><span>Converted images</span><strong id="convertedCount">—</strong></div></div>
+          <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">Download all <small>.zip</small></button><p>Each image can also be saved on its own</p></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow">
+      <div class="section-kicker">HOW IT WORKS</div><h2>Mix formats. Pick one. Save them all.</h2>
+      <div class="steps"><article><span>01</span><h3>Add images</h3><p>Put different formats, including iPhone HEIC photos, in the same list.</p></article><article><span>02</span><h3>Choose the output</h3><p>Pick PNG, JPEG or WebP and every file is converted to that format.</p></article><article><span>03</span><h3>Save together</h3><p>Download files one by one, or everything in a single ZIP.</p></article></div>
+    </section>
+
+    <section class="content-section split-section" id="formats"><div><div class="section-kicker">SUPPORTED INPUTS</div><h2>From phone photos to production files.</h2></div><div><p><strong>Input:</strong> PNG, JPEG, WebP, HEIC/HEIF, AVIF, GIF, BMP, TIFF</p><p><strong>Output:</strong> PNG, JPEG, WebP</p><p class="note">For multi-page TIFFs the largest page is converted; animated images are converted from their first frame. Whether AVIF can be read depends on your browser’s decoder.</p></div></section>
+
+    <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>Common questions</h2><details><summary>Can I add iPhone HEIC photos directly?<span>＋</span></summary><p>Yes. Add HEIC/HEIF files by selecting or dragging them in, and convert them to PNG, JPEG or WebP.</p></details><details><summary>Are my images uploaded?<span>＋</span></summary><p>No. Reading, converting (including the dedicated HEIC and TIFF decoders) and ZIP creation all happen inside your browser.</p></details><details><summary>What happens to transparency?<span>＋</span></summary><p>PNG and WebP keep transparency. Transparent areas become white when an image is converted to JPEG.</p></details></section>
+  </main>
+
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/image-compressor/">Image Compressor</a><a href="/image-splitter/">Image Splitter</a><a href="#workflow">How it works</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -56,7 +56,7 @@ Batch Generation / Rename / Convert / Folder・CSV Processing
 
 SEOでは各Toolに独立URLを持つ。
 
-例: - `/png-to-svg/` - `/svg-white-fill/` - `/image-splitter/` -
+例: - `/image-to-svg/` - `/svg-white-fill/` - `/image-splitter/` -
 `/line-art-generator/` - `/pdf-interleave/`
 
 ただし実際の作業は共通Workspaceで行い、一度読み込んだファイルを保持したまま、
@@ -162,7 +162,7 @@ ToolとWorkflowは同じ処理コンポーネントを再利用し、重複実�
 
 初期: - English - 日本語
 
-URL例: English `/png-to-svg/` Japanese `/ja/png-to-svg/`
+URL例: English `/image-to-svg/` Japanese `/ja/image-to-svg/`
 
 ユーザーが手動変更した言語はlocalStorage等に保存。
 SEOでは言語別URL＋hreflang。

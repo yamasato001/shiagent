@@ -54,3 +54,15 @@ export async function readTray() {
   }));
 }
 
+export async function clearTray() {
+  const database = await openDatabase();
+  const transaction = database.transaction(STORE_NAME, "readwrite");
+  transaction.objectStore(STORE_NAME).clear();
+  await new Promise((resolve, reject) => {
+    transaction.addEventListener("complete", resolve);
+    transaction.addEventListener("error", () => reject(transaction.error));
+    transaction.addEventListener("abort", () => reject(transaction.error));
+  });
+  database.close();
+}
+

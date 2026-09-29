@@ -11,6 +11,9 @@ const mime = {
   ".mjs": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
   ".svg": "image/svg+xml",
   ".wasm": "application/wasm"
 };
@@ -33,4 +36,4 @@ createServer((request, response) => {
     "Cache-Control": "no-store"
   });
   createReadStream(file).pipe(response);
-}).listen(port, () => console.log(`SHIAGENT: http://localhost:${port}/ja/png-compressor/`));
+}).listen(port, () => console.log(`SHIAGENT: http://localhost:${port}/ja/image-compressor/`));

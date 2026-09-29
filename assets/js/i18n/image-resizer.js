@@ -1,0 +1,40 @@
+export default {
+  ja: {
+    decoderError: "画像デコーダーでエラーが発生しました",
+    cancelled: "リサイズを中止しました",
+    unsupported: "対応していない画像形式が含まれていました",
+    duplicate: "同じファイルはすでに追加されています",
+    invalidSize: "出力サイズを正しく入力してください",
+    tooLarge: "出力サイズが大きすぎます。各辺を32,767px以下にしてください",
+    encodeFailed: label => `${label}を書き出せませんでした`,
+    encodeUnsupported: label => `このブラウザは${label}出力に対応していません`,
+    files: n => `${n} ファイル`,
+    status: { processing: "リサイズ中…", done: "完了", error: "処理できませんでした", ready: "待機中" },
+    before: "変更前",
+    after: "変更後",
+    download: "保存",
+    remove: "削除",
+    progress: (done, total) => `${done} / ${total} 完了`,
+    completed: (done, total) => `${done} / ${total} ファイルのリサイズ完了`,
+    decoderUnsupported: format => `未対応のデコーダー形式です: ${format}`
+  },
+  en: {
+    decoderError: "The image decoder failed",
+    cancelled: "Resize cancelled",
+    unsupported: "Some files were in an unsupported format",
+    duplicate: "That file is already in the list",
+    invalidSize: "Enter a valid output size",
+    tooLarge: "The output is too large. Keep each side at or below 32,767 px",
+    encodeFailed: label => `Could not export ${label}`,
+    encodeUnsupported: label => `This browser cannot export ${label}`,
+    files: n => `${n} file${n === 1 ? "" : "s"}`,
+    status: { processing: "Resizing…", done: "Complete", error: "Could not resize", ready: "Ready" },
+    before: "Before",
+    after: "After",
+    download: "Download",
+    remove: "Remove",
+    progress: (done, total) => `${done} of ${total} complete`,
+    completed: (done, total) => `${done} of ${total} files resized`,
+    decoderUnsupported: format => `Unsupported decoder format: ${format}`
+  }
+};

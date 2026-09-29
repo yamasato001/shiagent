@@ -1,5 +1,5 @@
 import { init, potrace } from "esm-potrace-wasm";
-import { createZip, formatBytes } from "../assets/js/png-core.js";
+import { createZip, detectRasterFormat, formatBytes } from "../assets/js/png-core.js";
 import {
   OUTPUT_SIZES,
   QUALITY_PRESETS,
@@ -13,6 +13,11 @@ import {
   projectionSplit,
   safeBaseName
 } from "../assets/js/png-to-svg-core.js";
+import { pick } from "../assets/js/i18n.js";
+import common from "../assets/js/i18n/common.js";
+import vectorText from "../assets/js/i18n/vector-tools.js";
+
+const shared = pick(common), copy = pick(vectorText).vectorizer;
 
 const $ = selector => document.querySelector(selector);
 const elements = {
@@ -44,6 +49,8 @@ const state = {
   running: false,
   wasmReady: null
 };
+
+const sourceFormatLabel = format => format === "jpeg" ? "JPEG" : format === "webp" ? "WebP" : "PNG";
 
 function showToast(message) {
   elements.toast.textContent = message;
@@ -82,9 +89,10 @@ function updateMode() {
 
 function renderFiles() {
   elements.queuePanel.hidden = state.files.length === 0;
-  elements.fileCount.textContent = `${state.files.length}件`;
+  elements.fileCount.textContent = shared.fileCount(state.files.length);
   elements.fileList.replaceChildren();
-  state.files.forEach((file, index) => {
+  state.files.forEach((entry, index) => {
+    const { file, format } = entry;
     const row = document.createElement("div");
     row.className = "file-row";
     const preview = document.createElement("img");
@@ -100,12 +108,12 @@ function renderFiles() {
     name.textContent = file.name;
     const meta = document.createElement("span");
     meta.className = "file-meta";
-    meta.textContent = formatBytes(file.size);
+    meta.textContent = `${sourceFormatLabel(format)} · ${formatBytes(file.size)}`;
     main.append(name, meta);
     const remove = document.createElement("button");
     remove.className = "icon-button";
     remove.type = "button";
-    remove.setAttribute("aria-label", `${file.name}を削除`);
+    remove.setAttribute("aria-label", shared.removeFile(file.name));
     remove.textContent = "×";
     remove.addEventListener("click", () => {
       state.files.splice(index, 1);
@@ -118,27 +126,37 @@ function renderFiles() {
   });
 }
 
-function addFiles(fileList) {
-  const incoming = [...fileList].filter(file => file.type === "image/png" || file.name.toLowerCase().endsWith(".png"));
-  if (!incoming.length) {
-    showToast("PNGファイルを選択してください。");
-    return;
-  }
-  const keys = new Set(state.files.map(file => `${file.name}:${file.size}:${file.lastModified}`));
-  for (const file of incoming) {
+async function addFiles(fileList) {
+  const keys = new Set(state.files.map(entry => entry.key));
+  let accepted = 0;
+  let rejected = 0;
+  for (const file of fileList) {
+    const format = detectRasterFormat(await file.slice(0, 12).arrayBuffer());
+    if (!format) {
+      rejected += 1;
+      continue;
+    }
     const key = `${file.name}:${file.size}:${file.lastModified}`;
     if (!keys.has(key)) {
-      state.files.push(file);
+      state.files.push({ file, format, key });
       keys.add(key);
+      accepted += 1;
     }
   }
+  if (rejected) showToast(copy.unsupported);
+  if (!accepted) return;
   revokeResults();
   elements.resultsPanel.hidden = true;
   renderFiles();
 }
 
 async function decodeFile(file) {
-  const bitmap = await createImageBitmap(file);
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  } catch {
+    bitmap = await createImageBitmap(file);
+  }
   const canvas = document.createElement("canvas");
   canvas.width = bitmap.width;
   canvas.height = bitmap.height;
@@ -161,7 +179,7 @@ async function rgbaPreviewUrl(rgba, width, height) {
 
 async function traceAsset(asset, preset, canvasSize) {
   const processed = preprocessRgba(asset.data, asset.width, asset.height, preset);
-  if (!processed.data.some(value => value === 0)) throw new Error("黒い線を検出できませんでした。");
+  if (!processed.data.some(value => value === 0)) throw new Error(copy.noLines);
   const traced = await potrace(binaryToImageData(processed.data, processed.width, processed.height), {
     turdsize: preset.turdsize,
     turnpolicy: 4,
@@ -176,7 +194,8 @@ async function traceAsset(asset, preset, canvasSize) {
   return normalizeSvgCanvas(traced, canvasSize);
 }
 
-async function convertFile(file, fileIndex, totalFiles) {
+async function convertFile(entry, fileIndex, totalFiles) {
+  const { file, format } = entry;
   const source = await decodeFile(file);
   const assets = [];
   if (mode() === "single") {
@@ -185,7 +204,7 @@ async function convertFile(file, fileIndex, totalFiles) {
     const rgb = compositeOnWhite(source.data);
     const mask = foregroundMask(rgb);
     const boxes = projectionSplit(mask, source.width, source.height, splitPreset());
-    if (!boxes.length) throw new Error("イラストを検出できませんでした。");
+    if (!boxes.length) throw new Error(copy.nothingFound);
     boxes.forEach((box, index) => assets.push({ ...cropRgba(source.data, source.width, source.height, box, 16), sourceIndex: index + 1 }));
   }
 
@@ -204,6 +223,7 @@ async function convertFile(file, fileIndex, totalFiles) {
       url: URL.createObjectURL(blob),
       previewUrl: await rgbaPreviewUrl(assets[index].data, assets[index].width, assets[index].height),
       sourceName: file.name,
+      sourceFormat: format,
       sourceIndex: assets[index].sourceIndex,
       canvasSize
     });
@@ -221,10 +241,10 @@ function triggerDownload(url, name) {
 
 function renderResults() {
   elements.resultsPanel.hidden = false;
-  elements.resultCount.textContent = `${state.results.length}件`;
+  elements.resultCount.textContent = shared.fileCount(state.results.length);
   const totalBytes = state.results.reduce((sum, result) => sum + result.blob.size, 0);
   elements.resultSize.textContent = formatBytes(totalBytes);
-  elements.resultStatus.textContent = `${state.files.length}ファイルから${state.results.length}件のSVGを生成しました。`;
+  elements.resultStatus.textContent = copy.status(state.files.length, state.results.length);
   elements.resultList.replaceChildren();
   state.results.forEach((result, index) => {
     const card = document.createElement("article");
@@ -234,14 +254,14 @@ function renderResults() {
     const beforeFigure = document.createElement("figure");
     const beforeImage = document.createElement("img");
     beforeImage.src = result.previewUrl;
-    beforeImage.alt = `${result.name}の変換前`;
+    beforeImage.alt = copy.beforeAlt(result.name);
     const beforeCaption = document.createElement("figcaption");
-    beforeCaption.textContent = "PNG";
+    beforeCaption.textContent = sourceFormatLabel(result.sourceFormat);
     beforeFigure.append(beforeImage, beforeCaption);
     const afterFigure = document.createElement("figure");
     const afterImage = document.createElement("img");
     afterImage.src = result.url;
-    afterImage.alt = `${result.name}の変換後`;
+    afterImage.alt = copy.afterAlt(result.name);
     const afterCaption = document.createElement("figcaption");
     afterCaption.textContent = "SVG";
     afterFigure.append(afterImage, afterCaption);
@@ -256,7 +276,7 @@ function renderResults() {
     const download = document.createElement("button");
     download.type = "button";
     download.className = "button button-light";
-    download.textContent = "SVGを保存";
+    download.textContent = shared.saveSvg;
     download.addEventListener("click", () => triggerDownload(result.url, result.name));
     body.append(number, name, meta, download);
     card.append(compare, body);
@@ -268,19 +288,19 @@ async function convertAll() {
   if (!state.files.length || state.running) return;
   state.running = true;
   elements.convertButton.disabled = true;
-  elements.progressText.textContent = "Potraceを準備中…";
+  elements.progressText.textContent = copy.preparing;
   revokeResults();
   try {
     state.wasmReady ||= init();
     await state.wasmReady;
     for (let index = 0; index < state.files.length; index += 1) await convertFile(state.files[index], index, state.files.length);
     renderResults();
-    elements.progressText.textContent = "変換完了";
+    elements.progressText.textContent = copy.done;
     elements.resultsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
     console.error(error);
-    elements.progressText.textContent = "変換に失敗しました";
-    showToast(error instanceof Error ? error.message : "変換中にエラーが発生しました。");
+    elements.progressText.textContent = copy.failed;
+    showToast(error instanceof Error ? error.message : copy.error);
   } finally {
     state.running = false;
     elements.convertButton.disabled = false;
@@ -301,7 +321,10 @@ elements.selectButton.addEventListener("click", event => {
   elements.fileInput.click();
 });
 elements.addButton.addEventListener("click", () => elements.fileInput.click());
-elements.fileInput.addEventListener("change", () => addFiles(elements.fileInput.files));
+elements.fileInput.addEventListener("change", () => addFiles(elements.fileInput.files).catch(error => {
+  console.error(error);
+  showToast(copy.loadFailed);
+}));
 elements.dropZone.addEventListener("click", () => elements.fileInput.click());
 elements.dropZone.addEventListener("keydown", event => {
   if (event.key === "Enter" || event.key === " ") {
@@ -317,7 +340,10 @@ for (const name of ["dragleave", "drop"]) elements.dropZone.addEventListener(nam
   event.preventDefault();
   elements.dropZone.classList.remove("is-over");
 });
-elements.dropZone.addEventListener("drop", event => addFiles(event.dataTransfer.files));
+elements.dropZone.addEventListener("drop", event => addFiles(event.dataTransfer.files).catch(error => {
+  console.error(error);
+  showToast(copy.loadFailed);
+}));
 elements.clearButton.addEventListener("click", clearAll);
 elements.removeAllButton.addEventListener("click", clearAll);
 elements.convertButton.addEventListener("click", convertAll);

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" data-page-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Convert Image to SVG — PNG, JPG &amp; WebP Line Art Vectorizer | SHIAGENT</title>
+  <meta name="description" content="Convert PNG, JPG and WebP line art to SVG in your browser. Split sheets of illustrations automatically, tune the tracing and download every SVG at once. No uploads."><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://shiagent.com/image-to-svg/"><meta property="og:title" content="Convert Image to SVG — PNG, JPG &amp; WebP Line Art Vectorizer | SHIAGENT"><meta property="og:description" content="Convert PNG, JPG and WebP line art to SVG in your browser. Split sheets of illustrations automatically, tune the tracing and download every SVG at once. No uploads."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Convert Image to SVG — PNG, JPG &amp; WebP Line Art Vectorizer | SHIAGENT"><meta name="twitter:description" content="Convert PNG, JPG and WebP line art to SVG in your browser. Split sheets of illustrations automatically, tune the tracing and download every SVG at once. No uploads."><link rel="canonical" href="https://shiagent.com/image-to-svg/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-to-svg/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/image-to-svg/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-to-svg/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/dist/png-to-svg.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">Skip to tool</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/image-to-svg/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">Vector tools</a><span>/</span><span>Image to SVG</span></div>
+      <div class="eyebrow"><span>VECTOR TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>Convert Image to SVG (PNG, JPEG &amp; WebP)</h1>
+      <p class="lead">Turn line art on a white background into editable SVG.<br>One image at a time, or a whole sheet split automatically.</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your images stay in your browser.</span></div>
+
+      <div class="compressor-card vectorizer-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>Drop PNG, JPEG or WebP files here</h2>
+          <p id="dropHelp">or</p>
+          <button class="button button-dark" id="selectButton" type="button">Select files</button>
+          <p class="drop-note">Format auto-detected · Multiple files</p>
+        </div>
+
+        <div class="settings-panel" id="settingsPanel">
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>Conversion</h2></div><button class="text-button" id="clearButton" type="button">Clear all</button></div>
+          <fieldset class="mode-grid vector-mode-grid">
+            <legend class="sr-only">Choose how to convert</legend>
+            <label class="mode-option"><input type="radio" name="conversionMode" value="split" checked><span><b>Split into many</b><small>Cut along white space into separate SVGs</small></span></label>
+            <label class="mode-option"><input type="radio" name="conversionMode" value="single"><span><b>One SVG per image</b><small>Keep detached parts in the same SVG</small></span></label>
+          </fieldset>
+
+          <div class="vector-settings-block">
+            <span class="setting-number">03</span><h3>SVG quality</h3>
+            <fieldset class="mode-grid vector-quality-grid">
+              <legend class="sr-only">Choose the SVG quality</legend>
+              <label class="mode-option"><input type="radio" name="quality" value="standard"><span><b>Standard</b><small>Keeps more detail</small></span></label>
+              <label class="mode-option"><input type="radio" name="quality" value="smooth" checked><span><b>Smooth</b><small>Evens out wobbly, jagged lines</small></span></label>
+              <label class="mode-option"><input type="radio" name="quality" value="strong"><span><b>Strong</b><small>Removes more noise</small></span></label>
+            </fieldset>
+          </div>
+
+          <div class="vector-settings-block">
+            <span class="setting-number">04</span><h3>Output size</h3>
+            <fieldset class="mode-grid vector-quality-grid">
+              <legend class="sr-only">Choose the SVG output size</legend>
+              <label class="mode-option"><input type="radio" name="outputSize" value="256"><span><b>256 × 256</b><small>For small icons</small></span></label>
+              <label class="mode-option"><input type="radio" name="outputSize" value="512" checked><span><b>512 × 512</b><small>Standard size</small></span></label>
+              <label class="mode-option"><input type="radio" name="outputSize" value="1024"><span><b>1024 × 1024</b><small>For large artwork</small></span></label>
+            </fieldset>
+          </div>
+
+          <div class="vector-settings-block" id="splitSettings">
+            <span class="setting-number">05</span><h3>Illustration splitting</h3>
+            <fieldset class="mode-grid vector-quality-grid">
+              <legend class="sr-only">Choose a split mode</legend>
+              <label class="mode-option"><input type="radio" name="split" value="fine"><span><b>Fine</b><small>For tightly spaced images</small></span></label>
+              <label class="mode-option"><input type="radio" name="split" value="standard" checked><span><b>Standard</b><small>Best for most sheets</small></span></label>
+              <label class="mode-option"><input type="radio" name="split" value="grouped"><span><b>Grouped</b><small>Keeps small detached parts together</small></span></label>
+            </fieldset>
+            <p class="setting-note">If an illustration has detached parts, try Grouped.</p>
+          </div>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">01</span><h2>Files</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ Add</button><button class="text-button" id="removeAllButton" type="button">Remove all</button></div></div>
+          <div class="file-list" id="fileList"></div>
+          <div class="run-actions"><span class="vector-progress" id="progressText" role="status"></span><button class="button button-accent" id="convertButton" type="button">Convert to SVG <span>→</span></button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle">
+          <div class="results-heading"><div><span class="setting-number">06</span><div><h2 id="resultsTitle">Results</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid vector-summary"><div><span>SVG files</span><strong id="resultCount">—</strong></div><div><span>Total size</span><strong id="resultSize">—</strong></div></div>
+          <div class="vector-result-list" id="resultList"></div>
+          <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">Download all <small>.zip</small></button><p>Each SVG can also be saved on its own</p></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow">
+      <div class="section-kicker">HOW IT WORKS</div><h2>Choose. Tune. Vectorize.</h2>
+      <div class="steps"><article><span>01</span><h3>Choose images</h3><p>PNG, JPEG and WebP are detected automatically. Transparent areas are placed on white, and many files can be added at once.</p></article><article><span>02</span><h3>Set splitting, quality and size</h3><p>Sheets are split along their white space. Adjust the lines and the output size for your use.</p></article><article><span>03</span><h3>Save as SVG</h3><p>Each SVG is centered on a 256, 512 or 1024 square canvas and saved individually or as a ZIP.</p></article></div>
+    </section>
+    <section class="content-section split-section" id="about"><div><div class="section-kicker">POTRACE</div><h2>Single-color vectors for line art.</h2></div><div><p>Great for black-on-white teaching materials, icons and stamps. It does not preserve the colors of photos or multi-color illustrations.</p><p class="note">Conversion, splitting and saving all happen on your device.</p></div></section>
+    <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>Common questions</h2><details><summary>Are my files uploaded?<span>＋</span></summary><p>No. Splitting, vectorizing and SVG export all happen inside your browser.</p></details><details><summary>Can I convert photos or color illustrations?<span>＋</span></summary><p>You can, but the result is a single-color (black) line-art SVG; original colors and gradients are not kept. It works best for line art on white, icons and stamps.</p></details><details><summary>What is the difference between “Split into many” and “One SVG per image”?<span>＋</span></summary><p>Split into many turns each illustration separated by white space into its own SVG. One SVG per image keeps the whole image, including detached parts, in a single SVG.</p></details><details><summary>Lines look jagged or specks remain<span>＋</span></summary><p>Choose Smooth to even out wobbly or jagged lines, or Strong to remove small noise.</p></details><details><summary>How is the output size decided?<span>＋</span></summary><p>The artwork is centered on a 256, 512 or 1024 square canvas, keeping its aspect ratio.</p></details></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/image-compressor/">Image Compressor</a><a href="#workflow">How it works</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,115 +1,205 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SHIAGENT — つくる。整える。仕上げる。</title>
-  <meta name="description" content="画像やSVGをブラウザ内で仕上げる、ローカルファーストのクリエイティブツール集。">
-  <link rel="canonical" href="/">
-  <link rel="stylesheet" href="/assets/css/home.css">
+  <title>Free Image, SVG & PDF Tools — Private Batch Processing | SHIAGENT</title>
+  <meta name="description" content="Compress, convert, resize and crop images; edit SVGs; and merge or split PDFs for free. Files stay on your device with private, in-browser batch processing."><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://shiagent.com/"><meta property="og:title" content="Free Image, SVG & PDF Tools — Private Batch Processing | SHIAGENT"><meta property="og:description" content="Compress, convert, resize and crop images; edit SVGs; and merge or split PDFs for free. Files stay on your device with private, in-browser batch processing."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Free Image, SVG & PDF Tools — Private Batch Processing | SHIAGENT"><meta name="twitter:description" content="Compress, convert, resize and crop images; edit SVGs; and merge or split PDFs for free. Files stay on your device with private, in-browser batch processing."><link rel="canonical" href="https://shiagent.com/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/home.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/js/home-tabs.js"></script>
   <script type="module" src="/assets/js/workflow-handoff.js"></script>
-</head>
+<script type="application/ld+json" data-seo="website">{"@context":"https://schema.org","@type":"WebSite","name":"SHIAGENT","alternateName":["シアゲント","shiagent.com"],"url":"https://shiagent.com/"}</script></head>
 <body>
-  <a class="skip-link" href="#tools">ツール一覧へ移動</a>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a>
-      <nav aria-label="メインナビゲーション"><a href="#tools">ツール</a><a href="#workflow">使い方</a><a href="#local-first">ローカル処理</a></nav>
-      <span class="language" aria-label="表示言語">日本語</span>
-    </div>
-  </header>
+  <a class="skip-link" href="#tools">Skip to tools</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/" hreflang="ja" lang="ja">日本語</a></div></div></header>
 
   <main>
     <section class="hero" aria-labelledby="hero-title">
       <p class="eyebrow">LOCAL-FIRST CREATIVE TOOLKIT</p>
-      <h1 id="hero-title"><span>つくる。</span><span>整える。</span><span>仕上げる。</span></h1>
-      <p class="hero-lead">画像・SVGを、ブラウザだけで。素材を「実際に使える状態」まで仕上げるための、シンプルな道具箱です。</p>
+      <h1 id="hero-title"><span>Generate.</span> <span>Refine.</span> <span>Finish.</span></h1>
+      <p class="hero-lead">Creative tools that run in your browser. A simple toolbox for taking images and SVGs all the way to ready-to-use files.</p>
       <div class="local-signal">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-        <span><strong>Runs on your device</strong> — ファイルはブラウザの外に出ません。</span>
+        <span><strong>Runs on your device</strong> — Your files stay in your browser.</span>
       </div>
     </section>
 
     <section class="tools-section" id="tools" aria-labelledby="tools-title">
-      <div class="section-heading"><div><p class="eyebrow">TOOLS</p><h2 id="tools-title">ツール一覧</h2></div><span class="tool-count">7 TOOLS</span></div>
-      <div class="tool-grid">
-        <a class="tool-card" href="/ja/png-compressor/">
+      <div class="section-heading"><div><p class="eyebrow" id="catalogEyebrow">TOOLS</p><h2 id="tools-title">All tools</h2></div></div>
+      <div class="catalog-tabs" role="tablist" aria-labelledby="tools-title">
+        <button type="button" role="tab" id="tab-tools" aria-controls="panel-tools" aria-selected="true" data-tab="tools" data-eyebrow="TOOLS" data-heading="All tools">Tools<span>18</span></button>
+        <button type="button" role="tab" id="tab-workflows" aria-controls="panel-workflows" aria-selected="false" tabindex="-1" data-tab="workflows" data-eyebrow="WORKFLOWS" data-heading="All workflows">Workflows<span>6</span></button>
+      </div>
+      <div class="tool-filters" id="toolFilters" role="group" aria-label="Tool category"><button type="button" class="is-active" data-category="all">All</button><button type="button" data-category="image">Image</button><button type="button" data-category="vector">Vector</button><button type="button" data-category="pdf">PDF</button><button type="button" data-category="file">File</button></div>
+      <div class="tool-grid" id="panel-tools" role="tabpanel" aria-labelledby="tab-tools">
+        <a class="tool-card" href="/image-compressor/">
           <div class="card-top">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
             <span class="badge">LOCAL</span>
           </div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>PNG圧縮</h3><p>用途に合った圧縮方式を選び、画質と容量を比較しながらPNGを軽量化します。</p></div>
-          <div class="card-footer"><span>/ja/png-compressor/</span><b aria-hidden="true">→</b></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Compressor</h3><p>Shrink PNG, JPEG and WebP files and compare quality and size before you save.</p></div>
         </a>
-        <a class="tool-card" href="/ja/png-to-svg/">
+        <a class="tool-card" href="/image-converter/">
+          <div class="card-top">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3"/><path d="m18 7-3 3"/><path d="M17 17H6l3 3"/><path d="m6 17 3-3"/></svg>
+            <span class="badge">HEIC</span>
+          </div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Converter</h3><p>Batch-convert HEIC and other common formats to PNG, JPEG or WebP.</p></div>
+        </a>
+        <a class="tool-card" href="/image-resizer/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/><path d="m3 8 6-6M21 8l-6-6M3 16l6 6M21 16l-6 6"/></svg><span class="badge">LOCAL</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Resizer</h3><p>Resize multiple images by pixel dimensions or a percentage of each original.</p></div>
+        </a>
+        <a class="tool-card" href="/image-cropper/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/></svg><span class="badge">BATCH</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Cropper</h3><p>Crop manually, auto-trim empty space, or normalize canvas size and object occupancy in batches.</p></div>
+        </a>
+        <a class="tool-card" href="/canvas-padding/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="1" stroke-dasharray="3 2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg><span class="badge">BATCH</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Canvas Padding</h3><p>Add percentage or pixel margins, or center images on a fixed canvas in one batch.</p></div>
+        </a>
+        <a class="tool-card" href="/image-joiner/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="8" height="14" rx="1"/><rect x="14" y="5" width="8" height="14" rx="1"/><path d="M10 12h4"/></svg><span class="badge">GRID</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Joiner</h3><p>Arrange images horizontally, vertically, or in a grid, then export them as one image.</p></div>
+        </a>
+        <a class="tool-card" href="/metadata-cleaner/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.8 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.7 7.5-9.5V6L12 3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg><span class="badge">PRIVACY</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>EXIF Cleaner</h3><p>Batch-remove GPS, capture dates, camera details, and other metadata from PNG, JPEG and WebP without quality loss.</p></div>
+        </a>
+        <a class="tool-card" href="/image-to-svg/">
           <div class="card-top">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 21.3a1 1 0 0 1-1.4 0l-1.6-1.6a1 1 0 0 1 0-1.4l5.6-5.6a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4z"/><path d="m18 13-1.4-6.9a1 1 0 0 0-.7-.8L3.2 2a1 1 0 0 0-1.2 1.2l3.3 12.7a1 1 0 0 0 .8.7L13 18"/><path d="m2.3 2.3 7.3 7.3"/><circle cx="11" cy="11" r="2"/></svg>
             <span class="badge">LOCAL</span>
           </div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>PNG → SVG</h3><p>白背景の線画PNGを自動分割し、編集できる256・512・1024サイズのSVGへ変換します。</p></div>
-          <div class="card-footer"><span>/ja/png-to-svg/</span><b aria-hidden="true">→</b></div>
+          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Image to SVG</h3><p>Vectorize PNG, JPEG and WebP line art into editable SVGs, with automatic splitting.</p></div>
         </a>
-        <a class="tool-card" href="/ja/image-splitter/">
+        <a class="tool-card" href="/svg-to-image/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="m4 16 4-4 3 3 3-3 6 6"/><circle cx="15.5" cy="8.5" r="1.5"/></svg><span class="badge">BATCH</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>SVG to Image</h3><p>Batch-rasterize SVGs with scale, pixel dimensions, DPI equivalent and background controls.</p></div>
+        </a>
+        <a class="tool-card" href="/color-tool/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 11l9 9 7-7-8-10Z"/><path d="m4 11 9 9M15 6l3 3"/><circle cx="7.5" cy="10.5" r="1.5"/></svg><span class="badge">COLOR</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE / SVG</p><h3>Replace Color &amp; Transparency</h3><p>Replace or remove selected colors with tolerance, or convert a batch to grayscale or monochrome.</p></div>
+        </a>
+        <a class="tool-card" href="/favicon-generator/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 16V8h6M9 12h5"/></svg><span class="badge">WEB</span></div>
+          <div class="card-copy"><p class="card-type">WEB ASSET</p><h3>Favicon &amp; App Icon Generator</h3><p>Create ICO, Apple Touch Icon, standard and maskable PWA icon packages from one image.</p></div>
+        </a>
+        <a class="tool-card" href="/image-splitter/">
           <div class="card-top">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 12h18"/></svg>
             <span class="badge">LOCAL</span>
           </div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>画像分割</h3><p>1枚に並んだ複数のイラストを余白で検出し、個別のPNGへ自動で切り出します。</p></div>
-          <div class="card-footer"><span>/ja/image-splitter/</span><b aria-hidden="true">→</b></div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Splitter</h3><p>Detect illustrations separated by white space and cut them into individual PNGs.</p></div>
         </a>
-        <a class="tool-card" href="/ja/batch-rename/">
+        <a class="tool-card" href="/background-remover/">
+          <div class="card-top">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 2.4"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19a5.5 5.5 0 0 1 11 0"/></svg>
+            <span class="badge">LOCAL</span>
+          </div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Background Remover</h3><p>Make solid backgrounds transparent, or swap them for white, black or any color.</p></div>
+        </a>
+        <a class="tool-card" href="/batch-rename/">
           <div class="card-top">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M4 12h8M4 17h6"/><path d="m15 15 4-4 2 2-4 4-3 1z"/></svg>
             <span class="badge">LOCAL</span>
           </div>
-          <div class="card-copy"><p class="card-type">FILE</p><h3>一括リネーム</h3><p>複数の画像・SVGを基本名と連番で整理し、そのまま別の画像ツールへ渡せます。</p></div>
-          <div class="card-footer"><span>/ja/batch-rename/</span><b aria-hidden="true">→</b></div>
+          <div class="card-copy"><p class="card-type">FILE</p><h3>Batch Rename</h3><p>Rename images, PDFs, documents, media, archives and other files with sequential numbers.</p></div>
         </a>
-        <a class="tool-card" href="/ja/svg-white-fill/">
+        <a class="tool-card" href="/svg-white-fill/">
           <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg><span class="badge">LOCAL</span></div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>SVG白塗り</h3><p>線で閉じた領域を検出し、元の線画の背面へ白いベクターパスを追加します。</p></div>
-          <div class="card-footer"><span>/ja/svg-white-fill/</span><b aria-hidden="true">→</b></div>
+          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Automatic SVG White Fill</h3><p>Find areas closed by lines and add white vector fills behind the original line art.</p></div>
         </a>
-        <a class="tool-card" href="/ja/svg-cleaner/">
+        <a class="tool-card" href="/svg-cleaner/">
           <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 21H8a2 2 0 0 1-1.4-.6l-4-4a2 2 0 0 1 0-2.8l10-10a2 2 0 0 1 2.8 0l6 6a2 2 0 0 1 0 2.8L12.8 21"/><path d="m5 11 9 9"/></svg><span class="badge">LOCAL</span></div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>SVGクリーナー</h3><p>見た目を保ちながら、不要なメタデータや編集ソフト固有情報を除去します。</p></div>
-          <div class="card-footer"><span>/ja/svg-cleaner/</span><b aria-hidden="true">→</b></div>
+          <div class="card-copy"><p class="card-type">VECTOR</p><h3>SVG Cleaner</h3><p>Strip metadata and editor-specific data from SVGs without changing how they look.</p></div>
         </a>
-        <a class="tool-card" href="/ja/svg-white-fill/editor/">
+        <a class="tool-card" href="/svg-white-fill/editor/">
           <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16l8-8 4 4-8 8H6z"/><path d="m13 9 4 4M5 4v5M2.5 6.5h5"/></svg><span class="badge">LOCAL</span></div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>手動SVGフィルエディター</h3><p>補助線と除外指定をキャンバス上で追加し、SVGの白塗り結果を手動で調整します。</p></div>
-          <div class="card-footer"><span>/ja/svg-white-fill/editor/</span><b aria-hidden="true">→</b></div>
+          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Manual SVG White Fill</h3><p>Draw guide lines and exclusions on a canvas to fine-tune SVG white fills by hand.</p></div>
+        </a>
+        <a class="tool-card" href="/pdf/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg><span class="badge">7 TOOLS</span></div>
+          <div class="card-copy"><p class="card-type">PDF</p><h3>PDF Tools</h3><p>Merge, split, reorder, interleave, rotate and remove pages in a dedicated PDF workspace.</p></div>
+        </a>
+      </div>
+      <div class="tool-grid" id="panel-workflows" role="tabpanel" aria-labelledby="tab-workflows" hidden>
+        <a class="tool-card" href="/workflows/web-image-optimizer/">
+          <div class="card-top">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/><path d="m9 9 2 2 4-4"/></svg>
+            <span class="badge">WORKFLOW</span>
+          </div>
+          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Web Image Optimizer</h3><p>Choose Blog, Thumbnail or Original size, then convert, compress, remove metadata and optionally rename.</p></div>
+          <p class="card-steps">Crop → Resize → Convert → Compress → Metadata → Rename</p>
+        </a>
+        <a class="tool-card" href="/workflows/line-art-to-svg/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h8l3 3h5v13H4z"/><path d="m8 15 3-7 2 5 3-2"/></svg><span class="badge">WORKFLOW</span></div>
+          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Turn line art into SVG assets</h3><p>Trim, remove the background, vectorize, add optional white fills and clean the SVG in one flow.</p></div>
+          <p class="card-steps">Trim → SVG → White Fill → Clean</p>
+        </a>
+        <a class="tool-card" href="/workflows/ai-asset-prep/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1" stroke-dasharray="3 2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg><span class="badge">6 STEPS</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE ASSETS</p><h3>AI Asset Prep</h3><p>Turn AI-generated images into ready-to-use assets with consistent padding, size, names and compression.</p></div>
+          <p class="card-steps">Auto Trim → Normalize → Resize → Rename → Compress</p>
+        </a>
+        <a class="tool-card" href="/workflows/asset-normalizer/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 3v18M16 3v18M3 8h18M3 16h18"/><circle cx="12" cy="12" r="3"/></svg><span class="badge">WORKFLOW</span></div>
+          <div class="card-copy"><p class="card-type">IMAGE ASSETS</p><h3>Asset Normalizer</h3><p>Standardize a mixed batch to one canvas, object scale, padding, background, format and filename pattern.</p></div>
+          <p class="card-steps">Detect → Normalize → Background → Convert → Rename</p>
+        </a>
+        <a class="tool-card" href="/pdf/sort-by-page-number/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h4"/><path d="m17 14 2 2 3-4"/></svg><span class="badge">OCR</span></div>
+          <div class="card-copy"><p class="card-type">PDF</p><h3>Restore PDF page order</h3><p>Correct orientation, detect page numbers around the edges, and sort multiple PDFs automatically.</p></div>
+          <p class="card-steps">Orient → Edge OCR → Sort</p>
+        </a>
+        <a class="tool-card" href="/workflows/custom/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><path d="M8 6h3c4 0 3 6 7 6M8 18h3c4 0 3-6 7-6"/></svg><span class="badge">BETA</span></div>
+          <div class="card-copy"><p class="card-type">ORIGINAL</p><h3>Original</h3><p>Connect compatible image, SVG, PDF and file tools, then save your personal workflow locally.</p></div>
+          <p class="card-steps">Choose → Arrange → Save locally</p>
         </a>
       </div>
     </section>
 
     <section class="workflow" id="workflow" aria-labelledby="workflow-title">
       <div class="workflow-inner">
-        <div class="workflow-intro"><div><p class="eyebrow">WORKFLOW</p><h2 id="workflow-title">目的から、道具を選ぶ。</h2></div><p>入口は単機能。必要な処理だけを選び、結果を確認して保存できます。インストールやアカウント登録は必要ありません。</p></div>
+        <div class="workflow-intro"><div><p class="eyebrow">USE CASES</p><h2 id="workflow-title">Start from what you need to do.</h2></div><p>Every tool does one job well. Pick the step you need, check the result and save it. No installation and no account required.</p></div>
         <ol class="workflow-list">
-          <li><span>01</span><div><h3>PNGを軽くする</h3><p>PNGを選択 → 圧縮方式を選択 → 比較 → 保存</p></div><a href="/ja/png-compressor/">PNG圧縮を開く <b>→</b></a></li>
-          <li><span>02</span><div><h3>線画をベクターにする</h3><p>PNGを選択 → 品質とサイズを指定 → SVGで保存</p></div><a href="/ja/png-to-svg/">PNG → SVGを開く <b>→</b></a></li>
-          <li><span>03</span><div><h3>素材シートを分割する</h3><p>画像を選択 → 余白を検出 → 個別PNGまたはZIPで保存</p></div><a href="/ja/image-splitter/">画像分割を開く <b>→</b></a></li>
-          <li><span>04</span><div><h3>ファイル名をまとめて整える</h3><p>画像・SVGを追加 → 命名ルールを指定 → 保存または次のツールへ</p></div><a href="/ja/batch-rename/">一括リネームを開く <b>→</b></a></li>
-          <li><span>05</span><div><h3>SVGの閉領域を白くする</h3><p>SVGを選択 → 閉領域を検出 → 白塗りパスを追加</p></div><a href="/ja/svg-white-fill/">SVG白塗りを開く <b>→</b></a></li>
-          <li><span>06</span><div><h3>SVG内部を整理する</h3><p>SVGを選択 → 不要情報を除去 → 前後比較 → 保存</p></div><a href="/ja/svg-cleaner/">SVGクリーナーを開く <b>→</b></a></li>
-          <li><span>07</span><div><h3>SVG白塗りを手動で調整する</h3><p>SVGを選択 → 補助線・除外を指定 → プレビュー → 保存</p></div><a href="/ja/svg-white-fill/editor/">手動エディターを開く <b>→</b></a></li>
+          <li><span>01</span><div><h3>Make images smaller</h3><p>Choose PNG, JPEG or WebP → pick a mode → compare → save</p></div><a href="/image-compressor/">Open Image Compressor <b>→</b></a></li>
+          <li><span>02</span><div><h3>Turn line art into vectors</h3><p>Choose PNG, JPEG or WebP → set quality and size → save as SVG</p></div><a href="/image-to-svg/">Open Image to SVG <b>→</b></a></li>
+          <li><span>03</span><div><h3>Split a sprite or sticker sheet</h3><p>Choose an image → detect white space → save PNGs or a ZIP</p></div><a href="/image-splitter/">Open Image Splitter <b>→</b></a></li>
+          <li><span>04</span><div><h3>Remove or replace a background</h3><p>Choose images → detect the background → save transparent or on a solid color</p></div><a href="/background-remover/">Open Background Remover <b>→</b></a></li>
+          <li><span>05</span><div><h3>Tidy up file names</h3><p>Add any files → set a naming rule → save as a ZIP</p></div><a href="/batch-rename/">Open Batch Rename <b>→</b></a></li>
+          <li><span>06</span><div><h3>Fill closed SVG areas with white</h3><p>Choose SVGs → detect closed areas → add white fill paths</p></div><a href="/svg-white-fill/">Open Automatic SVG White Fill <b>→</b></a></li>
+          <li><span>07</span><div><h3>Clean up SVG code</h3><p>Choose SVGs → remove unneeded data → compare → save</p></div><a href="/svg-cleaner/">Open SVG Cleaner <b>→</b></a></li>
+          <li><span>08</span><div><h3>Adjust SVG white fills by hand</h3><p>Choose SVGs → add guide lines or exclusions → preview → save</p></div><a href="/svg-white-fill/editor/">Open Manual SVG White Fill <b>→</b></a></li>
+          <li><span>09</span><div><h3>Resize a batch of images</h3><p>Add images → set pixels or percentage → download separately or as a ZIP</p></div><a href="/image-resizer/">Open Image Resizer <b>→</b></a></li>
+          <li><span>10</span><div><h3>Normalize image margins and canvases</h3><p>Add images → Auto Trim or Normalize → download as a ZIP</p></div><a href="/image-cropper/">Open Image Cropper <b>→</b></a></li>
+          <li><span>11</span><div><h3>Remove private image metadata</h3><p>Add PNG, JPEG or WebP → remove EXIF, GPS and more → download as a ZIP</p></div><a href="/metadata-cleaner/">Open EXIF Cleaner <b>→</b></a></li>
+          <li><span>12</span><div><h3>Combine multiple images into one</h3><p>Add images → choose horizontal, vertical or grid → save one image</p></div><a href="/image-joiner/">Open Image Joiner <b>→</b></a></li>
+          <li><span>13</span><div><h3>Turn SVGs into images</h3><p>Add SVGs → set size and background → download images or a ZIP</p></div><a href="/svg-to-image/">Open SVG to Image <b>→</b></a></li>
+          <li><span>14</span><div><h3>Add space around images</h3><p>Add images → choose percentage, pixels or a fixed canvas → download a ZIP</p></div><a href="/canvas-padding/">Open Canvas Padding <b>→</b></a></li>
+          <li><span>15</span><div><h3>Change asset colors in a batch</h3><p>Add images or SVGs → choose a color and tolerance → replace or make transparent</p></div><a href="/color-tool/">Open Replace Color <b>→</b></a></li>
+          <li><span>16</span><div><h3>Create favicons and PWA icons</h3><p>Add one image → set fit and background → download ICO, PNGs and manifest in a ZIP</p></div><a href="/favicon-generator/">Open Favicon Generator <b>→</b></a></li>
         </ol>
       </div>
     </section>
 
     <section class="local-first" id="local-first" aria-labelledby="local-title">
       <div class="local-box">
-        <div><p class="eyebrow">LOCAL-FIRST</p><h2 id="local-title">Runs on your device.</h2><p>処理は可能な限りブラウザ内で完結します。画像を外部サーバーへアップロードせず、その場で変換して保存できます。</p></div>
+        <div><p class="eyebrow">LOCAL-FIRST</p><h2 id="local-title">Runs on your device.</h2><p>Processing happens inside your browser whenever possible. Your images are never uploaded to a server; they are converted and saved right where they are.</p></div>
         <dl>
-          <div><dt><span>01</span>インストール不要</dt><dd>ページを開けば、そのまま使えます。</dd></div>
-          <div><dt><span>02</span>アップロード不要</dt><dd>ファイルの読み書きは端末内で完結します。</dd></div>
-          <div><dt><span>03</span>結果を見て判断</dt><dd>変換前後とサイズを確認してから保存できます。</dd></div>
+          <div><dt><span>01</span>Nothing to install</dt><dd>Open a page and start working.</dd></div>
+          <div><dt><span>02</span>No uploads</dt><dd>Files are read and written on your device.</dd></div>
+          <div><dt><span>03</span>Check before you save</dt><dd>Compare before and after, including file size.</dd></div>
         </dl>
       </div>
     </section>
   </main>
 
-  <footer><div class="footer-inner"><div><strong>SHIAGENT</strong><p>つくる。整える。仕上げる。</p></div><div class="footer-links"><a href="#tools">ツール</a><a href="#workflow">使い方</a><a href="#local-first">ローカル処理</a><span>© 2026</span></div></div></footer>
+  <footer><div class="footer-inner"><div><strong>SHIAGENT</strong><p>Generate. Refine. Finish.</p></div><div class="footer-links"><a href="#tools">Tools</a><a href="#workflow">How it works</a><a href="#local-first">Local processing</a><span>© 2026</span></div></div></footer>
 </body>
 </html>

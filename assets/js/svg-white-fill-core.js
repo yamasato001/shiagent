@@ -1,3 +1,7 @@
+import { pick } from "./i18n.js";
+import common from "./i18n/common.js";
+
+const messages = pick(common);
 export const WHITE_FILL_ID = "matopuri-white-fill";
 export const FILL_PRESETS = Object.freeze({
   strict: Object.freeze({ name: "厳密", longSide: 1024, closeRadius: 0, inset: 1, minArea: 4 }),
@@ -14,7 +18,7 @@ export function viewBoxOfSvg(root) {
   const width = parseFloat(root.getAttribute("width"));
   const height = parseFloat(root.getAttribute("height"));
   if (width > 0 && height > 0) return [0, 0, width, height];
-  throw new Error("SVGのviewBoxまたはwidth/heightを取得できません。");
+  throw new Error(messages.svgSizeMissing);
 }
 
 function morph(mask, width, height, radius, mode) {
@@ -151,7 +155,7 @@ export function maskToPath(mask, width, height, viewBox) {
 
 export function insertWhiteFill(svgText, pathData) {
   const documentNode = new DOMParser().parseFromString(svgText, "image/svg+xml");
-  if (documentNode.querySelector("parsererror")) throw new Error("SVGを解析できませんでした。");
+  if (documentNode.querySelector("parsererror")) throw new Error(messages.svgParseFailed);
   const root = documentNode.documentElement;
   root.querySelector(`#${WHITE_FILL_ID}`)?.remove();
   const group = documentNode.createElementNS("http://www.w3.org/2000/svg", "g");

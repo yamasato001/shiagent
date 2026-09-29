@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" data-page-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Remove Image Background &amp; Add a Solid Color — Free, Private | SHIAGENT</title>
+  <meta name="description" content="Make white or solid-color backgrounds transparent, or replace them with any solid color. Works in your browser with PNG, JPEG, WebP, HEIC and more. No uploads."><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://shiagent.com/background-remover/"><meta property="og:title" content="Remove Image Background &amp; Add a Solid Color — Free, Private | SHIAGENT"><meta property="og:description" content="Make white or solid-color backgrounds transparent, or replace them with any solid color. Works in your browser with PNG, JPEG, WebP, HEIC and more. No uploads."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Remove Image Background &amp; Add a Solid Color — Free, Private | SHIAGENT"><meta name="twitter:description" content="Make white or solid-color backgrounds transparent, or replace them with any solid color. Works in your browser with PNG, JPEG, WebP, HEIC and more. No uploads."><link rel="canonical" href="https://shiagent.com/background-remover/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/background-remover/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/background-remover/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/background-remover/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/js/background-remover.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">Skip to tool</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/background-remover/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">Image tools</a><span>/</span><span>Background Remover</span></div>
+      <div class="eyebrow"><span>IMAGE TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>Background Remover</h1>
+      <p class="lead">Turn solid backgrounds transparent, or swap them for any color.<br>Process many images at once, entirely in your browser.</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your images stay in your browser.</span></div>
+
+      <div class="compressor-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,image/avif,image/heic,image/heif,image/tiff,.png,.jpg,.jpeg,.jfif,.webp,.gif,.bmp,.avif,.heic,.heif,.tif,.tiff" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>Drop images here</h2>
+          <p id="dropHelp">or</p>
+          <button class="button button-dark" id="selectButton" type="button">Select files</button>
+          <p class="drop-note">PNG / JPEG / WebP / HEIC / AVIF / GIF / BMP / TIFF · Multiple files</p>
+        </div>
+
+        <div class="settings-panel bg-settings">
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>Remove background</h2></div><button class="text-button" id="clearButton" type="button">Clear all</button></div>
+          <fieldset class="mode-grid vector-quality-grid">
+            <legend class="sr-only">Choose how to remove the background</legend>
+            <label class="mode-option"><input type="radio" name="removal" value="connected" checked><span><b>Outer background</b><small>Only background connected to the edges</small></span></label>
+            <label class="mode-option"><input type="radio" name="removal" value="global"><span><b>Every matching color</b><small>Also inside lines and small gaps</small></span></label>
+            <label class="mode-option"><input type="radio" name="removal" value="none"><span><b>Keep background</b><small>Only add a color behind transparent images</small></span></label>
+          </fieldset>
+          <div class="bg-controls">
+            <fieldset class="bg-inline">
+              <legend>Color to remove</legend>
+              <label><input type="radio" name="key" value="auto" checked data-needs-removal> Auto-detect</label>
+              <label><input type="radio" name="key" value="manual" data-needs-removal> Pick</label>
+              <input type="color" id="keyColor" value="#ffffff" aria-label="Background color to remove" data-needs-removal>
+            </fieldset>
+            <label class="bg-range">Tolerance <output id="toleranceValue">12</output>
+              <input type="range" id="tolerance" min="0" max="60" value="12" data-needs-removal>
+            </label>
+            <label class="bg-range">Edge smoothing <output id="softnessValue">10</output>
+              <input type="range" id="softness" min="0" max="40" value="10" data-needs-removal>
+            </label>
+          </div>
+          <p class="setting-note">The background color is detected from the image edges. Click the original image in the results to reprocess that file with the clicked color.</p>
+
+          <div class="setting-heading bg-second-heading"><div><span class="setting-number">03</span><h2>New background</h2></div></div>
+          <fieldset class="mode-grid bg-fill-grid">
+            <legend class="sr-only">Choose the new background</legend>
+            <label class="mode-option"><input type="radio" name="fill" value="transparent" checked><span><b><i class="bg-chip is-checker" aria-hidden="true"></i>Transparent</b><small>PNG or WebP without background</small></span></label>
+            <label class="mode-option"><input type="radio" name="fill" value="white"><span><b><i class="bg-chip" style="background:#fff" aria-hidden="true"></i>White</b><small>#FFFFFF</small></span></label>
+            <label class="mode-option"><input type="radio" name="fill" value="black"><span><b><i class="bg-chip" style="background:#000" aria-hidden="true"></i>Black</b><small>#000000</small></span></label>
+            <label class="mode-option"><input type="radio" name="fill" value="custom"><span><b><input type="color" id="fillColor" value="#f2e8d5" aria-label="Choose a background color">Custom</b><small>Any solid color</small></span></label>
+          </fieldset>
+          <div class="bg-controls">
+            <label class="bg-select">Save as
+              <select id="outputFormat"><option value="png">PNG</option><option value="webp">WebP</option><option value="jpeg">JPEG (with a background color only)</option></select>
+            </label>
+          </div>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">01</span><h2>Files</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ Add</button><button class="text-button" id="removeAllButton" type="button">Remove all</button></div></div>
+          <div class="file-list" id="fileList"></div>
+          <div class="run-actions"><span class="vector-progress" id="progressText" role="status"></span><button class="button button-accent" id="processButton" type="button">Process backgrounds <span>→</span></button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle">
+          <div class="results-heading"><div><span class="setting-number">04</span><div><h2 id="resultsTitle">Results</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid vector-summary"><div><span>Processed images</span><strong id="resultCount">—</strong></div><div><span>Total size</span><strong id="resultSize">—</strong></div></div>
+          <fieldset class="bg-inline bg-preview-toggle">
+            <legend>Preview background</legend>
+            <label><input type="radio" name="preview" value="checker" checked> Checkerboard</label>
+            <label><input type="radio" name="preview" value="white"> White</label>
+            <label><input type="radio" name="preview" value="dark"> Black</label>
+          </fieldset>
+          <div class="bg-result-list" id="resultList"></div>
+          <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">Download all <small>.zip</small></button><p>Each image can also be saved on its own. Results are added to the work tray.</p></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow">
+      <div class="section-kicker">HOW IT WORKS</div><h2>Detect. Cut out. Refill.</h2>
+      <div class="steps"><article><span>01</span><h3>Detect the background</h3><p>The most common color along the image edges is treated as the background. If that is wrong, click to pick the right one.</p></article><article><span>02</span><h3>Make it transparent</h3><p>Similar colors become transparent. Anti-aliased edges turn semi-transparent and lose the background tint, so no halo is left.</p></article><article><span>03</span><h3>Finish on a solid color</h3><p>Save with a transparent background, or place white, black or any color behind the subject.</p></article></div>
+    </section>
+    <section class="content-section split-section" id="about"><div><div class="section-kicker">FLAT BACKGROUND</div><h2>Made for solid-color backgrounds.</h2></div><div><p>Works best for line art on white paper, illustrations on a plain background, product photos shot on a backdrop, and screenshots. Busy photographic backgrounds, or subjects whose edges share the background color, may not come out cleanly.</p><p class="note">No AI model is used: everything runs on your device using color distance and connectivity. HEIC and TIFF are read with a bundled decoder.</p></div></section>
+    <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>Common questions</h2><details><summary>Are my images uploaded?<span>＋</span></summary><p>No. Decoding, background removal, export and ZIP creation all happen inside your browser.</p></details><details><summary>What is the difference between “Outer background” and “Every matching color”?<span>＋</span></summary><p>Outer background only removes background that is connected to the image edges, so white areas inside the subject, such as eyes or clothing, are kept. Every matching color removes all similar colors, including areas enclosed by lines.</p></details><details><summary>A white fringe remains around the edges<span>＋</span></summary><p>Increase edge smoothing or widen the tolerance a little. For noisy JPEGs, a wider tolerance usually helps.</p></details><details><summary>Why can’t I save as JPEG?<span>＋</span></summary><p>JPEG cannot store transparency, so transparent results are saved as PNG. Choose a background color to enable JPEG.</p></details></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/image-compressor/">Image Compressor</a><a href="/image-splitter/">Image Splitter</a><a href="/image-to-svg/">Image to SVG</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

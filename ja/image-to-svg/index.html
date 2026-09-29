@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja" data-page-lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>画像をSVGに変換｜PNG・JPEG・WebPをベクター化 | SHIAGENT</title>
+  <meta name="description" content="PNG・JPEG・WebPの線画、ロゴ、アイコンを編集可能なSVGへ変換。複数素材の自動分割、トレース品質調整、一括保存に対応した無料ベクター化ツールです。"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:url" content="https://shiagent.com/ja/image-to-svg/"><meta property="og:title" content="画像をSVGに変換｜PNG・JPEG・WebPをベクター化 | SHIAGENT"><meta property="og:description" content="PNG・JPEG・WebPの線画、ロゴ、アイコンを編集可能なSVGへ変換。複数素材の自動分割、トレース品質調整、一括保存に対応した無料ベクター化ツールです。"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="画像をSVGに変換｜PNG・JPEG・WebPをベクター化 | SHIAGENT"><meta name="twitter:description" content="PNG・JPEG・WebPの線画、ロゴ、アイコンを編集可能なSVGへ変換。複数素材の自動分割、トレース品質調整、一括保存に対応した無料ベクター化ツールです。"><link rel="canonical" href="https://shiagent.com/ja/image-to-svg/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-to-svg/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/image-to-svg/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-to-svg/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/dist/png-to-svg.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">ツールへ移動</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/image-to-svg/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/ja/">SHIAGENT</a><span>/</span><a href="/ja/image-compressor/">画像ツール</a><span>/</span><span>画像 → SVG変換</span></div>
+      <div class="eyebrow"><span>VECTOR TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>画像をSVGに変換（PNG・JPEG・WebP対応）</h1>
+      <p class="lead">PNG・JPEG・WebPの線画、ロゴ、アイコンを編集しやすいSVGへベクター化。<br>1画像ずつの変換にも、複数イラストの自動分割にも対応します。</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>画像はブラウザの外に出ません。</span></div>
+
+      <div class="compressor-card vectorizer-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>PNG・JPEG・WebPをここにドロップ</h2>
+          <p id="dropHelp">または</p>
+          <button class="button button-dark" id="selectButton" type="button">ファイルを選択</button>
+          <p class="drop-note">形式を自動判別・複数ファイル対応</p>
+        </div>
+
+        <div class="settings-panel" id="settingsPanel">
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>処理方法</h2></div><button class="text-button" id="clearButton" type="button">すべてクリア</button></div>
+          <fieldset class="mode-grid vector-mode-grid">
+            <legend class="sr-only">処理方法を選択</legend>
+            <label class="mode-option"><input type="radio" name="conversionMode" value="split" checked><span><b>複数へ分割</b><small>白い空間で切り分け、個別SVGへ</small></span></label>
+            <label class="mode-option"><input type="radio" name="conversionMode" value="single"><span><b>1画像を1SVG</b><small>離れたパーツも同じSVGに保持</small></span></label>
+          </fieldset>
+
+          <div class="vector-settings-block">
+            <span class="setting-number">03</span><h3>SVG品質</h3>
+            <fieldset class="mode-grid vector-quality-grid">
+              <legend class="sr-only">SVG品質を選択</legend>
+              <label class="mode-option"><input type="radio" name="quality" value="standard"><span><b>標準</b><small>細部を残しやすい</small></span></label>
+              <label class="mode-option"><input type="radio" name="quality" value="smooth" checked><span><b>なめらか</b><small>線のムラやギザつきを抑える</small></span></label>
+              <label class="mode-option"><input type="radio" name="quality" value="strong"><span><b>強め</b><small>ノイズ除去を強くする</small></span></label>
+            </fieldset>
+          </div>
+
+          <div class="vector-settings-block">
+            <span class="setting-number">04</span><h3>出力サイズ</h3>
+            <fieldset class="mode-grid vector-quality-grid">
+              <legend class="sr-only">SVGの出力サイズを選択</legend>
+              <label class="mode-option"><input type="radio" name="outputSize" value="256"><span><b>256 × 256</b><small>小さなアイコン向け</small></span></label>
+              <label class="mode-option"><input type="radio" name="outputSize" value="512" checked><span><b>512 × 512</b><small>標準サイズ</small></span></label>
+              <label class="mode-option"><input type="radio" name="outputSize" value="1024"><span><b>1024 × 1024</b><small>大きく使う素材向け</small></span></label>
+            </fieldset>
+          </div>
+
+          <div class="vector-settings-block" id="splitSettings">
+            <span class="setting-number">05</span><h3>イラストの分割</h3>
+            <fieldset class="mode-grid vector-quality-grid">
+              <legend class="sr-only">分割方法を選択</legend>
+              <label class="mode-option"><input type="radio" name="split" value="fine"><span><b>細かく</b><small>間隔が狭い画像向け</small></span></label>
+              <label class="mode-option"><input type="radio" name="split" value="standard" checked><span><b>標準</b><small>通常はこちら</small></span></label>
+              <label class="mode-option"><input type="radio" name="split" value="grouped"><span><b>まとめ気味</b><small>離れた小パーツを残しやすい</small></span></label>
+            </fieldset>
+            <p class="setting-note">離れたパーツを含む場合は「まとめ気味」を試してください。</p>
+          </div>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">01</span><h2>ファイル</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ 追加</button><button class="text-button" id="removeAllButton" type="button">すべて削除</button></div></div>
+          <div class="file-list" id="fileList"></div>
+          <div class="run-actions"><span class="vector-progress" id="progressText" role="status"></span><button class="button button-accent" id="convertButton" type="button">SVGへ変換 <span>→</span></button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle">
+          <div class="results-heading"><div><span class="setting-number">06</span><div><h2 id="resultsTitle">変換結果</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid vector-summary"><div><span>生成したSVG</span><strong id="resultCount">—</strong></div><div><span>合計サイズ</span><strong id="resultSize">—</strong></div></div>
+          <div class="vector-result-list" id="resultList"></div>
+          <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">すべてダウンロード <small>.zip</small></button><p>各SVGも個別に保存できます</p></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow">
+      <div class="section-kicker">HOW IT WORKS</div><h2>選ぶ。整える。ベクターにする。</h2>
+      <div class="steps"><article><span>01</span><h3>画像を選ぶ</h3><p>PNG・JPEG・WebPを自動判別。透過部分は白背景へ合成し、複数ファイルもまとめて追加できます。</p></article><article><span>02</span><h3>分割・品質・サイズを選ぶ</h3><p>素材シートは白い余白から自動分割。用途に合わせて線と出力サイズを調整します。</p></article><article><span>03</span><h3>SVGで保存</h3><p>256・512・1024の正方形へ中央配置したSVGを個別またはZIPで保存します。</p></article></div>
+    </section>
+    <section class="content-section split-section" id="about"><div><div class="section-kicker">POTRACE</div><h2>線画向けの、単色ベクター変換。</h2></div><div><p>黒線と白背景の教材素材、アイコン、スタンプなどに向いています。写真や多色イラストの色を保持する変換ではありません。</p><p class="note">変換・分割・保存はすべて端末内で行います。</p></div></section>
+  <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>よくある質問</h2><details><summary>ファイルはサーバーへ送信されますか？<span>＋</span></summary><p>送信されません。分割、ベクター変換、SVGの書き出しはすべてブラウザ内で行います。</p></details><details><summary>写真やカラーイラストも変換できますか？<span>＋</span></summary><p>変換はできますが、単色（黒）の線画SVGになり、元の色やグラデーションは保持しません。白背景の線画、アイコン、スタンプなどに向いています。</p></details><details><summary>「複数へ分割」と「1画像を1SVG」の違いは？<span>＋</span></summary><p>複数へ分割は、白い余白で区切られたイラストをそれぞれ別のSVGにします。1画像を1SVGは、離れたパーツも含めて画像全体を1つのSVGにします。</p></details><details><summary>線がガタついたり、ゴミが残ったりします<span>＋</span></summary><p>SVG品質で「なめらか」を選ぶと線のムラやギザつきを、「強め」を選ぶと小さなノイズを抑えられます。</p></details><details><summary>出力サイズはどう決まりますか？<span>＋</span></summary><p>256・512・1024の正方形キャンバスの中央に、縦横比を保って配置します。</p></details></section></main>
+  <footer><div><a class="brand footer-brand" href="/ja/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/image-compressor/">画像圧縮</a><a href="#workflow">ワークフロー</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

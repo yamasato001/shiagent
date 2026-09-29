@@ -1,0 +1,59 @@
+.builder-tool-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 20px;
+  border-bottom: 1px solid #aaa79f;
+}
+
+.builder-tool-tabs button {
+  min-width: 0;
+  padding: 11px 4px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #77756f;
+  font-size: .67rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+
+.builder-tool-tabs button[aria-selected="true"] {
+  border-bottom-color: #151515;
+  color: #151515;
+}
+
+.builder-tool-tabs button:hover,
+.builder-tool-tabs button:focus-visible {
+  background: #e9e8e2;
+  outline: none;
+}
+
+.builder-palette .builder-tool-group {
+  margin-top: 14px;
+}
+
+.builder-canvas-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.builder-canvas-actions #clearWorkflow:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.builder-palette-empty {
+  margin: 24px 0 0;
+  padding: 28px 18px;
+  border: 1px dashed #c8c6bf;
+  color: #77756f;
+  text-align: center;
+  line-height: 1.7;
+}
+
+@media (max-width: 420px) {
+  .builder-tool-tabs button { font-size: .58rem; letter-spacing: .03em; }
+}

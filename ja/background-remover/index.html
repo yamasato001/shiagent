@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja" data-page-lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>画像背景を透明化・背景色を変更｜一括背景削除 | SHIAGENT</title>
+  <meta name="description" content="PNG・JPEG・WebP・HEIC画像の白・単色背景を透明化し、白・黒・任意色へ置換。複数画像をアップロードせずブラウザ内で一括処理できます。"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:url" content="https://shiagent.com/ja/background-remover/"><meta property="og:title" content="画像背景を透明化・背景色を変更｜一括背景削除 | SHIAGENT"><meta property="og:description" content="PNG・JPEG・WebP・HEIC画像の白・単色背景を透明化し、白・黒・任意色へ置換。複数画像をアップロードせずブラウザ内で一括処理できます。"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="画像背景を透明化・背景色を変更｜一括背景削除 | SHIAGENT"><meta name="twitter:description" content="PNG・JPEG・WebP・HEIC画像の白・単色背景を透明化し、白・黒・任意色へ置換。複数画像をアップロードせずブラウザ内で一括処理できます。"><link rel="canonical" href="https://shiagent.com/ja/background-remover/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/background-remover/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/background-remover/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/background-remover/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/js/background-remover.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">ツールへ移動</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/background-remover/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/ja/">SHIAGENT</a><span>/</span><a href="/ja/#tools">画像ツール</a><span>/</span><span>背景削除・背景色</span></div>
+      <div class="eyebrow"><span>IMAGE TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>背景削除・背景色</h1>
+      <p class="lead">画像の白背景・単色背景を透明化し、必要なら白・黒・好きな色へ変更。<br>PNG・JPEG・WebP・HEICもブラウザ内でまとめて背景処理できます。</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>画像はブラウザの外に出ません。</span></div>
+
+      <div class="compressor-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,image/avif,image/heic,image/heif,image/tiff,.png,.jpg,.jpeg,.jfif,.webp,.gif,.bmp,.avif,.heic,.heif,.tif,.tiff" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>画像をここにドロップ</h2>
+          <p id="dropHelp">または</p>
+          <button class="button button-dark" id="selectButton" type="button">ファイルを選択</button>
+          <p class="drop-note">PNG / JPEG / WebP / HEIC / AVIF / GIF / BMP / TIFF・複数ファイル対応</p>
+        </div>
+
+        <div class="settings-panel bg-settings">
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>背景の削除</h2></div><button class="text-button" id="clearButton" type="button">すべてクリア</button></div>
+          <fieldset class="mode-grid vector-quality-grid">
+            <legend class="sr-only">削除方法を選択</legend>
+            <label class="mode-option"><input type="radio" name="removal" value="connected" checked><span><b>外側の背景</b><small>外周からつながる背景だけを削除</small></span></label>
+            <label class="mode-option"><input type="radio" name="removal" value="global"><span><b>同じ色をすべて</b><small>線の内側や隙間の背景色も削除</small></span></label>
+            <label class="mode-option"><input type="radio" name="removal" value="none"><span><b>削除しない</b><small>透過画像に背景色だけを追加</small></span></label>
+          </fieldset>
+          <div class="bg-controls">
+            <fieldset class="bg-inline">
+              <legend>削除する色</legend>
+              <label><input type="radio" name="key" value="auto" checked data-needs-removal> 自動検出</label>
+              <label><input type="radio" name="key" value="manual" data-needs-removal> 指定</label>
+              <input type="color" id="keyColor" value="#ffffff" aria-label="削除する背景色" data-needs-removal>
+            </fieldset>
+            <label class="bg-range">許容範囲 <output id="toleranceValue">12</output>
+              <input type="range" id="tolerance" min="0" max="60" value="12" data-needs-removal>
+            </label>
+            <label class="bg-range">境界のなめらかさ <output id="softnessValue">10</output>
+              <input type="range" id="softness" min="0" max="40" value="10" data-needs-removal>
+            </label>
+          </div>
+          <p class="setting-note">背景色は画像の外周から自動で推定します。結果の元画像をクリックすると、その色で個別に再処理できます。</p>
+
+          <div class="setting-heading bg-second-heading"><div><span class="setting-number">03</span><h2>仕上げの背景</h2></div></div>
+          <fieldset class="mode-grid bg-fill-grid">
+            <legend class="sr-only">仕上げの背景を選択</legend>
+            <label class="mode-option"><input type="radio" name="fill" value="transparent" checked><span><b><i class="bg-chip is-checker" aria-hidden="true"></i>透明</b><small>背景なしのPNG・WebP</small></span></label>
+            <label class="mode-option"><input type="radio" name="fill" value="white"><span><b><i class="bg-chip" style="background:#fff" aria-hidden="true"></i>白</b><small>#FFFFFF</small></span></label>
+            <label class="mode-option"><input type="radio" name="fill" value="black"><span><b><i class="bg-chip" style="background:#000" aria-hidden="true"></i>黒</b><small>#000000</small></span></label>
+            <label class="mode-option"><input type="radio" name="fill" value="custom"><span><b><input type="color" id="fillColor" value="#f2e8d5" aria-label="背景色を指定">カスタム</b><small>任意の単色</small></span></label>
+          </fieldset>
+          <div class="bg-controls">
+            <label class="bg-select">保存形式
+              <select id="outputFormat"><option value="png">PNG</option><option value="webp">WebP</option><option value="jpeg">JPEG（背景色あり時のみ）</option></select>
+            </label>
+          </div>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">01</span><h2>ファイル</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ 追加</button><button class="text-button" id="removeAllButton" type="button">すべて削除</button></div></div>
+          <div class="file-list" id="fileList"></div>
+          <div class="run-actions"><span class="vector-progress" id="progressText" role="status"></span><button class="button button-accent" id="processButton" type="button">背景を処理 <span>→</span></button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle">
+          <div class="results-heading"><div><span class="setting-number">04</span><div><h2 id="resultsTitle">処理結果</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid vector-summary"><div><span>処理した画像</span><strong id="resultCount">—</strong></div><div><span>合計サイズ</span><strong id="resultSize">—</strong></div></div>
+          <fieldset class="bg-inline bg-preview-toggle">
+            <legend>プレビュー背景</legend>
+            <label><input type="radio" name="preview" value="checker" checked> 市松</label>
+            <label><input type="radio" name="preview" value="white"> 白</label>
+            <label><input type="radio" name="preview" value="dark"> 黒</label>
+          </fieldset>
+          <div class="bg-result-list" id="resultList"></div>
+          <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">すべてダウンロード <small>.zip</small></button><p>個別保存もできます。結果は作業トレイにも登録されます</p></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow">
+      <div class="section-kicker">HOW IT WORKS</div><h2>推定する。抜く。敷き直す。</h2>
+      <div class="steps"><article><span>01</span><h3>背景色を推定</h3><p>画像の外周で最も多い色を背景とみなします。違う場合はクリックで指定できます。</p></article><article><span>02</span><h3>背景を透明化</h3><p>近い色を透明にし、輪郭のアンチエイリアスは半透明にして背景色のにじみを取り除きます。</p></article><article><span>03</span><h3>単色で仕上げ</h3><p>透明のまま保存するか、白・黒・任意の色を背面に敷いて保存します。</p></article></div>
+    </section>
+    <section class="content-section split-section" id="about"><div><div class="section-kicker">FLAT BACKGROUND</div><h2>単色背景の素材向け。</h2></div><div><p>白い紙の線画、単色背景のイラスト、商品写真の撮影背景、スクリーンショットなどに向いています。背景が写真のように複雑な画像や、背景と同じ色が被写体の輪郭に接している画像はきれいに抜けない場合があります。</p><p class="note">AIモデルは使わず、色の距離と連結判定だけで端末内処理します。HEIC・TIFFは同梱のデコーダーで読み込みます。</p></div></section>
+    <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>よくある質問</h2><details><summary>画像はサーバーへ送信されますか？<span>＋</span></summary><p>送信されません。読み込み、背景の削除、書き出し、ZIP作成はすべてブラウザ内で行います。</p></details><details><summary>「外側の背景」と「同じ色をすべて」の違いは？<span>＋</span></summary><p>外側の背景は、画像の外周からつながっている背景だけを削除するため、目や服の白など内側の同色は残ります。同じ色をすべては、線に囲まれた内側も含めて近い色を全部削除します。</p></details><details><summary>輪郭に白いフチが残ります<span>＋</span></summary><p>境界のなめらかさを上げるか、許容範囲を少し広げてください。JPEGのノイズが多い画像では許容範囲を広めにすると改善します。</p></details><details><summary>JPEGで保存できないのはなぜ？<span>＋</span></summary><p>JPEGは透明を保存できないため、仕上げの背景が「透明」の場合はPNGで保存します。背景色を選ぶとJPEGも選べます。</p></details></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/ja/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/image-compressor/">画像圧縮</a><a href="/ja/image-splitter/">画像分割</a><a href="/ja/image-to-svg/">画像 → SVG変換</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -4,25 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ローカルAI線画ジェネレーター — 保留中 | SHIAGENT</title>
-  <meta name="description" content="ローカルAI線画ジェネレーターは品質と一般的なPC環境での実用性を再検討するため、現在保留中です。">
-  <link rel="canonical" href="/ja/line-art-generator/">
-  <link rel="alternate" hreflang="ja" href="/ja/line-art-generator/">
-  <link rel="alternate" hreflang="en" href="/line-art-generator/">
-  <link rel="stylesheet" href="/assets/css/site.css">
+  <meta name="description" content="ローカルAI線画ジェネレーターは品質と一般的なPC環境での実用性を再検討するため、現在保留中です。"><meta name="robots" content="noindex,follow"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:url" content="https://shiagent.com/ja/line-art-generator/"><meta property="og:title" content="ローカルAI線画ジェネレーター — 保留中 | SHIAGENT"><meta property="og:description" content="ローカルAI線画ジェネレーターは品質と一般的なPC環境での実用性を再検討するため、現在保留中です。"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="ローカルAI線画ジェネレーター — 保留中 | SHIAGENT"><meta name="twitter:description" content="ローカルAI線画ジェネレーターは品質と一般的なPC環境での実用性を再検討するため、現在保留中です。"><link rel="canonical" href="https://shiagent.com/ja/line-art-generator/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/line-art-generator/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/line-art-generator/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/line-art-generator/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="SHIAGENT ホーム"><span>SHIAGENT</span><small>シアゲント</small></a>
-    <nav aria-label="メインナビゲーション"><a href="/ja/png-compressor/">ツール</a></nav>
-    <div class="language" aria-label="言語"><a href="/line-art-generator/">EN</a><span aria-current="page">日本語</span></div>
-  </header>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/line-art-generator/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
   <main>
     <section class="tool-hero">
-      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><span>ローカルAI線画ジェネレーター</span></div>
+      <div class="breadcrumb"><a href="/ja/">SHIAGENT</a><span>/</span><span>ローカルAI線画ジェネレーター</span></div>
       <div class="eyebrow"><span>R&amp;D</span><span class="on-device">PENDING</span></div>
       <h1>線画生成は<br>いったん保留。</h1>
       <p class="lead">一般的なPC環境で使える品質と速度に届かなかったため、<br>ローカルAI版の公開実装を取り外しました。</p>
-      <p><a class="button button-dark" href="/ja/png-compressor/">PNG圧縮を使う →</a></p>
+      <p><a class="button button-dark" href="/ja/image-compressor/">画像圧縮を使う →</a></p>
     </section>
     <section class="content-section">
       <div class="section-kicker">STATUS</div>
@@ -30,8 +27,8 @@
       <p id="modelCacheStatus">旧モデルキャッシュを確認しています。</p>
       <button class="button button-dark" id="removeModelCache" type="button" disabled>旧AIモデルキャッシュを削除</button>
     </section>
-  </main>
-  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><small>© SHIAGENT</small></footer>
+  <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>よくある質問</h2><details><summary>なぜ保留になっているのですか？<span>＋</span></summary><p>ブラウザ内で動くAIモデルでは、一般的なPCで実用的な品質と速度を得られなかったためです。軽くて実用的な方法が見つかるまで再検討します。</p></details><details><summary>以前ダウンロードしたAIモデルはどうなりますか？<span>＋</span></summary><p>このブラウザに残っている場合は、このページの「旧AIモデルキャッシュを削除」ボタンで削除できます。</p></details><details><summary>代わりに使えるツールはありますか？<span>＋</span></summary><p>既存の画像を線画SVGにする場合は画像 → SVG変換、背景を消す場合は背景削除・背景色が使えます。</p></details></section></main>
+  <footer><div><a class="brand footer-brand" href="/ja/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><small>© SHIAGENT</small></footer>
   <script type="module">
     const cacheName = "shiagent-local-ai-sd-turbo-v1";
     const status = document.querySelector("#modelCacheStatus");

@@ -24,3 +24,33 @@ https://github.com/tomayac/esm-potrace-wasm
 Potrace was created by Peter Selinger and converts monochrome bitmaps into
 smooth vector paths.
 
+## Discourse jSquash HEIC / libheif
+
+HEIC and HEIF decoding uses `@discourse/heic`, distributed under the Apache
+License 2.0. Its WebAssembly decoder is based on libheif and libde265, which are
+distributed under the GNU Lesser General Public License version 3.0.
+
+https://github.com/discourse/jSquash
+https://github.com/strukturag/libheif
+https://github.com/strukturag/libde265
+
+## UTIF.js / pako
+
+TIFF decoding uses `utif` and its `pako` dependency, distributed under the MIT
+License.
+
+https://github.com/photopea/UTIF.js
+
+## PDF-LIB
+
+PDF page copying, creation, rotation, and export use `pdf-lib`, distributed
+under the MIT License.
+
+https://github.com/Hopding/pdf-lib
+
+## PDF.js
+
+PDF parsing and page thumbnail rendering use Mozilla PDF.js (`pdfjs-dist`),
+distributed under the Apache License 2.0.
+
+https://github.com/mozilla/pdf.js

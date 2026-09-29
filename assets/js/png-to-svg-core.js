@@ -1,3 +1,7 @@
+import { pick } from "./i18n.js";
+import common from "./i18n/common.js";
+
+const messages = pick(common);
 export const QUALITY_PRESETS = Object.freeze({
   standard: Object.freeze({ name: "標準", upscale: 2, blurKernel: 3, threshold: 238, closeIterations: 0, openIterations: 0, minComponentArea: 0, turdsize: 3, alphamax: 1, opttolerance: 0.25 }),
   smooth: Object.freeze({ name: "なめらか", upscale: 2, blurKernel: 5, threshold: 235, closeIterations: 1, openIterations: 0, minComponentArea: 0, turdsize: 5, alphamax: 1.1, opttolerance: 0.35 }),
@@ -316,19 +320,19 @@ const formatNumber = value => {
 export const OUTPUT_SIZES = Object.freeze([256, 512, 1024]);
 
 export function contentSizeForCanvas(canvasSize) {
-  if (!OUTPUT_SIZES.includes(canvasSize)) throw new Error("出力サイズが正しくありません。");
+  if (!OUTPUT_SIZES.includes(canvasSize)) throw new Error(messages.outputSizeInvalid);
   return Math.round(canvasSize * 420 / 512);
 }
 
 export function normalizeSvgCanvas(svgText, canvasSize = 512, contentSize = contentSizeForCanvas(canvasSize)) {
   const documentNode = new DOMParser().parseFromString(svgText, "image/svg+xml");
   const root = documentNode.documentElement;
-  if (root.localName === "parsererror") throw new Error("SVGを解析できませんでした。");
+  if (root.localName === "parsererror") throw new Error(messages.svgParseFailed);
   const viewBox = (root.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(Number);
   const [minX, minY, width, height] = viewBox.length === 4 && viewBox.every(Number.isFinite)
     ? viewBox
     : [0, 0, parseNumber(root.getAttribute("width")), parseNumber(root.getAttribute("height"))];
-  if (!(width > 0 && height > 0)) throw new Error("SVGの元サイズを取得できませんでした。");
+  if (!(width > 0 && height > 0)) throw new Error(messages.svgSourceSizeMissing);
   const scale = Math.min(contentSize / width, contentSize / height);
   const offsetX = (canvasSize - width * scale) / 2 - minX * scale;
   const offsetY = (canvasSize - height * scale) / 2 - minY * scale;

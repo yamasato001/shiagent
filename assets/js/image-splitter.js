@@ -1,5 +1,10 @@
 import { createZip, formatBytes } from "./png-core.js";
 import { SPLIT_PRESETS, compositeOnWhite, cropRgba, foregroundMask, projectionSplit, safeBaseName } from "./png-to-svg-core.js";
+import { pick } from "./i18n.js";
+import common from "./i18n/common.js";
+import splitterText from "./i18n/image-splitter.js";
+
+const shared = pick(common), copy = pick(splitterText);
 
 const $ = selector => document.querySelector(selector);
 const elements = {
@@ -49,7 +54,7 @@ function isImageFile(file) {
 
 function renderFiles() {
   elements.queuePanel.hidden = state.files.length === 0;
-  elements.fileCount.textContent = `${state.files.length}件`;
+  elements.fileCount.textContent = shared.fileCount(state.files.length);
   elements.fileList.replaceChildren();
   state.files.forEach((file, index) => {
     const row = document.createElement("div");
@@ -72,7 +77,7 @@ function renderFiles() {
     const remove = document.createElement("button");
     remove.className = "icon-button";
     remove.type = "button";
-    remove.setAttribute("aria-label", `${file.name}を削除`);
+    remove.setAttribute("aria-label", shared.removeFile(file.name));
     remove.textContent = "×";
     remove.addEventListener("click", () => {
       state.files.splice(index, 1);
@@ -88,7 +93,7 @@ function renderFiles() {
 function addFiles(fileList) {
   const incoming = [...fileList].filter(isImageFile);
   if (!incoming.length) {
-    showToast("PNGまたはJPGファイルを選択してください。");
+    showToast(copy.unsupported);
     return;
   }
   const keys = new Set(state.files.map(file => `${file.name}:${file.size}:${file.lastModified}`));
@@ -137,7 +142,7 @@ function canvasFromRgba(rgba, width, height) {
 }
 
 function canvasToPng(canvas) {
-  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("PNGを書き出せませんでした。")), "image/png"));
+  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error(copy.pngFailed)), "image/png"));
 }
 
 async function detectionPreview(rgba, width, height, boxes) {
@@ -172,17 +177,17 @@ function triggerDownload(url, name) {
 }
 
 async function splitFile(file, fileIndex, totalFiles) {
-  elements.progressText.textContent = `${fileIndex + 1}/${totalFiles} ${file.name} — 画像を解析中`;
+  elements.progressText.textContent = `${fileIndex + 1}/${totalFiles} ${file.name} — ${copy.analyzing}`;
   await new Promise(resolve => requestAnimationFrame(resolve));
   const source = await decodeFile(file);
   const rgb = compositeOnWhite(source.data);
   const sourceRgba = opaqueRgba(rgb);
   const boxes = projectionSplit(foregroundMask(rgb), source.width, source.height, preset());
-  if (!boxes.length) throw new Error(`${file.name}: イラストを検出できませんでした。`);
+  if (!boxes.length) throw new Error(copy.nothingFound(file.name));
   state.previews.push({ name: file.name, count: boxes.length, url: await detectionPreview(sourceRgba, source.width, source.height, boxes) });
   const baseName = safeBaseName(file.name);
   for (let index = 0; index < boxes.length; index += 1) {
-    elements.progressText.textContent = `${fileIndex + 1}/${totalFiles} ${file.name} — ${index + 1}/${boxes.length}を書き出し中`;
+    elements.progressText.textContent = `${fileIndex + 1}/${totalFiles} ${file.name} — ${copy.writing(index + 1, boxes.length)}`;
     await new Promise(resolve => requestAnimationFrame(resolve));
     const crop = cropRgba(sourceRgba, source.width, source.height, boxes[index], 16);
     const blob = await canvasToPng(canvasFromRgba(crop.data, crop.width, crop.height));
@@ -193,18 +198,18 @@ async function splitFile(file, fileIndex, totalFiles) {
 
 function renderResults() {
   elements.resultsPanel.hidden = false;
-  elements.resultCount.textContent = `${state.results.length}件`;
+  elements.resultCount.textContent = shared.fileCount(state.results.length);
   elements.resultSize.textContent = formatBytes(state.results.reduce((sum, result) => sum + result.blob.size, 0));
-  elements.resultStatus.textContent = `${state.files.length}ファイルから${state.results.length}枚に分割しました。`;
+  elements.resultStatus.textContent = copy.status(state.files.length, state.results.length);
   elements.detectionList.replaceChildren();
   state.previews.forEach(preview => {
     const figure = document.createElement("figure");
     figure.className = "splitter-detection";
     const image = document.createElement("img");
     image.src = preview.url;
-    image.alt = `${preview.name}の検出結果`;
+    image.alt = copy.detectionAlt(preview.name);
     const caption = document.createElement("figcaption");
-    caption.textContent = `${preview.name} — ${preview.count}個を検出`;
+    caption.textContent = copy.detected(preview.name, preview.count);
     figure.append(image, caption);
     elements.detectionList.append(figure);
   });
@@ -225,7 +230,7 @@ function renderResults() {
     const download = document.createElement("button");
     download.type = "button";
     download.className = "button button-light";
-    download.textContent = "PNGを保存";
+    download.textContent = copy.savePng;
     download.addEventListener("click", () => triggerDownload(result.url, result.name));
     body.append(number, name, meta, download);
     card.append(image, body);
@@ -241,12 +246,12 @@ async function splitAll() {
   try {
     for (let index = 0; index < state.files.length; index += 1) await splitFile(state.files[index], index, state.files.length);
     renderResults();
-    elements.progressText.textContent = "分割完了";
+    elements.progressText.textContent = copy.done;
     elements.resultsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
     console.error(error);
-    elements.progressText.textContent = "分割に失敗しました";
-    showToast(error instanceof Error ? error.message : "分割中にエラーが発生しました。");
+    elements.progressText.textContent = copy.failed;
+    showToast(error instanceof Error ? error.message : copy.error);
   } finally {
     state.running = false;
     elements.splitButton.disabled = false;

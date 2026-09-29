@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja" data-page-lang="ja">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EXIF・画像メタデータ削除｜GPS情報を一括消去 | SHIAGENT</title>
+  <meta name="description" content="PNG・JPEG・WebPからEXIF、GPS位置情報、撮影日時、カメラ情報、XMP、IPTCを一括削除。再圧縮せず画質を維持し、ブラウザ内で安全に保存できます。"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:url" content="https://shiagent.com/ja/metadata-cleaner/"><meta property="og:title" content="EXIF・画像メタデータ削除｜GPS情報を一括消去 | SHIAGENT"><meta property="og:description" content="PNG・JPEG・WebPからEXIF、GPS位置情報、撮影日時、カメラ情報、XMP、IPTCを一括削除。再圧縮せず画質を維持し、ブラウザ内で安全に保存できます。"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="EXIF・画像メタデータ削除｜GPS情報を一括消去 | SHIAGENT"><meta name="twitter:description" content="PNG・JPEG・WebPからEXIF、GPS位置情報、撮影日時、カメラ情報、XMP、IPTCを一括削除。再圧縮せず画質を維持し、ブラウザ内で安全に保存できます。"><link rel="canonical" href="https://shiagent.com/ja/metadata-cleaner/"><link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/metadata-cleaner/"><link rel="alternate" hreflang="en" href="https://shiagent.com/metadata-cleaner/"><link rel="alternate" hreflang="x-default" href="https://shiagent.com/metadata-cleaner/">
+  <script src="/assets/js/language.js"></script><link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/js/image-metadata-cleaner.js"></script><script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">ツールへ移動</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/metadata-cleaner/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="eyebrow"><span>IMAGE TOOL</span><span class="on-device">ON DEVICE</span></div><h1>メタデータ削除</h1>
+      <p class="lead">EXIF、GPS位置情報、撮影日時、カメラ情報などを複数画像から一括削除。<br>画像を再圧縮せず、画質を変えないままプライバシー情報を消去します。</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>画像はブラウザの外に出ません。</span></div>
+      <div class="compressor-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp"><input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" multiple hidden><div class="drop-mark" aria-hidden="true"><span>＋</span></div><h2>PNG・JPEG・WebPをここにドロップ</h2><p id="dropHelp">または</p><button class="button button-dark" id="selectButton" type="button">ファイルを選択</button><p class="drop-note">形式を自動判別・複数ファイル対応</p></div>
+        <div class="settings-panel">
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>削除する情報</h2></div><button class="text-button" id="clearButton" type="button">すべてクリア</button></div>
+          <div class="summary-grid"><div><span>位置・端末</span><strong>GPS / Camera</strong></div><div><span>日時・説明</span><strong>Date / Text</strong></div><div class="saved"><span>制作情報</span><strong>XMP / IPTC</strong></div></div>
+          <p class="setting-note">画像データと表示に必要なカラープロファイルは維持します。JPEG・PNG・WebPを再エンコードしないため、クリーニングによる画質劣化はありません。</p>
+        </div>
+        <div class="queue-panel" id="queuePanel" hidden><div class="queue-top"><div><span class="setting-number">01</span><h2>ファイル</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ 追加</button><button class="text-button" id="removeAllButton" type="button">すべて削除</button></div></div><div class="file-list" id="fileList" aria-live="polite"></div><div class="run-actions"><span class="vector-progress" id="progressText" role="status"></span><button class="button button-accent" id="cleanButton" type="button">メタデータを削除 <span>→</span></button><button class="button button-light" id="cancelButton" type="button" hidden>中止</button></div></div>
+        <section class="results-panel" id="resultsPanel" hidden aria-labelledby="resultsTitle"><div class="results-heading"><div><span class="setting-number">03</span><div><h2 id="resultsTitle">クリーニング結果</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div><div class="summary-grid"><div><span>処理前</span><strong id="beforeTotal">—</strong></div><div><span>処理後</span><strong id="afterTotal">—</strong></div><div class="saved"><span>処理できた画像</span><strong id="cleanedCount">—</strong></div></div><div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">すべてダウンロード <small>.zip</small></button><p>各画像も個別に保存できます</p></div></section>
+      </div>
+    </section>
+    <section class="content-section" id="workflow"><div class="section-kicker">HOW IT WORKS</div><h2>追加して、消して、安全に保存。</h2><div class="steps"><article><span>01</span><h3>画像を追加</h3><p>PNG・JPEG・WebPを混在したまままとめて追加できます。</p></article><article><span>02</span><h3>一括クリーニング</h3><p>GPS、撮影日時、機種情報、コメントなどをファイルから削除します。</p></article><article><span>03</span><h3>まとめて保存</h3><p>個別保存、またはZIPで一括保存できます。</p></article></div></section>
+    <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>よくある質問</h2><details><summary>どの情報が削除されますか？<span>＋</span></summary><p>JPEGのEXIF・GPS・XMP・IPTC・コメント、PNGのEXIF・テキスト・日時、WebPのEXIF・XMPを削除します。</p></details><details><summary>画質は落ちますか？<span>＋</span></summary><p>落ちません。画像のピクセルを再圧縮せず、メタデータ領域だけを取り除きます。</p></details><details><summary>カラープロファイルも削除されますか？<span>＋</span></summary><p>ICCカラープロファイルなど表示に必要な情報は維持します。</p></details><details><summary>画像はアップロードされますか？<span>＋</span></summary><p>されません。読み込み、削除、ZIP作成はすべてブラウザ内で行います。</p></details></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/ja/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/image-compressor/">画像圧縮</a><a href="/ja/image-converter/">画像形式変換</a><a href="#workflow">使い方</a></div><small>© 2026 SHIAGENT</small></footer><div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body></html>

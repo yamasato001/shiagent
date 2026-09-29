@@ -1,4 +1,5 @@
-import { analyzePixels, createZip, formatBytes, savedPercent } from "./png-core.js";
+import { analyzePixels, createZip, detectRasterFormat, formatBytes, jpegQuality, outputName, savedPercent } from "./png-core.js";
+import "./queue-drop.js";
 
 const lang = document.documentElement.dataset.pageLang || "ja";
 const locale = lang === "ja" ? "ja-JP" : "en-US";
@@ -10,9 +11,9 @@ const copy = lang === "ja" ? {
   done: "完了",
   kept: "元画像が最小",
   failed: "処理できませんでした",
-  unsupported: "PNGファイルだけを追加できます",
+  unsupported: "PNG、JPEG、WebPファイルだけを追加できます",
   duplicate: "同じファイルはすでに追加されています",
-  empty: "PNGファイルを追加してください",
+  empty: "PNG、JPEG、WebPファイルを追加してください",
   completed: (done, total) => `${done} / ${total} ファイル完了`,
   saved: rate => `${rate.toFixed(1)}% 削減`,
   larger: rate => `${Math.abs(rate).toFixed(1)}% 増加`,
@@ -25,7 +26,7 @@ const copy = lang === "ja" ? {
   badges: {
     unchanged: "画素変更なし", lossless: "ロスレス", lines: "細線保護", alpha: "透明度維持",
     transparency: "透明度対応", palette256: "最大256色", palette64: "最大64色",
-    bounded: "省メモリ処理", original: "元画像を採用",
+    bounded: "省メモリ処理", original: "元画像を採用", jpeg: "JPEG再圧縮", webp: "WebP再圧縮",
     auto: { lineart: "Auto: 線画", illustration: "Auto: イラスト", photo: "Auto: 写真" }
   },
   download: "保存",
@@ -37,9 +38,9 @@ const copy = lang === "ja" ? {
   done: "Complete",
   kept: "Original was smaller",
   failed: "Could not process",
-  unsupported: "Only PNG files can be added",
+  unsupported: "Only PNG, JPEG or WebP files can be added",
   duplicate: "That file is already in the list",
-  empty: "Add at least one PNG file",
+  empty: "Add at least one PNG, JPEG or WebP file",
   completed: (done, total) => `${done} of ${total} files complete`,
   saved: rate => `${rate.toFixed(1)}% smaller`,
   larger: rate => `${Math.abs(rate).toFixed(1)}% larger`,
@@ -52,7 +53,7 @@ const copy = lang === "ja" ? {
   badges: {
     unchanged: "Pixels unchanged", lossless: "Lossless", lines: "Fine lines protected", alpha: "Alpha preserved",
     transparency: "Transparency supported", palette256: "Up to 256 colors", palette64: "Up to 64 colors",
-    bounded: "Memory-safe path", original: "Original retained",
+    bounded: "Memory-safe path", original: "Original retained", jpeg: "JPEG recompressed", webp: "WebP recompressed",
     auto: { lineart: "Auto: Line Art", illustration: "Auto: Illustration", photo: "Auto: Photo" }
   },
   download: "Download",
@@ -156,10 +157,7 @@ function selectedMode() {
   return document.querySelector('input[name="mode"]:checked')?.value || "auto";
 }
 
-function makeOutputName(name) {
-  const stem = name.replace(/\.png$/i, "");
-  return `${stem}-compressed.png`;
-}
+function makeOutputName(entry, suffix = "") { return outputName(entry.file.name, entry.format, suffix); }
 
 function disposeEntry(entry) {
   if (entry.previewUrl) URL.revokeObjectURL(entry.previewUrl);
@@ -183,17 +181,18 @@ function resetResults() {
   }
 }
 
-function addFiles(fileList) {
+async function addFiles(fileList) {
   if (running) return;
   let rejected = false;
   let duplicate = false;
   for (const file of fileList) {
-    if (file.type !== "image/png" && !file.name.toLowerCase().endsWith(".png")) { rejected = true; continue; }
+    const format = detectRasterFormat(await file.slice(0, 12).arrayBuffer());
+    if (!format) { rejected = true; continue; }
     const key = `${file.name}:${file.size}:${file.lastModified}`;
     if (entries.some(entry => entry.key === key)) { duplicate = true; continue; }
     entries.push({
       id: crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`,
-      key, file, previewUrl: URL.createObjectURL(file), resultUrl: null, resultBlob: null,
+      key, file, format, previewUrl: URL.createObjectURL(file), resultUrl: null, resultBlob: null,
       status: "ready", after: null, error: null, kind: null, usedMode: null,
       autoSelected: false, processingStrategy: null, keptOriginal: false
     });
@@ -233,7 +232,10 @@ function resultBadges(entry) {
   const badges = [];
   if (entry.autoSelected && entry.kind) badges.push(copy.badges.auto[entry.kind]);
   if (entry.keptOriginal) {
-    badges.push(copy.badges.original, copy.badges.unchanged, copy.badges.alpha);
+    badges.push(copy.badges.original, copy.badges.unchanged);
+    if (entry.format === "png" || entry.format === "webp") badges.push(copy.badges.alpha);
+  } else if (entry.format === "jpeg" || entry.format === "webp") {
+    badges.push(copy.badges[entry.format]);
   } else if (entry.usedMode === "exact") {
     badges.push(copy.badges.unchanged, copy.badges.lossless, copy.badges.alpha);
   } else if (entry.usedMode === "lineart") {
@@ -271,7 +273,7 @@ function render() {
     const modeText = entry.usedMode ? ` · ${entry.usedMode === "lineart" ? "Line Art" : entry.usedMode[0].toUpperCase() + entry.usedMode.slice(1)}` : "";
     return `<article class="file-row ${entry.status === "done" ? "has-result" : ""}" data-id="${entry.id}">
       ${comparisonMarkup(entry)}
-      <div class="file-main"><span class="file-name" title="${escapeHtml(entry.file.name)}">${escapeHtml(entry.file.name)}</span><span class="file-meta">${formatBytes(entry.file.size, locale)}${modeText}</span>${resultBadges(entry)}${entry.status === "processing" ? '<div class="progress-track"><span class="progress-bar" style="width:55%"></span></div>' : ""}</div>
+      <div class="file-main"><span class="file-name" title="${escapeHtml(entry.file.name)}">${escapeHtml(entry.file.name)}</span><span class="file-meta">${entry.format.toUpperCase()} · ${formatBytes(entry.file.size, locale)}${modeText}</span>${resultBadges(entry)}${entry.status === "processing" ? '<div class="progress-track"><span class="progress-bar" style="width:55%"></span></div>' : ""}</div>
       <span class="file-status ${statusClass}">${statusText}</span>
       ${entry.status === "done" ? resultMarkup(entry) : `<button class="icon-button" type="button" data-remove="${entry.id}" aria-label="${copy.remove}">×</button>`}
     </article>`;
@@ -296,6 +298,15 @@ async function decodeFile(file) {
   return { canvas, imageData: context.getImageData(0, 0, canvas.width, canvas.height) };
 }
 
+function encodeRaster(canvas, format, quality) {
+  const mime = format === "webp" ? "image/webp" : "image/jpeg";
+  return new Promise((resolve, reject) => canvas.toBlob(
+    blob => blob?.type === mime ? resolve(blob) : reject(new Error(`${format.toUpperCase()} encoding failed`)),
+    mime,
+    quality
+  ));
+}
+
 async function compressEntry(entry, requestedMode) {
   entry.status = "processing";
   render();
@@ -304,6 +315,30 @@ async function compressEntry(entry, requestedMode) {
   let blob = entry.file;
   entry.autoSelected = requestedMode === "auto";
   const effortLevel = elements.effort.value === "careful" ? 4 : elements.effort.value === "fast" ? 2 : 3;
+
+  if (entry.format === "jpeg" || entry.format === "webp") {
+    if (requestedMode === "exact") {
+      entry.usedMode = "exact";
+      entry.keptOriginal = true;
+    } else {
+      const decoded = await decodeFile(entry.file);
+      const analysis = analyzePixels(decoded.imageData.data, decoded.canvas.width, decoded.canvas.height);
+      entry.kind = analysis.kind;
+      mode = requestedMode === "auto" ? "auto" : requestedMode;
+      blob = await encodeRaster(decoded.canvas, entry.format, jpegQuality(mode, elements.effort.value, analysis.kind));
+      entry.usedMode = mode;
+      entry.processingStrategy = "jpeg";
+      if (blob.size >= entry.file.size) {
+        blob = entry.file;
+        entry.keptOriginal = true;
+      }
+    }
+    entry.resultBlob = blob;
+    entry.resultUrl = URL.createObjectURL(blob);
+    entry.after = blob.size;
+    entry.status = "done";
+    return;
+  }
 
   // Exact is a byte-level lossless path. Avoid decoding into a canvas so large
   // images do not consume a second full RGBA buffer and hidden RGB values under
@@ -405,13 +440,13 @@ async function downloadAll() {
   const usedNames = new Map();
   const zipEntries = [];
   for (const entry of completed) {
-    let name = makeOutputName(entry.file.name);
+    let name = makeOutputName(entry);
     const seen = usedNames.get(name) || 0;
     usedNames.set(name, seen + 1);
-    if (seen) name = name.replace(/\.png$/i, `-${seen + 1}.png`);
+    if (seen) name = makeOutputName(entry, `-${seen + 1}`);
     zipEntries.push({ name, data: new Uint8Array(await entry.resultBlob.arrayBuffer()) });
   }
-  downloadBlob(createZip(zipEntries), "shiagent-pngs.zip");
+  downloadBlob(createZip(zipEntries), "shiagent-images.zip");
   showToast(copy.downloaded);
 }
 
@@ -439,7 +474,7 @@ elements.list.addEventListener("click", event => {
   const download = event.target.closest("[data-download]");
   if (download) {
     const entry = entries.find(item => item.id === download.dataset.download);
-    if (entry?.resultBlob) downloadBlob(entry.resultBlob, makeOutputName(entry.file.name));
+    if (entry?.resultBlob) downloadBlob(entry.resultBlob, makeOutputName(entry));
   }
 });
 window.addEventListener("beforeunload", () => {

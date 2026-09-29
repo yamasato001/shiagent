@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-page-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Automatic SVG White Fill — Fill Closed Areas | SHIAGENT</title>
+  <meta name="description" content="Detect areas enclosed by lines in SVG line art and add white fill paths behind the strokes, so overlapping artwork stops showing through. Batch process in your browser."><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://shiagent.com/svg-white-fill/"><meta property="og:title" content="Automatic SVG White Fill — Fill Closed Areas | SHIAGENT"><meta property="og:description" content="Detect areas enclosed by lines in SVG line art and add white fill paths behind the strokes, so overlapping artwork stops showing through. Batch process in your browser."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Automatic SVG White Fill — Fill Closed Areas | SHIAGENT"><meta name="twitter:description" content="Detect areas enclosed by lines in SVG line art and add white fill paths behind the strokes, so overlapping artwork stops showing through. Batch process in your browser."><link rel="canonical" href="https://shiagent.com/svg-white-fill/">
+  <link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-white-fill/">
+  <link rel="alternate" hreflang="en" href="https://shiagent.com/svg-white-fill/">
+  <link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-white-fill/">
+  <script src="/assets/js/language.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
+  <script type="module" src="/assets/js/svg-white-fill.js"></script>
+  <script type="module" src="/assets/js/workflow-handoff.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool">Skip to tool</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/svg-white-fill/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+
+  <main>
+    <section class="tool-hero" id="tool">
+      <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">Vector tools</a><span>/</span><span>Automatic SVG White Fill</span></div>
+      <div class="eyebrow"><span>VECTOR TOOL</span><span class="on-device">ON DEVICE</span></div>
+      <h1>Automatic SVG White Fill</h1>
+      <p class="lead">Find areas closed by lines and add a white fill behind the line art.<br>Overlapping artwork no longer shows through from behind.</p>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your SVGs stay in your browser.</span></div>
+
+      <div class="compressor-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button">
+          <input id="fileInput" type="file" accept="image/svg+xml,.svg" multiple hidden>
+          <div class="drop-mark" aria-hidden="true"><span>＋</span></div>
+          <h2>Drop SVG files here</h2>
+          <p>or</p>
+          <button class="button button-dark" id="selectButton" type="button">Select files</button>
+          <p class="drop-note">SVG · Multiple files</p>
+        </div>
+
+        <div class="settings-panel">
+          <div class="setting-heading"><div><span class="setting-number">02</span><h2>Detection</h2></div><button class="text-button" id="clearButton" type="button">Clear all</button></div>
+          <fieldset class="mode-grid vector-quality-grid">
+            <legend class="sr-only">Detection precision</legend>
+            <label class="mode-option"><input type="radio" name="preset" value="strict"><span><b>Strict</b><small>Only fully closed areas</small></span></label>
+            <label class="mode-option"><input type="radio" name="preset" value="standard" checked><span><b>Standard</b><small>Bridges small gaps</small></span></label>
+            <label class="mode-option"><input type="radio" name="preset" value="precise"><span><b>Precise</b><small>Follows fine detail more closely</small></span></label>
+          </fieldset>
+          <p class="setting-note">An existing matopuri-white-fill group is replaced; the original line art elements are never changed.</p>
+        </div>
+
+        <div class="queue-panel" id="queuePanel" hidden>
+          <div class="queue-top"><div><span class="setting-number">01</span><h2>Files</h2><span class="file-count" id="fileCount"></span></div><div class="queue-actions"><button class="button button-light" id="addButton" type="button">＋ Add</button><button class="text-button" id="removeAllButton" type="button">Remove all</button></div></div>
+          <div class="file-list" id="fileList"></div>
+          <div class="run-actions"><span class="vector-progress" id="progressText"></span><button class="button button-accent" id="processButton" type="button">Add white fill <span>→</span></button></div>
+        </div>
+
+        <section class="results-panel" id="resultsPanel" hidden>
+          <div class="results-heading"><div><span class="setting-number">03</span><div><h2>Results</h2><p id="resultStatus"></p></div></div><span class="complete-mark">COMPLETE</span></div>
+          <div class="summary-grid vector-summary"><div><span>Processed SVGs</span><strong id="resultCount">—</strong></div><div><span>Total size</span><strong id="resultSize">—</strong></div></div>
+          <div class="vector-result-list" id="resultList"></div>
+          <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">Download all <small>.zip</small></button><button class="button button-light" id="manualEditorButton" type="button">Adjust by hand →</button><p>Close gaps or exclude areas manually</p></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="content-section" id="workflow"><div class="section-kicker">HOW IT WORKS</div><h2>Render. Find closed areas. Lay white underneath.</h2><div class="steps"><article><span>01</span><h3>Render the SVG</h3><p>The SVG is rendered at high resolution on a transparent background, and its lines are read as barriers.</p></article><article><span>02</span><h3>Detect closed areas</h3><p>Transparent areas that cannot be reached from outside are picked as areas to fill.</p></article><article><span>03</span><h3>Add white paths</h3><p>White vector paths are inserted behind the original line art.</p></article></div></section>
+    <section class="content-section split-section" id="about"><div><div class="section-kicker">MATOPURI WHITE FILL</div><h2>Add white without touching the lines.</h2></div><div><p>The drawing elements of the original SVG are left as they are; detected fills are added as a dedicated group.</p><p class="note">Areas with large gaps in their outline cannot be detected as closed.</p></div></section>
+    <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>Common questions</h2><details><summary>Are my files uploaded?<span>＋</span></summary><p>No. Rendering the SVG, detecting closed areas and adding white paths all happen inside your browser.</p></details><details><summary>Is my original line art changed?<span>＋</span></summary><p>No. The white fill is added as its own group behind the line art. Processing an SVG that already has a white fill replaces the previous fill.</p></details><details><summary>Some areas are not filled<span>＋</span></summary><p>Areas whose outline has a gap are not detected as closed. Standard and Precise bridge small gaps; for larger gaps, draw guide lines in Manual SVG White Fill.</p></details><details><summary>What is the difference between Strict, Standard and Precise?<span>＋</span></summary><p>Strict fills only fully closed areas. Standard and Precise render at a higher resolution and bridge small breaks while detecting.</p></details></section>
+  </main>
+  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/image-to-svg/">Image to SVG</a><a href="/svg-cleaner/">SVG Cleaner</a></div><small>© 2026 SHIAGENT</small></footer>
+  <div class="toast" id="toast"></div>
+</body>
+</html>

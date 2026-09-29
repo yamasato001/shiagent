@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /design/
+Disallow: /scripts/
+Disallow: /src/
+Disallow: /test/
+Disallow: /tmp/
+
+Sitemap: https://shiagent.com/sitemap.xml

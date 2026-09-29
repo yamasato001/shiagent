@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PDFをページ番号順に並べ替え - OCR自動判定 | SHIAGENT</title>
+  <meta name="description" content="PDFの文章方向を補正し、四隅とページ端からページ番号を文字情報またはOCRで検出。複数PDFをページ番号順に一括で並べ替えます。"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta property="og:site_name" content="SHIAGENT"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:url" content="https://shiagent.com/ja/pdf/sort-by-page-number/"><meta property="og:title" content="PDFをページ番号順に並べ替え - OCR自動判定 | SHIAGENT"><meta property="og:description" content="PDFの文章方向を補正し、四隅とページ端からページ番号を文字情報またはOCRで検出。複数PDFをページ番号順に一括で並べ替えます。"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="PDFをページ番号順に並べ替え - OCR自動判定 | SHIAGENT"><meta name="twitter:description" content="PDFの文章方向を補正し、四隅とページ端からページ番号を文字情報またはOCRで検出。複数PDFをページ番号順に一括で並べ替えます。"><link rel="canonical" href="https://shiagent.com/ja/pdf/sort-by-page-number/"><link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/sort-by-page-number/"><link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/sort-by-page-number/"><link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/sort-by-page-number/">
+  <script src="/assets/js/language.js"></script><link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css"><link rel="stylesheet" href="/assets/css/pdf.css"><link rel="stylesheet" href="/assets/css/pdf-page-order.css"><script type="module" src="/assets/dist/pdf-page-order-workflow.js"></script>
+</head>
+<body class="pdf-shell pdf-order-shell">
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/pdf/sort-by-page-number/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
+  <main class="tool-hero" id="tool">
+    <p class="breadcrumb"><a href="/ja/">ホーム</a> / <a href="/ja/?tab=workflows#tools">ワークフロー</a> / PDFページ番号順</p>
+    <p class="eyebrow">PDF WORKFLOW · ON DEVICE</p><h1>PDFをページ番号順に並べ替え</h1><p class="lead">文章の上下をそろえ、四隅と端からページ番号を検出し、正しい順番へ一括整理します。複数PDFもまとめて処理できます。</p><span class="pdf-local">ON DEVICE · UNLIMITED</span>
+    <ol class="workflow-pipeline" aria-label="処理の流れ"><li><span>01</span><b>向きを判定</b><small>横向き・逆さまを補正</small></li><li><span>02</span><b>外周を検索</b><small>文字情報・数字OCR</small></li><li><span>03</span><b>順番を判定</b><small>重複・飛び番も確認</small></li><li><span>04</span><b>PDFを保存</b><small>画質を変えずに出力</small></li></ol>
+    <div id="pdfPageOrderRoot"></div>
+  </main>
+  <section class="content-section"><p class="eyebrow">HOW IT WORKS</p><h2>向きを直して、番号を読んで、並べ替える。</h2><div class="steps"><article><span>01</span><h3>文章方向を補正</h3><p>文字座標とページ画像から上下を判定し、ページごとに正しい方向へ補正します。</p></article><article><span>02</span><h3>外周だけを解析</h3><p>上下左右の端と四隅を調べます。文字PDFを優先し、スキャンPDFでは数字OCRを使います。</p></article><article><span>03</span><h3>確認して保存</h3><p>推定番号、未検出、重複、飛び番を確認できます。番号は手動修正するとすぐ並びへ反映されます。</p></article></div></section>
+  <section class="content-section faq-section"><p class="eyebrow">FAQ</p><h2>よくある質問</h2><details><summary>スキャンしたPDFでも使えますか？<span>＋</span></summary><p>使えます。文字情報がないページは外周だけを画像化し、端末内の数字OCRでページ番号を推定します。</p></details><details><summary>表紙などページ番号がないページはどうなりますか？<span>＋</span></summary><p>最初の番号付きページより前にある番号なしページは先頭に残します。途中の番号なしページは直前の番号付きページに付随させます。</p></details><details><summary>日付や文書番号を誤認しませんか？<span>＋</span></summary><p>位置、書式、ほかのページとの連続性を合わせて評価します。確信度が低い候補や重複・飛び番は要確認として表示します。</p></details><details><summary>画質は変わりますか？<span>＋</span></summary><p>変わりません。ページ内容を再圧縮せず、ページ順と回転情報だけを書き換えます。</p></details><details><summary>PDFはアップロードされますか？<span>＋</span></summary><p>アップロードされません。向き判定、OCR、並べ替え、PDF生成はすべてブラウザ内で行います。</p></details></section>
+  <div id="pdfTrayRoot"></div>
+</body></html>

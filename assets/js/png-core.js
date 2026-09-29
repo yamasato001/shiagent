@@ -5,6 +5,33 @@ export const MODES = Object.freeze({
   lineart: { rgbStep: 4, alphaStep: 1 }
 });
 
+export function detectRasterFormat(bytes) {
+  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  if (data.length >= 8 &&
+      data[0] === 0x89 && data[1] === 0x50 && data[2] === 0x4e && data[3] === 0x47 &&
+      data[4] === 0x0d && data[5] === 0x0a && data[6] === 0x1a && data[7] === 0x0a) return "png";
+  if (data.length >= 3 && data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff) return "jpeg";
+  if (data.length >= 12 &&
+      data[0] === 0x52 && data[1] === 0x49 && data[2] === 0x46 && data[3] === 0x46 &&
+      data[8] === 0x57 && data[9] === 0x45 && data[10] === 0x42 && data[11] === 0x50) return "webp";
+  return null;
+}
+
+export function outputName(name, format, suffix = "") {
+  const stem = name.replace(/\.(?:png|jpe?g|webp)$/i, "");
+  const extension = format === "jpeg" ? ".jpg" : format === "webp" ? ".webp" : ".png";
+  return `${stem}-compressed${suffix}${extension}`;
+}
+
+export function jpegQuality(mode, effort = "standard", kind = "photo") {
+  let quality;
+  if (mode === "lineart") quality = 0.92;
+  else if (mode === "smallest") quality = 0.68;
+  else if (mode === "balanced") quality = 0.82;
+  else quality = kind === "lineart" ? 0.92 : kind === "illustration" ? 0.86 : 0.82;
+  return effort === "careful" ? Math.min(0.96, quality + 0.06) : quality;
+}
+
 const clamp = value => Math.max(0, Math.min(255, value));
 const quantize = (value, step) => step <= 1 ? value : clamp(Math.round(value / step) * step);
 

@@ -1,3 +1,7 @@
+import { pick } from "./i18n.js";
+import common from "./i18n/common.js";
+
+const messages = pick(common);
 const SVG_NS = "http://www.w3.org/2000/svg";
 const removableTags = new Set(["metadata", "title", "desc"]);
 const numericAttributes = new Set(["d", "points", "transform", "viewBox", "x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry", "width", "height", "stroke-width", "stroke-dasharray", "stroke-dashoffset", "opacity", "fill-opacity", "stroke-opacity"]);
@@ -15,9 +19,9 @@ export function compactNumericText(value) {
 
 export function cleanSvg(svgText) {
   const documentNode = new DOMParser().parseFromString(svgText, "image/svg+xml");
-  if (documentNode.querySelector("parsererror")) throw new Error("SVGを解析できませんでした。");
+  if (documentNode.querySelector("parsererror")) throw new Error(messages.svgParseFailed);
   const root = documentNode.documentElement;
-  if (root.localName !== "svg") throw new Error("SVGファイルではありません。");
+  if (root.localName !== "svg") throw new Error(messages.notSvg);
   let removedNodes = 0;
   let removedAttributes = 0;
   const walk = element => {

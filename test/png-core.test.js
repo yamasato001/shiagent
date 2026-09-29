@@ -1,6 +1,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyzePixels, createZip, crc32, formatBytes, processPixels, savedPercent } from "../assets/js/png-core.js";
+import { analyzePixels, createZip, crc32, detectRasterFormat, formatBytes, jpegQuality, outputName, processPixels, savedPercent } from "../assets/js/png-core.js";
+
+test("PNG and JPEG are detected from file signatures", () => {
+  assert.equal(detectRasterFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), "png");
+  assert.equal(detectRasterFormat(new Uint8Array([0xff, 0xd8, 0xff, 0xe0])), "jpeg");
+  assert.equal(detectRasterFormat(new TextEncoder().encode("RIFF1234WEBP")), "webp");
+  assert.equal(detectRasterFormat(new Uint8Array([0x47, 0x49, 0x46, 0x38])), null);
+});
+
+test("output names and JPEG quality preserve the detected format", () => {
+  assert.equal(outputName("photo.JPEG", "jpeg"), "photo-compressed.jpg");
+  assert.equal(outputName("drawing.png", "png", "-2"), "drawing-compressed-2.png");
+  assert.equal(outputName("photo.webp", "webp"), "photo-compressed.webp");
+  assert.equal(jpegQuality("smallest"), 0.68);
+  assert.equal(jpegQuality("auto", "careful", "lineart"), 0.96);
+});
 
 test("line art images are detected from white backgrounds and dark edges", () => {
   const width = 20;
