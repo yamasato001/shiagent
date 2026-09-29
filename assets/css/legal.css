@@ -1,0 +1,37 @@
+.legal-main { width: min(100%, 920px); margin: 0 auto; padding: 64px clamp(20px, 5vw, 56px) 96px; }
+.legal-hero { padding-bottom: 34px; border-bottom: 1px solid var(--ink); }
+.legal-hero .eyebrow { margin: 0 0 14px; font-size: 11px; font-weight: 800; letter-spacing: .16em; }
+.legal-hero h1 { margin: 0; font-size: clamp(34px, 6vw, 62px); line-height: 1.05; letter-spacing: -.04em; }
+.legal-hero p { max-width: 700px; margin: 20px 0 0; color: var(--muted); line-height: 1.8; }
+.legal-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 24px; font-size: 12px; color: var(--muted); }
+.legal-notice { margin: 32px 0; padding: 18px 20px; border: 1px solid var(--ink); background: #f4f3ef; font-size: 13px; line-height: 1.8; }
+.legal-content { counter-reset: legal-section; }
+.legal-content section { padding: 34px 0; border-bottom: 1px solid var(--line); }
+.legal-content h2 { margin: 0 0 16px; font-size: 21px; line-height: 1.4; }
+.legal-content h2::before { counter-increment: legal-section; content: counter(legal-section, decimal-leading-zero) "  "; font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; color: var(--muted); vertical-align: .2em; }
+.legal-content h3 { margin: 24px 0 8px; font-size: 15px; }
+.legal-content p, .legal-content li { font-size: 14px; line-height: 1.9; }
+.legal-content p { margin: 10px 0; }
+.legal-content ul, .legal-content ol { margin: 12px 0; padding-left: 1.5em; }
+.legal-content a { text-underline-offset: 3px; }
+.legal-table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 13px; }
+.legal-table th, .legal-table td { padding: 13px 14px; border: 1px solid var(--line); text-align: left; vertical-align: top; line-height: 1.7; }
+.legal-table th { width: 28%; background: #f4f3ef; }
+.contact-form { margin-top: 34px; border-top: 1px solid var(--ink); }
+.contact-field { display: grid; gap: 8px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.contact-field > span, .contact-field legend { font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+.contact-field input, .contact-field select, .contact-field textarea { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--ink); border-radius: 0; background: #fff; color: var(--ink); font: inherit; }
+.contact-field textarea { min-height: 180px; resize: vertical; line-height: 1.7; }
+.contact-field small { color: var(--muted); line-height: 1.7; }
+.contact-check { display: flex; align-items: flex-start; gap: 10px; padding: 16px 0; font-size: 13px; line-height: 1.7; }
+.contact-check input { flex: 0 0 auto; margin-top: 4px; }
+.contact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; padding-top: 24px; }
+.contact-actions button { min-width: 220px; }
+.contact-status { margin: 0; font-size: 13px; line-height: 1.7; }
+.contact-status.is-success { color: #17652f; font-weight: 700; }
+.contact-honeypot { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
+@media (max-width: 640px) {
+  .legal-main { padding-top: 42px; }
+  .legal-table, .legal-table tbody, .legal-table tr, .legal-table th, .legal-table td { display: block; width: 100%; }
+  .legal-table th { border-bottom: 0; }
+}

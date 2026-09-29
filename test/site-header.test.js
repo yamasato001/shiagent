@@ -44,3 +44,13 @@ test("tool content starts on the same grid line as the SHIAGENT wordmark", async
   assert.match(pdf, /\.pdf-hero \{ width: min\(100%, 1160px\)[^}]*clamp\(20px, 4vw, 48px\)/);
   assert.match(pdfOrder, /\.pdf-order-shell \.tool-hero \{ width: min\(100%, 1160px\)[^}]*clamp\(20px, 4vw, 48px\)/);
 });
+
+test("tool footers use the same overflow-safe mobile width as the home page", async () => {
+  const [home, site] = await Promise.all([
+    readFile(new URL("../assets/css/home.css", import.meta.url), "utf8"),
+    readFile(new URL("../assets/css/site.css", import.meta.url), "utf8"),
+  ]);
+  const mobileFooter = /@media \(max-width: (?:720|760)px\) \{[\s\S]*?footer \{[^}]*margin: 0 18px;[^}]*width: auto;[^}]*padding-left: 0;[^}]*padding-right: 0;[^}]*grid-template-columns: 1fr;[^}]*\}/;
+  assert.match(home, mobileFooter);
+  assert.match(site, mobileFooter);
+});

@@ -133,6 +133,13 @@ async function storeFiles(files, source) {
   await replaceTray(accepted, source);
   trayFiles = accepted;
   renderDock();
+  document.dispatchEvent(new CustomEvent("shiagent:traychange", {
+    detail: {
+      source,
+      count: accepted.length,
+      files: accepted.map(file => ({ name: file.name, type: file.type, size: file.size })),
+    },
+  }));
 }
 
 function normalizeOutputs(files) {

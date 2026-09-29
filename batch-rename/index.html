@@ -12,18 +12,16 @@
   <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
   <script type="module" src="/assets/js/batch-rename.js"></script>
   <script type="module" src="/assets/js/workflow-handoff.js"></script>
-</head>
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" data-brand-icon><link rel="icon" href="/assets/brand/favicon-32.png" sizes="32x32" type="image/png" data-brand-icon><link rel="icon" href="/assets/brand/favicon-16.png" sizes="16x16" type="image/png" data-brand-icon><link rel="shortcut icon" href="/assets/brand/favicon.ico" data-brand-icon><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png" sizes="180x180" data-brand-icon><link rel="manifest" href="/site.webmanifest"><link rel="alternate" type="application/json" href="/ai/tools.json" title="SHIAGENT tool catalog"><link rel="help" href="/llms.txt"><link rel="stylesheet" href="/assets/css/information.css"><script type="module" src="/assets/js/site-observability.js"></script><script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script><script type="application/ld+json" data-seo="software-application">{"@context":"https://schema.org","@type":"WebApplication","name":"Batch Rename","description":"Bulk rename images, PDFs, documents, audio, video, archives and other files in your browser. Keep extensions and save everything as a ZIP. No uploads.","url":"https://shiagent.com/batch-rename/","applicationCategory":"batch","operatingSystem":"Any","browserRequirements":"Requires a modern web browser with JavaScript enabled","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["On-device processing","No file upload","Browser-based processing"]}</script></head>
 <body>
   <a class="skip-link" href="#tool">Skip to tool</a>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/batch-rename/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/batch-rename/" hreflang="ja" lang="ja">日本語</a></div></div></header>
 
-  <main>
+  <main id="main-content">
     <section class="tool-hero" id="tool">
       <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">File tools</a><span>/</span><span>Batch Rename</span></div>
-      <div class="eyebrow"><span>FILE TOOL</span><span class="on-device">ON DEVICE</span></div>
       <h1>Batch Rename</h1>
       <p class="lead">Rename images, PDFs, documents, audio, video, archives, and other files in one go.<br>File contents and extensions are kept unchanged.</p>
-      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your files stay in your browser.</span></div>
 
       <div class="compressor-card rename-card">
         <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
@@ -64,13 +62,14 @@
           <p class="setting-note" id="handoffNote">Only supported files are passed to the next tool.</p>
         </section>
       </div>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your files stay in your browser.</span></div>
     </section>
 
     <section class="content-section" id="workflow"><div class="section-kicker">HOW IT WORKS</div><h2>Add. Rename. Save.</h2><div class="steps"><article><span>01</span><h3>Add any files</h3><p>Mix images, PDFs, documents, audio, video, archives, and files without extensions.</p></article><article><span>02</span><h3>Set a naming rule</h3><p>Choose a base name and numbering, and review every change before and after.</p></article><article><span>03</span><h3>Save or continue</h3><p>Save everything as a ZIP. Compatible images can also continue to an image tool.</p></article></div></section>
     <section class="content-section split-section" id="about"><div><div class="section-kicker">WORK TRAY</div><h2>Move between tools without reselecting files.</h2></div><div><p>Files you hand off are kept in a temporary work tray inside this browser. Nothing is uploaded to a server.</p><p class="note">Clearing this site’s data in your browser also clears the work tray.</p></div></section>
     <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>Common questions</h2><details><summary>Which file types are supported?<span>＋</span></summary><p>Any file selectable by your browser is supported, including images, PDFs, Office documents, text, audio, video, archives and files without extensions.</p></details><details><summary>Are my files uploaded?<span>＋</span></summary><p>No. Renaming, ZIP creation and handing compatible files to the next tool all happen inside your browser.</p></details><details><summary>In what order are numbers assigned?<span>＋</span></summary><p>In the order shown in the list of changes, which is the order you added the files.</p></details><details><summary>Does the file extension change?<span>＋</span></summary><p>No. The original extension, including its letter case, is kept. The file contents are not changed.</p></details><details><summary>What happens to characters that are not allowed?<span>＋</span></summary><p>Characters that cannot be used in file names, such as \ / : * ? " &lt; &gt; |, are removed automatically.</p></details><details><summary>What if two files end up with the same name?<span>＋</span></summary><p>An error is shown and the names are not applied. Change the base name or the start number.</p></details></section>
-  </main>
-  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/image-splitter/">Image Splitter</a><a href="/image-to-svg/">Image to SVG</a><a href="#workflow">How it works</a></div><small>© 2026 SHIAGENT</small></footer>
+  <section class="content-section tool-example" data-site-example><div><div class="section-kicker">Example</div><h2>One practical use.</h2><p>Example: rename 20 images from worksheet-001 onward and save them as a ZIP.</p></div></section></main>
+  <footer><div><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/faq/">FAQ</a><a href="/changelog/">Changelog</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div><small>© 2026 SHIAGENT</small></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

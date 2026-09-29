@@ -1,0 +1,1792 @@
+{
+  "schema": "https://shiagent.com/ai/tools.schema.json",
+  "version": "1.0",
+  "site": {
+    "name": "SHIAGENT",
+    "origin": "https://shiagent.com",
+    "privacy": "Files are processed on the user's device and are not uploaded."
+  },
+  "browserApi": {
+    "global": "window.SHIAGENT",
+    "documentation": "https://shiagent.com/llms-full.txt"
+  },
+  "tools": [
+    {
+      "id": "background-remover",
+      "route": "background-remover",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/gif",
+        "image/bmp",
+        "image/avif",
+        "image/heic",
+        "image/heif",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".jfif",
+        ".webp",
+        ".gif",
+        ".bmp",
+        ".avif",
+        ".heic",
+        ".heif",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#processButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Background Remover",
+        "ja": "背景削除・背景色"
+      },
+      "description": {
+        "en": "Make white or solid-color backgrounds transparent, or replace them with any solid color. Works in your browser with PNG, JPEG, WebP, HEIC and more. No uploads.",
+        "ja": "PNG・JPEG・WebP・HEIC画像の白・単色背景を透明化し、白・黒・任意色へ置換。複数画像をアップロードせずブラウザ内で一括処理できます。"
+      },
+      "paths": {
+        "en": "/background-remover/",
+        "ja": "/ja/background-remover/"
+      }
+    },
+    {
+      "id": "batch-rename",
+      "route": "batch-rename",
+      "status": "active",
+      "category": "batch",
+      "localProcessing": true,
+      "accepts": [],
+      "outputs": [
+        "application/zip",
+        "original media types"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#applyButton",
+        "result": "#resultsPanel",
+        "download": "#downloadButton",
+        "controls": [
+          {
+            "selector": "#suffixInput",
+            "element": "input",
+            "type": "text",
+            "value": "_"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Batch Rename",
+        "ja": "一括リネーム"
+      },
+      "description": {
+        "en": "Bulk rename images, PDFs, documents, audio, video, archives and other files in your browser. Keep extensions and save everything as a ZIP. No uploads.",
+        "ja": "画像、PDF、文書、音声、動画などのファイル名を連番で一括変更。接頭辞、開始番号、桁数、区切り文字を指定し、拡張子を維持して保存できます。"
+      },
+      "paths": {
+        "en": "/batch-rename/",
+        "ja": "/ja/batch-rename/"
+      }
+    },
+    {
+      "id": "canvas-padding",
+      "route": "canvas-padding",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#paddingButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#canvasWidth",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "32767",
+            "value": "512"
+          },
+          {
+            "selector": "#customColor",
+            "element": "input",
+            "type": "color",
+            "value": "#ffffff"
+          },
+          {
+            "selector": "#quality",
+            "element": "select",
+            "type": "select",
+            "value": "compact",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Canvas Padding Add image margins",
+        "ja": "余白追加"
+      },
+      "description": {
+        "en": "Add pixel or percentage padding around images, or center them on a fixed 512×512 canvas. Batch process images with transparent, white, black, or custom backgrounds.",
+        "ja": "画像の上下左右へpx・％で余白を追加し、512×512など指定キャンバスの中央へ配置。透明・白・黒・任意色の背景で複数画像を一括処理できます。"
+      },
+      "paths": {
+        "en": "/canvas-padding/",
+        "ja": "/ja/canvas-padding/"
+      }
+    },
+    {
+      "id": "color-tool",
+      "route": "color-tool",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/svg+xml",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".svg"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#processButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#qualityInput",
+            "element": "select",
+            "type": "select",
+            "value": "75",
+            "values": [
+              "75",
+              "86",
+              "94"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Replace Color / Grayscale / Transparency",
+        "ja": "色置換 / 白黒化 / 透明化"
+      },
+      "description": {
+        "en": "Replace a selected color, make white transparent, or convert PNG, JPEG, WebP, and SVG files to grayscale or monochrome in one local batch.",
+        "ja": "PNG・JPEG・WebP・SVGの指定色を置換し、白背景の透明化、グレースケール、白黒2値化を一括処理。色の許容範囲も調整できます。"
+      },
+      "paths": {
+        "en": "/color-tool/",
+        "ja": "/ja/color-tool/"
+      }
+    },
+    {
+      "id": "favicon-generator",
+      "route": "favicon-generator",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/svg+xml",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".svg"
+      ],
+      "outputs": [
+        "image/png",
+        "image/x-icon",
+        "application/manifest+json",
+        "application/zip"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#generateButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#paddingInput",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "30",
+            "value": "0"
+          },
+          {
+            "selector": "#backgroundColor",
+            "element": "input",
+            "type": "color",
+            "value": "#f4f1ea"
+          },
+          {
+            "selector": "#appName",
+            "element": "input",
+            "type": "text",
+            "value": "My App"
+          },
+          {
+            "selector": "#themeColor",
+            "element": "input",
+            "type": "color",
+            "value": "#111111"
+          },
+          {
+            "selector": "#linkSnippet",
+            "element": "textarea",
+            "type": "textarea"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Favicon / App Icon Generator",
+        "ja": "Favicon・App Icon生成"
+      },
+      "description": {
+        "en": "Generate favicon.ico, 16, 32 and 48px PNGs, Apple Touch Icon, standard and maskable PWA icons, and a web manifest from one image.",
+        "ja": "1枚の画像・SVGからfavicon.ico、16・32・48px PNG、Apple Touch Icon、PWA・maskableアイコン、manifestを無料で一括生成できます。"
+      },
+      "paths": {
+        "en": "/favicon-generator/",
+        "ja": "/ja/favicon-generator/"
+      }
+    },
+    {
+      "id": "image-compressor",
+      "route": "image-compressor",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#compressButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Image Compressor (PNG, JPEG & WebP)",
+        "ja": "画像圧縮（PNG・JPEG・WebP対応）"
+      },
+      "description": {
+        "en": "Automatically detect and compress PNG, JPEG and WebP images locally in your browser. No uploads and no file limit.",
+        "ja": "PNG・JPEG（JPG）・WebP画像を自動判別し、画質を保ちながら容量を一括圧縮。無料・アップロード不要・枚数制限なしでブラウザ内処理できます。"
+      },
+      "paths": {
+        "en": "/image-compressor/",
+        "ja": "/ja/image-compressor/"
+      }
+    },
+    {
+      "id": "image-converter",
+      "route": "image-converter",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#convertButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Image Converter",
+        "ja": "画像形式変換"
+      },
+      "description": {
+        "en": "Convert HEIC, HEIF, AVIF, WebP, PNG, JPEG, GIF, BMP and TIFF to PNG, JPEG or WebP in bulk. Runs locally in your browser, so your photos are never uploaded.",
+        "ja": "iPhoneのHEIC・HEIFをJPGへ変換。PNG、JPEG、WebP、AVIF、GIF、BMP、TIFFも追加でき、選択したPNG・JPEG・WebP形式へ無料で一括変換できます。"
+      },
+      "paths": {
+        "en": "/image-converter/",
+        "ja": "/ja/image-converter/"
+      }
+    },
+    {
+      "id": "image-cropper",
+      "route": "image-cropper",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#cropButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#backgroundMode",
+            "element": "select",
+            "type": "select",
+            "value": "auto",
+            "values": [
+              "auto",
+              "transparent",
+              "white",
+              "custom"
+            ]
+          },
+          {
+            "selector": "#backgroundColor",
+            "element": "input",
+            "type": "color",
+            "min": "0",
+            "max": "40",
+            "value": "#ffffff"
+          },
+          {
+            "selector": "#canvasWidth",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "100",
+            "value": "512"
+          },
+          {
+            "selector": "#quality",
+            "element": "select",
+            "type": "select",
+            "value": "compact",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Image Cropper",
+        "ja": "画像トリミング"
+      },
+      "description": {
+        "en": "Crop images manually, auto-trim empty backgrounds, and normalize padding, canvas size and object occupancy in batches.",
+        "ja": "画像を手動トリミング、または白・透明背景の余白を自動削除。余白、キャンバスサイズ、対象物の占有率まで複数画像で一括統一できます。"
+      },
+      "paths": {
+        "en": "/image-cropper/",
+        "ja": "/ja/image-cropper/"
+      }
+    },
+    {
+      "id": "image-joiner",
+      "route": "image-joiner",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#joinButton",
+        "result": "#resultsPanel",
+        "download": "#downloadButton",
+        "controls": [
+          {
+            "selector": "#customColor",
+            "element": "input",
+            "type": "color",
+            "value": "#f2f2f2"
+          },
+          {
+            "selector": "#quality",
+            "element": "select",
+            "type": "select",
+            "value": "compact",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Image Joiner Combine images",
+        "ja": "画像結合"
+      },
+      "description": {
+        "en": "Combine multiple images horizontally, vertically, or into a grid. Create side-by-side pairs or 2×2 layouts locally in your browser, with HEIC input support.",
+        "ja": "複数画像を横並び・縦並び・グリッドで1枚に結合。画像の順番、間隔、背景色を調整し、ブラウザ内でアップロードせずに作成できます。"
+      },
+      "paths": {
+        "en": "/image-joiner/",
+        "ja": "/ja/image-joiner/"
+      }
+    },
+    {
+      "id": "image-resizer",
+      "route": "image-resizer",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#resizeButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#quality",
+            "element": "select",
+            "type": "select",
+            "value": "compact",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Image Resizer",
+        "ja": "画像リサイズ"
+      },
+      "description": {
+        "en": "Resize PNG, JPEG, WebP, HEIC and other images in batches by exact pixel dimensions or a percentage of the original size.",
+        "ja": "PNG・JPEG・WebP・HEIC画像を、任意の縦横pxまたは元画像の％で一括リサイズ。縦横比を維持して指定範囲へ収める無料の画像サイズ変更ツールです。"
+      },
+      "paths": {
+        "en": "/image-resizer/",
+        "ja": "/ja/image-resizer/"
+      }
+    },
+    {
+      "id": "image-splitter",
+      "route": "image-splitter",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        ".png",
+        ".jpg",
+        ".jpeg"
+      ],
+      "outputs": [
+        "image/png"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#splitButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Image Splitter",
+        "ja": "画像分割"
+      },
+      "description": {
+        "en": "Automatically split a PNG or JPG sheet of illustrations into separate images using the white space between them. Runs in your browser; save each PNG or a ZIP.",
+        "ja": "1枚のPNG・JPGに並んだイラスト、スタンプ、スプライトを余白から自動検出して個別画像へ分割。切り出したPNGを個別またはZIPで保存できます。"
+      },
+      "paths": {
+        "en": "/image-splitter/",
+        "ja": "/ja/image-splitter/"
+      }
+    },
+    {
+      "id": "image-to-svg",
+      "route": "image-to-svg",
+      "status": "active",
+      "category": "vector",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp"
+      ],
+      "outputs": [
+        "image/svg+xml"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#convertButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "en": "Convert Image to SVG (PNG, JPEG & WebP)",
+        "ja": "画像をSVGに変換（PNG・JPEG・WebP対応）"
+      },
+      "description": {
+        "en": "Convert PNG, JPG and WebP line art to SVG in your browser. Split sheets of illustrations automatically, tune the tracing and download every SVG at once. No uploads.",
+        "ja": "PNG・JPEG・WebPの線画、ロゴ、アイコンを編集可能なSVGへ変換。複数素材の自動分割、トレース品質調整、一括保存に対応した無料ベクター化ツールです。"
+      },
+      "paths": {
+        "en": "/image-to-svg/",
+        "ja": "/ja/image-to-svg/"
+      }
+    },
+    {
+      "id": "line-art-generator",
+      "route": "line-art-generator",
+      "status": "pending",
+      "category": "ai",
+      "localProcessing": true,
+      "accepts": [],
+      "outputs": [
+        "image/png"
+      ],
+      "automation": {
+        "input": null,
+        "action": null,
+        "result": null,
+        "download": null,
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "線画生成は いったん保留。",
+        "en": "Line-art generation is on hold."
+      },
+      "description": {
+        "ja": "ローカルAI線画ジェネレーターは品質と一般的なPC環境での実用性を再検討するため、現在保留中です。",
+        "en": "The local AI line-art generator is pending while we reassess output quality and practicality on everyday PCs."
+      },
+      "paths": {
+        "ja": "/ja/line-art-generator/",
+        "en": "/line-art-generator/"
+      }
+    },
+    {
+      "id": "metadata-cleaner",
+      "route": "metadata-cleaner",
+      "status": "active",
+      "category": "image",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#cleanButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "メタデータ削除",
+        "en": "EXIF Cleaner Remove metadata"
+      },
+      "description": {
+        "ja": "PNG・JPEG・WebPからEXIF、GPS位置情報、撮影日時、カメラ情報、XMP、IPTCを一括削除。再圧縮せず画質を維持し、ブラウザ内で安全に保存できます。",
+        "en": "Batch remove EXIF, GPS, capture dates, camera details, XMP, IPTC, and comments from PNG, JPEG, and WebP images in your browser without quality loss."
+      },
+      "paths": {
+        "ja": "/ja/metadata-cleaner/",
+        "en": "/metadata-cleaner/"
+      }
+    },
+    {
+      "id": "pdf-delete-pages",
+      "route": "pdf/delete-pages",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFページ削除",
+        "en": "Delete PDF Pages"
+      },
+      "description": {
+        "ja": "PDFの不要ページをサムネイルで確認しながら削除。残すページを並べ替え、整理したPDFをアップロードせずブラウザ内で保存できます。",
+        "en": "Remove unwanted PDF pages visually and export a clean copy without uploading it."
+      },
+      "paths": {
+        "ja": "/ja/pdf/delete-pages/",
+        "en": "/pdf/delete-pages/"
+      }
+    },
+    {
+      "id": "pdf-images-to-pdf",
+      "route": "pdf/images-to-pdf",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "画像 → PDF",
+        "en": "Images to PDF"
+      },
+      "description": {
+        "ja": "PNG・JPEG・WebP画像を好きな順番へ並べ替えて1つのPDFに変換。複数画像をアップロードせず、安全にブラウザ内でまとめられます。",
+        "en": "Combine PNG, JPEG and WebP images into one PDF locally in your browser."
+      },
+      "paths": {
+        "ja": "/ja/pdf/images-to-pdf/",
+        "en": "/pdf/images-to-pdf/"
+      }
+    },
+    {
+      "id": "pdf-interleave",
+      "route": "pdf/interleave",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDF交互結合",
+        "en": "Interleave PDFs"
+      },
+      "description": {
+        "ja": "2つ以上のPDFからページを交互に並べて結合。奇数・偶数ページを別々にスキャンした両面原稿を、正しいページ順のPDFへまとめられます。",
+        "en": "Interleave pages from two or more PDFs for odd-even or duplex scan workflows."
+      },
+      "paths": {
+        "ja": "/ja/pdf/interleave/",
+        "en": "/pdf/interleave/"
+      }
+    },
+    {
+      "id": "pdf-merge",
+      "route": "pdf/merge",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDF結合",
+        "en": "Merge PDF"
+      },
+      "description": {
+        "ja": "複数のPDFを1つに結合。ページのサムネイルを確認し、ドラッグで並べ替えてから保存できます。アップロード不要でブラウザ内処理します。",
+        "en": "Merge multiple PDFs, reorder pages and export one PDF locally in your browser."
+      },
+      "paths": {
+        "ja": "/ja/pdf/merge/",
+        "en": "/pdf/merge/"
+      }
+    },
+    {
+      "id": "pdf-reorder",
+      "route": "pdf/reorder",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFページ並べ替え",
+        "en": "Reorder PDF Pages"
+      },
+      "description": {
+        "ja": "PDFページをサムネイルで確認しながらドラッグで並べ替え。ページの複製や逆順化にも対応し、画質を変えずブラウザ内で保存できます。",
+        "en": "Drag and reorder PDF pages, duplicate pages or reverse their order locally."
+      },
+      "paths": {
+        "ja": "/ja/pdf/reorder/",
+        "en": "/pdf/reorder/"
+      }
+    },
+    {
+      "id": "pdf-rotate",
+      "route": "pdf/rotate",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFの向きを自動判定・回転",
+        "en": "Auto Rotate PDF Pages"
+      },
+      "description": {
+        "ja": "PDF内の文章の上下をページごとに自動判定し、横向き・逆さまのページを一括回転。ブラウザ内で画質を変えずに保存できます。",
+        "en": "Automatically detect text orientation on every PDF page, correct sideways or upside-down pages, and export locally without recompressing content."
+      },
+      "paths": {
+        "ja": "/ja/pdf/rotate/",
+        "en": "/pdf/rotate/"
+      }
+    },
+    {
+      "id": "pdf-sort-by-page-number",
+      "route": "pdf/sort-by-page-number",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfOrderInput",
+        "action": "#pdfOrderRun",
+        "result": "#pdfOrderResults",
+        "download": "#pdfOrderDownloadAll",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFをページ番号順に並べ替え",
+        "en": "Sort PDF by Page Number"
+      },
+      "description": {
+        "ja": "PDFの文章方向を補正し、四隅とページ端からページ番号を文字情報またはOCRで検出。複数PDFをページ番号順に一括で並べ替えます。",
+        "en": "Correct PDF orientation, detect page numbers around page edges with text extraction or OCR, and batch-sort multiple PDFs locally in your browser."
+      },
+      "paths": {
+        "ja": "/ja/pdf/sort-by-page-number/",
+        "en": "/pdf/sort-by-page-number/"
+      }
+    },
+    {
+      "id": "pdf-split",
+      "route": "pdf/split",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDF分割",
+        "en": "Split PDF"
+      },
+      "description": {
+        "ja": "PDFを指定したページ範囲で分割・抽出、または1ページずつ別ファイルとして保存。アップロード不要でブラウザ内処理できます。",
+        "en": "Split a PDF by page range or save every page separately without uploading it."
+      },
+      "paths": {
+        "ja": "/ja/pdf/split/",
+        "en": "/pdf/split/"
+      }
+    },
+    {
+      "id": "svg-cleaner",
+      "route": "svg-cleaner",
+      "status": "active",
+      "category": "vector",
+      "localProcessing": true,
+      "accepts": [
+        "image/svg+xml",
+        ".svg"
+      ],
+      "outputs": [
+        "image/svg+xml"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#processButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "SVGクリーナー",
+        "en": "SVG Cleaner"
+      },
+      "description": {
+        "ja": "SVGの見た目を維持しながら、メタデータ、コメント、編集ソフト固有属性、余分な小数精度・空白を削除。複数SVGをブラウザ内で整理・軽量化できます。",
+        "en": "Clean up SVG files in your browser: remove metadata, comments, Inkscape and editor data, excess decimals and whitespace without changing how they look. No uploads."
+      },
+      "paths": {
+        "ja": "/ja/svg-cleaner/",
+        "en": "/svg-cleaner/"
+      }
+    },
+    {
+      "id": "svg-to-image",
+      "route": "svg-to-image",
+      "status": "active",
+      "category": "vector",
+      "localProcessing": true,
+      "accepts": [
+        "image/svg+xml",
+        ".svg"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#rasterizeButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#qualityInput",
+            "element": "select",
+            "type": "select",
+            "value": "75",
+            "values": [
+              "75",
+              "86",
+              "94"
+            ]
+          },
+          {
+            "selector": "#backgroundColor",
+            "element": "input",
+            "type": "color",
+            "value": "#f4f1ea"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "SVG → 画像",
+        "en": "SVG to Image"
+      },
+      "description": {
+        "ja": "複数SVGをPNG・WebPへ一括変換。倍率、幅、高さ、DPI相当、透明背景・白背景・任意色を指定し、高解像度画像としてブラウザ内で保存できます。",
+        "en": "Batch rasterize SVG files to PNG or WebP. Set scale, width and height, DPI equivalent, transparent background or a custom background color in your browser."
+      },
+      "paths": {
+        "ja": "/ja/svg-to-image/",
+        "en": "/svg-to-image/"
+      }
+    },
+    {
+      "id": "svg-white-fill",
+      "route": "svg-white-fill",
+      "status": "active",
+      "category": "vector",
+      "localProcessing": true,
+      "accepts": [
+        "image/svg+xml",
+        ".svg"
+      ],
+      "outputs": [
+        "image/svg+xml"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#processButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "SVG自動白塗り",
+        "en": "Automatic SVG White Fill"
+      },
+      "description": {
+        "ja": "SVG線画の閉じた領域を自動検出し、線の背面へ白いfillパスを追加。素材を重ねたときの透けを防ぎ、複数SVGをブラウザ内で一括処理できます。",
+        "en": "Detect areas enclosed by lines in SVG line art and add white fill paths behind the strokes, so overlapping artwork stops showing through. Batch process in your browser."
+      },
+      "paths": {
+        "ja": "/ja/svg-white-fill/",
+        "en": "/svg-white-fill/"
+      }
+    },
+    {
+      "id": "svg-white-fill-editor",
+      "route": "svg-white-fill/editor",
+      "status": "active",
+      "category": "vector",
+      "localProcessing": true,
+      "accepts": [
+        "image/svg+xml",
+        ".svg"
+      ],
+      "outputs": [
+        "image/svg+xml"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#saveNextButton",
+        "result": "#previewSvg",
+        "download": "#downloadButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "SVG手動白塗りエディター",
+        "en": "Manual SVG White Fill Editor"
+      },
+      "description": {
+        "ja": "SVG線画の隙間をガイド線で閉じ、白塗りから除外する領域をクリックで手動調整。変更をリアルタイムで確認できるブラウザ内SVGフィルエディターです。",
+        "en": "Close gaps with guide lines and exclude areas by hand to fine-tune SVG white fills. A browser-based editor; your SVGs are never uploaded."
+      },
+      "paths": {
+        "ja": "/ja/svg-white-fill/editor/",
+        "en": "/svg-white-fill/editor/"
+      }
+    },
+    {
+      "id": "workflows-ai-asset-prep",
+      "route": "workflows/ai-asset-prep",
+      "status": "active",
+      "category": "workflow",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#runButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#toleranceInput",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "80",
+            "step": "1",
+            "value": "12"
+          },
+          {
+            "selector": "#widthInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "8192",
+            "value": "512"
+          },
+          {
+            "selector": "#qualityInput",
+            "element": "select",
+            "type": "select",
+            "value": "compact",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ]
+          },
+          {
+            "selector": "#backgroundInput",
+            "element": "select",
+            "type": "select",
+            "value": "transparent",
+            "values": [
+              "transparent",
+              "white",
+              "black",
+              "custom"
+            ]
+          },
+          {
+            "selector": "#backgroundColorInput",
+            "element": "input",
+            "type": "color",
+            "value": "#ffffff"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "AI画像素材一括仕上げ",
+        "en": "AI Asset Prep"
+      },
+      "description": {
+        "ja": "AI生成画像をまとめてAuto Trimし、余白、512×512などのCanvasサイズ、PNG・JPEG・WebP形式、連番名、圧縮設定を一括で統一。ブラウザ内で処理します。",
+        "en": "Turn AI-generated images into ready-to-use assets in bulk. Auto-trim, normalize padding, resize, rename and compress to PNG, JPEG or WebP entirely in your browser."
+      },
+      "paths": {
+        "ja": "/ja/workflows/ai-asset-prep/",
+        "en": "/workflows/ai-asset-prep/"
+      }
+    },
+    {
+      "id": "workflows-asset-normalizer",
+      "route": "workflows/asset-normalizer",
+      "status": "active",
+      "category": "workflow",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#runButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#toleranceInput",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "80",
+            "step": "1",
+            "value": "12"
+          },
+          {
+            "selector": "#backgroundInput",
+            "element": "select",
+            "type": "select",
+            "value": "white",
+            "values": [
+              "white",
+              "transparent",
+              "black",
+              "custom"
+            ]
+          },
+          {
+            "selector": "#backgroundColorInput",
+            "element": "input",
+            "type": "color",
+            "value": "#ffffff"
+          },
+          {
+            "selector": "#qualityInput",
+            "element": "select",
+            "type": "select",
+            "value": "compact",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ]
+          },
+          {
+            "selector": "#baseNameInput",
+            "element": "input",
+            "type": "text",
+            "value": "asset"
+          },
+          {
+            "selector": "#startNumberInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "999999",
+            "value": "1"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "画像素材の規格統一",
+        "en": "Asset Normalizer"
+      },
+      "description": {
+        "ja": "大量の画像を同じCanvasサイズ、対象物の大きさ、余白、背景、PNG・JPEG・WebP形式、連番ファイル名へ一括で規格統一。ブラウザ内で処理します。",
+        "en": "Standardize mixed image batches to one canvas size, object scale, padding, background, format and numbered filename pattern. Runs locally in your browser."
+      },
+      "paths": {
+        "ja": "/ja/workflows/asset-normalizer/",
+        "en": "/workflows/asset-normalizer/"
+      }
+    },
+    {
+      "id": "workflows-custom",
+      "route": "workflows/custom",
+      "status": "active",
+      "category": "workflow",
+      "localProcessing": true,
+      "accepts": [],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": null,
+        "action": "#runWorkflow",
+        "result": "#workflowRun",
+        "download": null,
+        "controls": [
+          {
+            "selector": "#workflowName",
+            "element": "input",
+            "type": "text",
+            "value": ""
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "ワークフローを自分で作る",
+        "en": "Build your own Workflow"
+      },
+      "description": {
+        "ja": "画像・SVG・PDF・ファイルツールを自由につなぎ、自分専用のワークフローを作成。互換性を自動判定し、ブラウザへローカル保存できます。",
+        "en": "Connect image, SVG, PDF and file tools into your own workflow. Incompatible steps are blocked automatically and definitions are saved locally in your browser."
+      },
+      "paths": {
+        "ja": "/ja/workflows/custom/",
+        "en": "/workflows/custom/"
+      }
+    },
+    {
+      "id": "workflows-line-art-to-svg",
+      "route": "workflows/line-art-to-svg",
+      "status": "active",
+      "category": "workflow",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp"
+      ],
+      "outputs": [
+        "image/svg+xml"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#runButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "線画をSVG素材にする",
+        "en": "Turn line art into SVG assets"
+      },
+      "description": {
+        "ja": "線画画像をトリミング、背景処理、SVG変換、白フィル（塗りつぶし）、SVG整理までまとめて処理。白フィルなし・自動・手動を選べます。",
+        "en": "Trim line art, remove the background, vectorize it, optionally add white fills automatically or manually, and clean the final SVG in one workflow."
+      },
+      "paths": {
+        "ja": "/ja/workflows/line-art-to-svg/",
+        "en": "/workflows/line-art-to-svg/"
+      }
+    },
+    {
+      "id": "workflows-web-image-optimizer",
+      "route": "workflows/web-image-optimizer",
+      "status": "active",
+      "category": "workflow",
+      "localProcessing": true,
+      "accepts": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "image/avif",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".heic",
+        ".heif",
+        ".avif",
+        ".gif",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#runButton",
+        "result": "#resultsPanel",
+        "download": "#downloadAllButton",
+        "controls": [
+          {
+            "selector": "#resizeInput",
+            "element": "input",
+            "type": "checkbox",
+            "min": "16",
+            "max": "4096",
+            "step": "1",
+            "value": "1200"
+          },
+          {
+            "selector": "#qualityInput",
+            "element": "select",
+            "type": "select",
+            "value": "compact",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ]
+          },
+          {
+            "selector": "#renameInput",
+            "element": "input",
+            "type": "checkbox"
+          },
+          {
+            "selector": "#baseNameInput",
+            "element": "input",
+            "type": "text",
+            "value": "web"
+          },
+          {
+            "selector": "#startNumberInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "999999",
+            "value": "1"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "Web画像最適化",
+        "en": "Web Image Optimizer"
+      },
+      "description": {
+        "ja": "画像をWeb用に一括最適化。Blog、Thumbnail、Original sizeのプリセットでCrop、リサイズ、WebP・JPEG・PNG変換、圧縮、メタデータ削除、任意の連番リネームをブラウザ内で処理します。",
+        "en": "Optimize images for the web in bulk. Use Blog, Thumbnail or Original size presets to crop, resize, convert, compress, remove metadata and optionally rename files entirely in your browser."
+      },
+      "paths": {
+        "ja": "/ja/workflows/web-image-optimizer/",
+        "en": "/workflows/web-image-optimizer/"
+      }
+    }
+  ]
+}

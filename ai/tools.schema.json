@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shiagent.com/ai/tools.schema.json",
+  "title": "SHIAGENT tool catalog",
+  "type": "object",
+  "required": ["version", "site", "browserApi", "tools"],
+  "properties": {
+    "version": { "type": "string" },
+    "site": { "type": "object" },
+    "browserApi": { "type": "object" },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "category", "paths", "accepts", "outputs", "automation"],
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "enum": ["active", "pending"] },
+          "category": { "type": "string" },
+          "localProcessing": { "type": "boolean" },
+          "paths": { "type": "object", "required": ["en", "ja"] },
+          "accepts": { "type": "array", "items": { "type": "string" } },
+          "outputs": { "type": "array", "items": { "type": "string" } },
+          "automation": { "type": "object", "required": ["input", "action", "result", "download", "controls", "events"] }
+        }
+      }
+    }
+  }
+}

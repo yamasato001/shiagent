@@ -99,3 +99,5 @@ await copyFile(
   "node_modules/@discourse/heic/codec/dec/heic_dec.wasm",
   "assets/dist/heic_dec.wasm"
 );
+
+await import("./refresh-seo-metadata.mjs");

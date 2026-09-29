@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-29T00:00:00+09:00",
+  "monitoring": "release-status-not-live-monitoring",
+  "overall": "operational",
+  "components": [
+    { "id": "static-site", "status": "operational" },
+    { "id": "image-tools", "status": "operational" },
+    { "id": "svg-tools", "status": "operational" },
+    { "id": "pdf-tools", "status": "operational" },
+    { "id": "local-ai-line-art", "status": "pending" }
+  ],
+  "knownIssues": [
+    "Direct folder saving is unavailable where showDirectoryPicker is unsupported.",
+    "Very large files may exceed browser memory.",
+    "Unusual HEIC and TIFF variants may fail to decode.",
+    "Automatic detection results require human review."
+  ]
+}

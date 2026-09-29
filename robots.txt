@@ -6,4 +6,10 @@ Disallow: /src/
 Disallow: /test/
 Disallow: /tmp/
 
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
 Sitemap: https://shiagent.com/sitemap.xml

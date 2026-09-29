@@ -1,0 +1,36 @@
+# SHIAGENT browser-agent guide
+
+SHIAGENT is a local-first static web application. Do not look for a remote conversion API: operate the browser page so the user's files stay on their device.
+
+## Discovery
+Read https://shiagent.com/ai/tools.json and choose an active tool whose accepts and outputs match the job. Open paths.ja or paths.en.
+
+## Stable browser contract
+Every page loads window.SHIAGENT. Await window.SHIAGENT.ready before automation.
+- getCatalog(): returns the full tool catalog.
+- getContract(): returns the current tool contract.
+- getState(): returns input count, busy state, visible result state, status text, and the latest event.
+- loadFiles(File[]): attaches browser File objects and emits the same change event as human selection.
+- setValue(cssSelector, value): updates an option and emits input/change events.
+- run(): activates the primary processing action.
+- download(): activates the primary download action.
+- waitFor(eventName, timeoutMs): waits for a documented event.
+- navigate(toolId, {tray:true}): moves to another tool and imports compatible Work Tray files.
+
+## Recommended sequence
+1. Open the selected tool path and await SHIAGENT.ready.
+2. Attach files with the browser's file-upload capability or SHIAGENT.loadFiles when File objects are already available in page context.
+3. Set only controls listed in automation.controls.
+4. Call SHIAGENT.run(), monitor getState(), and wait for shiagent:outputs, shiagent:traychange, or a visible result.
+5. Validate output count and statusText before downloading or navigating onward with tray:true.
+6. Never claim success solely because a button was clicked.
+
+## Events
+shiagent:ready — catalog and current contract are available.
+shiagent:statechange — relevant DOM state changed.
+shiagent:outputs — a tool produced in-memory output files.
+shiagent:traychange — files were persisted to the cross-tool Work Tray; detail contains safe metadata, not file contents.
+shiagent:error — a tool reported an automation-visible failure.
+
+## Privacy
+Do not transmit input or output files to another service unless the user explicitly asks. Prefer the Work Tray for SHIAGENT-to-SHIAGENT handoffs.

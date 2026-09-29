@@ -1,14 +1,41 @@
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  excludedRoutes,
+  inferCategory,
+  inferOutput,
+  pdfContract,
+  primaryActionIds,
+  routeOverrides,
+  siteOrigin,
+} from "./tool-contracts.mjs";
 
 const root = new URL("../", import.meta.url);
-const siteOrigin = "https://shiagent.com";
+const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+const bingVerification = process.env.BING_SITE_VERIFICATION?.trim();
+const brandMark = '<img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true">';
 const noindexPages = new Set([
   "line-art-generator/index.html",
   "ja/line-art-generator/index.html",
 ]);
 
 const pageCopy = {
+  "ja/terms/index.html": {
+    title: "利用規約 | SHIAGENT",
+    description: "SHIAGENTの画像・SVG・PDFツールおよびワークフローをご利用いただく際の条件を定めた利用規約です。",
+  },
+  "terms/index.html": {
+    title: "Terms of Use | SHIAGENT",
+    description: "Terms governing your use of SHIAGENT's browser-based image, SVG and PDF tools and workflows.",
+  },
+  "ja/privacy/index.html": {
+    title: "プライバシーポリシー | SHIAGENT",
+    description: "SHIAGENTにおける画像・PDF等のローカル処理、ブラウザ内ストレージ、アクセスログなどの情報の取扱いを説明します。",
+  },
+  "privacy/index.html": {
+    title: "Privacy Policy | SHIAGENT",
+    description: "How SHIAGENT handles local file processing, browser storage, server logs and related information.",
+  },
   "ja/index.html": {
     title: "無料の画像・SVG・PDFツール｜ブラウザで一括処理 | SHIAGENT",
     description: "画像圧縮、HEIC・WebP変換、リサイズ、トリミング、SVG変換、PDF結合・分割を無料で一括処理。ファイルをアップロードせず、ブラウザ内で安全に使えます。",
@@ -136,7 +163,130 @@ function replaceElement(source, pattern, replacement, file) {
   return source.replace(pattern, replacement);
 }
 
+function legalFooter(file) {
+  const ja = file.startsWith("ja/");
+  return ja
+    ? `<footer><div><a class="brand footer-brand" href="/ja/">${brandMark}<span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/about/">このサイトについて</a><a href="/ja/specifications/">対応環境</a><a href="/ja/local-processing/">ローカル処理</a><a href="/ja/faq/">FAQ</a><a href="/ja/changelog/">更新履歴</a><a href="/ja/status/">障害・既知の問題</a><a href="/ja/feedback/">フィードバック</a><a href="/ja/examples/">事例</a><a href="/ja/accessibility/">アクセシビリティ</a><a href="/ja/terms/">利用規約</a><a href="/ja/privacy/">プライバシーポリシー</a><a href="/ja/contact/">お問い合わせ</a></div><small>© 2026 SHIAGENT</small></footer>`
+    : `<footer><div><a class="brand footer-brand" href="/">${brandMark}<span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/faq/">FAQ</a><a href="/changelog/">Changelog</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div><small>© 2026 SHIAGENT</small></footer>`;
+}
+
+const toolExamples = {
+  "image-compressor": ["例：Web掲載前のPNG・JPEG・WebPをAutoでまとめて圧縮し、前後容量を確認してZIP保存します。", "Example: compress PNG, JPEG and WebP files in Auto mode, compare sizes, then save a ZIP."],
+  "image-converter": ["例：iPhoneのHEIC写真を追加し、JPEGを選んでWeb掲載用ファイルへ一括変換します。", "Example: add iPhone HEIC photos and batch-convert them to JPEG for the web."],
+  "image-resizer": ["例：商品画像を長辺1200px・縦横比維持で揃え、WebPとして保存します。", "Example: fit product images within 1200 px, preserve aspect ratio and export WebP."],
+  "image-cropper": ["例：白背景の商品画像をAuto Trimし、対象物の周囲に同じ余白を残します。", "Example: Auto Trim white product photos and keep consistent space around each object."],
+  "canvas-padding": ["例：複数の素材を512×512の透明Canvas中央へ配置し、同じ余白へ揃えます。", "Example: center multiple assets on transparent 512×512 canvases with equal padding."],
+  "image-joiner": ["例：2枚の比較画像を横並びにし、間隔16px・白背景の1枚画像として保存します。", "Example: place two comparison images side by side with a 16 px white gap."],
+  "metadata-cleaner": ["例：公開前のJPEGからEXIF・GPSを削除し、画素を再圧縮せず保存します。", "Example: remove EXIF and GPS from JPEGs before publishing without re-encoding pixels."],
+  "image-to-svg": ["例：白背景の線画PNGを1024サイズでトレースし、編集可能なSVGとして保存します。", "Example: trace a white-background line drawing at size 1024 and save editable SVG."],
+  "svg-to-image": ["例：SVGロゴを幅2048px・透明背景のPNGへまとめて変換します。", "Example: batch-render SVG logos as 2048 px transparent PNG files."],
+  "color-tool": ["例：線画の白背景を透明化し、黒線はそのままPNGで保存します。", "Example: make a line drawing's white background transparent while keeping black lines."],
+  "favicon-generator": ["例：正方形ロゴ1枚からfavicon.ico、Apple Touch Icon、PWA一式をZIP生成します。", "Example: create favicon.ico, Apple Touch Icon and a PWA icon set from one square logo."],
+  "image-splitter": ["例：4つのスタンプが並ぶ1枚画像を余白で検出し、4枚のPNGへ分割します。", "Example: detect whitespace in a four-sticker sheet and split it into four PNG files."],
+  "background-remover": ["例：単色背景の商品画像を透明PNGへ変換し、境界の柔らかさを調整します。", "Example: remove a solid product-photo background and tune the edge softness."],
+  "batch-rename": ["例：20枚の画像をworksheet-001からの連番へ変更し、ZIPで保存します。", "Example: rename 20 images from worksheet-001 onward and save them as a ZIP."],
+  "svg-white-fill": ["例：線画SVGの閉領域へ白い背面パスを追加し、重ねたときの透けを防ぎます。", "Example: add white backing paths to closed SVG regions so artwork below does not show through."],
+  "svg-white-fill/editor": ["例：自動白塗りで漏れた隙間を補助線で閉じ、不要な領域を除外して保存します。", "Example: close a missed gap, exclude an unwanted region and save the corrected SVG."],
+  "svg-cleaner": ["例：編集ソフトから書き出したSVGのメタデータと不要属性を除去して軽量化します。", "Example: remove editor metadata and redundant attributes from exported SVG files."],
+  "pdf/merge": ["例：3つのPDFを追加し、サムネイルで順番を確認して1つに結合します。", "Example: add three PDFs, verify thumbnail order and merge them into one file."],
+  "pdf/split": ["例：50ページのPDFから1-5、12、30-35ページを指定して別PDFへ抽出します。", "Example: extract pages 1–5, 12 and 30–35 from a 50-page PDF."],
+  "pdf/reorder": ["例：スキャンPDFのページをドラッグで正しい順番へ並べ直して保存します。", "Example: drag scanned PDF pages into the correct order and save a new file."],
+  "pdf/interleave": ["例：奇数面と偶数面を別々にスキャンした2つのPDFを交互に結合します。", "Example: interleave separate front-side and back-side scan PDFs."],
+  "pdf/rotate": ["例：横向き・逆さまのページを自動判定し、必要なページだけ手動で微調整します。", "Example: auto-detect sideways pages, then manually correct only uncertain pages."],
+  "pdf/delete-pages": ["例：末尾の空白ページと不要な表紙を削除し、残りを1つのPDFで保存します。", "Example: remove a blank final page and unwanted cover, then save the remaining PDF."],
+  "pdf/images-to-pdf": ["例：12枚のJPEGを名前順に並べ、1つのPDF資料へまとめます。", "Example: arrange 12 JPEGs by name and bind them into one PDF."],
+  "pdf/sort-by-page-number": ["例：複数のスキャンPDFから外周のページ番号を検出し、番号順へ復元します。", "Example: detect edge page numbers across scanned PDFs and restore document order."],
+  "workflows/web-image-optimizer": ["例：スマホ写真をブログ用プリセットで縮小・WebP化・圧縮・連番化します。", "Example: resize phone photos with the Blog preset, convert to WebP, compress and number them."],
+  "workflows/line-art-to-svg": ["例：スキャン線画をトリミングし、SVG化・白塗り・クリーニングまで一括実行します。", "Example: trim scanned line art, vectorize it, add white fill and clean the SVG."],
+  "workflows/ai-asset-prep": ["例：AI生成画像20枚を正方形へ揃え、連番名とWeb向け容量へ一括調整します。", "Example: normalize 20 generated images to square canvases, numbered names and web-ready sizes."],
+  "workflows/asset-normalizer": ["例：寸法の違う素材を同じCanvas・占有率・背景・ファイル名へ統一します。", "Example: standardize mixed assets to one canvas, occupancy, background and naming rule."],
+  "workflows/custom": ["例：Auto Trim→リサイズ→WebP変換→連番化を自分用ワークフローとして保存します。", "Example: save Auto Trim → Resize → WebP → Rename as a reusable workflow."],
+};
+
+function installToolExample(source, contract, ja) {
+  source = source.replace(/<section class="content-section tool-example" data-site-example>[\s\S]*?<\/section>/g, "");
+  if (!contract || contract.status !== "active") return source;
+  const example = toolExamples[contract.route]?.[ja ? 0 : 1];
+  if (!example) return source;
+  const section = `<section class="content-section tool-example" data-site-example><div><div class="section-kicker">${ja ? "使用例" : "Example"}</div><h2>${ja ? "たとえば、こんな処理。" : "One practical use."}</h2><p>${example}</p></div></section>`;
+  return source.replace("</main>", `${section}</main>`);
+}
+
 const sitemapPages = [];
+const catalogPages = new Map();
+
+function routeFromFile(file) {
+  return file.replace(/^ja\//, "").replace(/\/?index\.html$/, "").replace(/\/$/, "");
+}
+
+function textContent(value = "") {
+  return value.replace(/<[^>]*>/g, " ").replaceAll("&amp;", "&").replaceAll("&nbsp;", " ").replace(/\s+/g, " ").trim();
+}
+
+function attribute(tag, name) {
+  return tag.match(new RegExp(`\\b${name}="([^"]*)"`, "i"))?.[1] ?? null;
+}
+
+function selectorForId(source, ids) {
+  return ids.find(id => new RegExp(`\\bid="${id}"`).test(source)) ? `#${ids.find(id => new RegExp(`\\bid="${id}"`).test(source))}` : null;
+}
+
+function discoverControls(source) {
+  return [...source.matchAll(/<(input|select|textarea)\b[^>]*\bid="([^"]+)"[^>]*>(?:[\s\S]*?<\/select>)?/gi)]
+    .map(match => {
+      const [tag, element, id] = match;
+      const type = element.toLowerCase() === "input" ? (attribute(tag, "type") || "text") : element.toLowerCase();
+      if (type === "file") return null;
+      const control = { selector: `#${id}`, element: element.toLowerCase(), type };
+      for (const key of ["min", "max", "step", "value"]) {
+        const value = attribute(tag, key);
+        if (value !== null) control[key] = value;
+      }
+      if (element.toLowerCase() === "select") {
+        control.values = [...tag.matchAll(/<option\b[^>]*value="([^"]*)"/gi)].map(match => match[1]);
+      }
+      return control;
+    })
+    .filter(Boolean);
+}
+
+function pageContract(file, source) {
+  const route = routeFromFile(file);
+  if (excludedRoutes.has(route)) return null;
+  const override = routeOverrides[route] || {};
+  const pdf = pdfContract(route) || {};
+  const fileTag = source.match(/<input\b[^>]*type="file"[^>]*>/i)?.[0]
+    || source.match(/<input\b[^>]*id="fileInput"[^>]*>/i)?.[0];
+  const fileId = fileTag ? attribute(fileTag, "id") : null;
+  const input = override.input !== undefined ? override.input : (pdf.input || (fileId ? `#${fileId}` : null));
+  const action = override.action !== undefined ? override.action : (pdf.action || selectorForId(source, primaryActionIds));
+  const download = override.download !== undefined ? override.download : (pdf.download || selectorForId(source, ["downloadAllButton", "downloadButton"]));
+  const result = override.result !== undefined ? override.result : (pdf.result || selectorForId(source, ["resultsPanel", "resultPanel", "sourcePanel"]));
+  if (!input && !action && route !== "line-art-generator") return null;
+  return {
+    id: route.replaceAll("/", "-"),
+    route,
+    status: override.status || "active",
+    category: inferCategory(route),
+    localProcessing: true,
+    accepts: (override.accept || pdf.accept || attribute(fileTag || "", "accept") || "").split(",").map(value => value.trim()).filter(Boolean),
+    outputs: inferOutput(route),
+    automation: {
+      input,
+      action,
+      result,
+      download,
+      controls: discoverControls(source),
+      events: {
+        ready: "shiagent:ready",
+        state: "shiagent:statechange",
+        outputs: "shiagent:outputs",
+        tray: "shiagent:traychange",
+        error: "shiagent:error",
+      },
+    },
+  };
+}
 
 for (const file of await htmlFiles(root)) {
   const url = new URL(file, root);
@@ -193,6 +343,69 @@ for (const file of await htmlFiles(root)) {
   source = source.replace(/(<meta name="description" content="[^"]*">)/, `$1${social}`);
 
   source = source.replace(/<script type="application\/ld\+json" data-seo="website">[\s\S]*?<\/script>/g, "");
+  source = source.replace(/<script type="application\/ld\+json" data-seo="software-application">[\s\S]*?<\/script>/g, "");
+  source = source.replace(/<link rel="manifest" href="\/site\.webmanifest">\s*/g, "");
+  source = source.replace(/<link rel="alternate" type="application\/json" href="\/ai\/tools\.json"[^>]*>\s*/g, "");
+  source = source.replace(/<link rel="help" href="\/llms\.txt">\s*/g, "");
+  source = source.replace(/<link rel="stylesheet" href="\/assets\/css\/information\.css">\s*/g, "");
+  source = source.replace(/<script type="module" src="\/assets\/js\/agent-bridge\.js"[^>]*><\/script>\s*/g, "");
+  source = source.replace(/<script type="module" src="\/assets\/js\/site-observability\.js"[^>]*><\/script>\s*/g, "");
+  source = source.replace(/<meta name="(?:google-site-verification|msvalidate\.01)"[^>]*>\s*/g, "");
+  source = source.replace(/<link [^>]*data-brand-icon[^>]*>\s*/g, "");
+  const machineLinks = [
+    '<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" data-brand-icon>',
+    '<link rel="icon" href="/assets/brand/favicon-32.png" sizes="32x32" type="image/png" data-brand-icon>',
+    '<link rel="icon" href="/assets/brand/favicon-16.png" sizes="16x16" type="image/png" data-brand-icon>',
+    '<link rel="shortcut icon" href="/assets/brand/favicon.ico" data-brand-icon>',
+    '<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png" sizes="180x180" data-brand-icon>',
+    '<link rel="manifest" href="/site.webmanifest">',
+    '<link rel="alternate" type="application/json" href="/ai/tools.json" title="SHIAGENT tool catalog">',
+    '<link rel="help" href="/llms.txt">',
+    '<link rel="stylesheet" href="/assets/css/information.css">',
+    '<script type="module" src="/assets/js/site-observability.js"></script>',
+    '<script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script>',
+  ].join("");
+  source = source.replace("</head>", `${machineLinks}</head>`);
+  source = source.replace(
+    /(<header class="site-header">[\s\S]*?<a class="brand"[^>]*>)(?!<img class="brand-mark")/,
+    `$1${brandMark}`,
+  );
+
+  if (["index.html", "ja/index.html"].includes(file)) {
+    const verification = [
+      googleVerification ? `<meta name="google-site-verification" content="${googleVerification}">` : "",
+      bingVerification ? `<meta name="msvalidate.01" content="${bingVerification}">` : "",
+    ].join("");
+    source = source.replace("</head>", `${verification}</head>`);
+  }
+
+  const contract = pageContract(file, source);
+  source = installToolExample(source, contract, file.startsWith("ja/"));
+  if (contract) {
+    const locale = file.startsWith("ja/") ? "ja" : "en";
+    const heading = textContent(source.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1]) || textContent(title.replace(/\s*[|—].*$/, ""));
+    const softwareData = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: heading,
+      ...(locale === "ja" ? { alternateName: contract.route.split("/").at(-1).split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ") } : {}),
+      description,
+      url: canonical,
+      applicationCategory: contract.category,
+      operatingSystem: "Any",
+      browserRequirements: "Requires a modern web browser with JavaScript enabled",
+      inLanguage: locale,
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: ["On-device processing", "No file upload", "Browser-based processing"],
+    });
+    source = source.replace("</head>", `<script type="application/ld+json" data-seo="software-application">${softwareData}</script></head>`);
+    const entry = catalogPages.get(contract.route) || { ...contract, name: {}, description: {}, paths: {} };
+    entry.name[locale] = heading;
+    entry.description[locale] = description;
+    entry.paths[locale] = new URL(canonical).pathname;
+    catalogPages.set(contract.route, entry);
+  }
   if (file === "index.html") {
     const websiteData = JSON.stringify({
       "@context": "https://schema.org",
@@ -215,6 +428,18 @@ for (const file of await htmlFiles(root)) {
       .replace('<a href="#"><span>IMAGE</span><h3>Image Resizer</h3>', '<a href="/image-resizer/"><span>IMAGE</span><h3>Image Resizer</h3>')
       .replace('<a href="#"><span>IMAGE</span><h3>Line Art Cleaner</h3><p>Remove dust and gray from line art</p>', '<a href="/color-tool/"><span>IMAGE</span><h3>Color &amp; Monochrome</h3><p>Recolor or simplify line art</p>')
       .replace('<a href="#">Privacy</a>', '<a href="/#local-first">Privacy</a>');
+  }
+
+  if (/<main\b(?![^>]*\bid=)/i.test(source)) source = source.replace(/<main\b/i, '<main id="main-content"');
+  if (!/class="skip-link"/.test(source)) {
+    source = source.replace(/<body([^>]*)>/i, `<body$1><a class="skip-link" href="#main-content">${file.startsWith("ja/") ? "本文へ移動" : "Skip to content"}</a>`);
+  }
+
+  const footer = legalFooter(file);
+  if (/<footer(?:\s[^>]*)?>[\s\S]*?<\/footer>/.test(source)) {
+    source = source.replace(/<footer(?:\s[^>]*)?>[\s\S]*?<\/footer>/, footer);
+  } else {
+    source = source.replace("</body>", `${footer}</body>`);
   }
 
   await writeFile(url, source);
@@ -253,8 +478,80 @@ await writeFile(new URL("robots.txt", root), [
   "Disallow: /test/",
   "Disallow: /tmp/",
   "",
+  "User-agent: OAI-SearchBot",
+  "Allow: /",
+  "",
+  "User-agent: GPTBot",
+  "Allow: /",
+  "",
   `Sitemap: ${siteOrigin}/sitemap.xml`,
   "",
 ].join("\n"));
 
-console.log(`SEO metadata refreshed and sitemap generated for ${sitemapPages.length} pages.`);
+const tools = [...catalogPages.values()].sort((a, b) => a.id.localeCompare(b.id));
+await writeFile(new URL("ai/tools.json", root), `${JSON.stringify({
+  schema: `${siteOrigin}/ai/tools.schema.json`,
+  version: "1.0",
+  site: { name: "SHIAGENT", origin: siteOrigin, privacy: "Files are processed on the user's device and are not uploaded." },
+  browserApi: { global: "window.SHIAGENT", documentation: `${siteOrigin}/llms-full.txt` },
+  tools,
+}, null, 2)}\n`);
+
+await writeFile(new URL("llms.txt", root), [
+  "# SHIAGENT",
+  "",
+  "> Private, browser-based tools for images, SVG, and PDF. Files are processed on the user's device and are not uploaded.",
+  "",
+  "## Machine-readable resources",
+  `- [Tool catalog](${siteOrigin}/ai/tools.json): Routes, accepted formats, outputs, stable selectors, and browser events.`,
+  `- [Automation guide](${siteOrigin}/llms-full.txt): Browser-agent usage and cross-tool workflow contract.`,
+  `- [Catalog schema](${siteOrigin}/ai/tools.schema.json): JSON Schema for the tool catalog.`,
+  "",
+  "## Important constraints",
+  "- Tools run client-side and require a JavaScript-capable browser.",
+  "- Local files must be selected or attached in the browser context; there is no server upload API.",
+  "- Finished files can be passed between compatible tools through the persistent Work Tray.",
+  "",
+].join("\n"));
+
+await writeFile(new URL("llms-full.txt", root), [
+  "# SHIAGENT browser-agent guide",
+  "",
+  "SHIAGENT is a local-first static web application. Do not look for a remote conversion API: operate the browser page so the user's files stay on their device.",
+  "",
+  "## Discovery",
+  `Read ${siteOrigin}/ai/tools.json and choose an active tool whose accepts and outputs match the job. Open paths.ja or paths.en.`,
+  "",
+  "## Stable browser contract",
+  "Every page loads window.SHIAGENT. Await window.SHIAGENT.ready before automation.",
+  "- getCatalog(): returns the full tool catalog.",
+  "- getContract(): returns the current tool contract.",
+  "- getState(): returns input count, busy state, visible result state, status text, and the latest event.",
+  "- loadFiles(File[]): attaches browser File objects and emits the same change event as human selection.",
+  "- setValue(cssSelector, value): updates an option and emits input/change events.",
+  "- run(): activates the primary processing action.",
+  "- download(): activates the primary download action.",
+  "- waitFor(eventName, timeoutMs): waits for a documented event.",
+  "- navigate(toolId, {tray:true}): moves to another tool and imports compatible Work Tray files.",
+  "",
+  "## Recommended sequence",
+  "1. Open the selected tool path and await SHIAGENT.ready.",
+  "2. Attach files with the browser's file-upload capability or SHIAGENT.loadFiles when File objects are already available in page context.",
+  "3. Set only controls listed in automation.controls.",
+  "4. Call SHIAGENT.run(), monitor getState(), and wait for shiagent:outputs, shiagent:traychange, or a visible result.",
+  "5. Validate output count and statusText before downloading or navigating onward with tray:true.",
+  "6. Never claim success solely because a button was clicked.",
+  "",
+  "## Events",
+  "shiagent:ready — catalog and current contract are available.",
+  "shiagent:statechange — relevant DOM state changed.",
+  "shiagent:outputs — a tool produced in-memory output files.",
+  "shiagent:traychange — files were persisted to the cross-tool Work Tray; detail contains safe metadata, not file contents.",
+  "shiagent:error — a tool reported an automation-visible failure.",
+  "",
+  "## Privacy",
+  "Do not transmit input or output files to another service unless the user explicitly asks. Prefer the Work Tray for SHIAGENT-to-SHIAGENT handoffs.",
+  "",
+].join("\n"));
+
+console.log(`SEO metadata refreshed for ${sitemapPages.length} pages; published ${tools.length} AI tool contracts.`);

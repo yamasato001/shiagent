@@ -7,6 +7,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/" />
   </url>
   <url>
+    <loc>https://shiagent.com/about/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/about/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/about/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/accessibility/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/accessibility/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/accessibility/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/accessibility/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/background-remover/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/background-remover/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/background-remover/" />
@@ -25,16 +37,46 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/canvas-padding/" />
   </url>
   <url>
+    <loc>https://shiagent.com/changelog/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/changelog/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/changelog/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/changelog/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/color-tool/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/color-tool/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/color-tool/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/color-tool/" />
   </url>
   <url>
+    <loc>https://shiagent.com/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/contact/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/contact/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/contact/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/examples/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/examples/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/examples/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/examples/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/faq/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/faq/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/faq/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/faq/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/favicon-generator/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/favicon-generator/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/feedback/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/feedback/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/feedback/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/feedback/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-compressor/</loc>
@@ -85,6 +127,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/about/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/about/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/about/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/accessibility/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/accessibility/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/accessibility/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/accessibility/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/background-remover/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/background-remover/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/background-remover/" />
@@ -103,16 +157,46 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/canvas-padding/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/changelog/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/changelog/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/changelog/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/changelog/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/color-tool/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/color-tool/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/color-tool/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/color-tool/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/contact/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/contact/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/contact/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/examples/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/examples/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/examples/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/examples/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/faq/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/faq/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/faq/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/faq/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/favicon-generator/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/favicon-generator/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/feedback/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/feedback/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/feedback/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/feedback/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-compressor/</loc>
@@ -155,6 +239,12 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-to-svg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-to-svg/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-to-svg/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/local-processing/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/local-processing/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/local-processing/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/local-processing/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/metadata-cleaner/</loc>
@@ -217,6 +307,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/split/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/privacy/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/privacy/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/specifications/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/specifications/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/specifications/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/specifications/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/status/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/status/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/status/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/status/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/svg-cleaner/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-cleaner/" />
@@ -239,6 +347,12 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-white-fill/editor/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/terms/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/terms/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/terms/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/terms/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/ai-asset-prep/</loc>
@@ -269,6 +383,12 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/web-image-optimizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/web-image-optimizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/web-image-optimizer/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/local-processing/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/local-processing/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/local-processing/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/local-processing/" />
   </url>
   <url>
     <loc>https://shiagent.com/metadata-cleaner/</loc>
@@ -331,6 +451,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/split/" />
   </url>
   <url>
+    <loc>https://shiagent.com/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/privacy/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/privacy/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/specifications/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/specifications/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/specifications/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/specifications/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/status/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/status/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/status/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/status/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/svg-cleaner/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-cleaner/" />
@@ -353,6 +491,12 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-white-fill/editor/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/terms/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/terms/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/terms/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/terms/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/ai-asset-prep/</loc>

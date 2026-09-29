@@ -1,0 +1,13 @@
+# SHIAGENT
+
+> Private, browser-based tools for images, SVG, and PDF. Files are processed on the user's device and are not uploaded.
+
+## Machine-readable resources
+- [Tool catalog](https://shiagent.com/ai/tools.json): Routes, accepted formats, outputs, stable selectors, and browser events.
+- [Automation guide](https://shiagent.com/llms-full.txt): Browser-agent usage and cross-tool workflow contract.
+- [Catalog schema](https://shiagent.com/ai/tools.schema.json): JSON Schema for the tool catalog.
+
+## Important constraints
+- Tools run client-side and require a JavaScript-capable browser.
+- Local files must be selected or attached in the browser context; there is no server upload API.
+- Finished files can be passed between compatible tools through the persistent Work Tray.

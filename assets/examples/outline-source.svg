@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" version="1.1" preserveAspectRatio="xMidYMid meet">
+  <metadata>SHIAGENT deterministic cleanup fixture</metadata>
+  <!-- This comment and redundant precision are removed by the cleaner. -->
+  <rect x="56.0000" y="44.0000" width="208.0000" height="152.0000" rx="28.0000" fill="none" stroke="#111111" stroke-width="12.0000"/>
+  <circle cx="124.0000" cy="116.0000" r="22.0000" fill="none" stroke="#111111" stroke-width="9.0000"/>
+  <circle cx="200.0000" cy="116.0000" r="22.0000" fill="none" stroke="#111111" stroke-width="9.0000"/>
+</svg>

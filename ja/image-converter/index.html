@@ -12,18 +12,16 @@
   <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
   <script type="module" src="/assets/js/image-converter.js"></script>
   <script type="module" src="/assets/js/workflow-handoff.js"></script>
-</head>
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" data-brand-icon><link rel="icon" href="/assets/brand/favicon-32.png" sizes="32x32" type="image/png" data-brand-icon><link rel="icon" href="/assets/brand/favicon-16.png" sizes="16x16" type="image/png" data-brand-icon><link rel="shortcut icon" href="/assets/brand/favicon.ico" data-brand-icon><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png" sizes="180x180" data-brand-icon><link rel="manifest" href="/site.webmanifest"><link rel="alternate" type="application/json" href="/ai/tools.json" title="SHIAGENT tool catalog"><link rel="help" href="/llms.txt"><link rel="stylesheet" href="/assets/css/information.css"><script type="module" src="/assets/js/site-observability.js"></script><script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script><script type="application/ld+json" data-seo="software-application">{"@context":"https://schema.org","@type":"WebApplication","name":"画像形式変換","alternateName":"Image Converter","description":"iPhoneのHEIC・HEIFをJPGへ変換。PNG、JPEG、WebP、AVIF、GIF、BMP、TIFFも追加でき、選択したPNG・JPEG・WebP形式へ無料で一括変換できます。","url":"https://shiagent.com/ja/image-converter/","applicationCategory":"image","operatingSystem":"Any","browserRequirements":"Requires a modern web browser with JavaScript enabled","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["On-device processing","No file upload","Browser-based processing"]}</script></head>
 <body>
   <a class="skip-link" href="#tool">ツールへ移動</a>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/image-converter/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/ja/" aria-label="SHIAGENT ホーム"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><strong>SHIAGENT</strong><span>シアゲント</span></a><nav aria-label="メインナビゲーション"><a href="/ja/#tools">ツール</a><a href="/ja/?tab=workflows#tools">ワークフロー</a></nav><div class="language" aria-label="表示言語"><a href="/image-converter/" hreflang="en" lang="en">EN</a><span aria-current="page">日本語</span></div></div></header>
 
-  <main>
+  <main id="main-content">
     <section class="tool-hero" id="tool">
       <div class="breadcrumb"><a href="/ja/">SHIAGENT</a><span>/</span><a href="/ja/#tools">画像ツール</a><span>/</span><span>画像形式変換</span></div>
-      <div class="eyebrow"><span>IMAGE TOOL</span><span class="on-device">ON DEVICE</span></div>
       <h1>画像形式変換</h1>
       <p class="lead">iPhoneのHEIC・HEIFやPNG・JPEG・WebPなどをまとめて追加。<br>すべての画像を、選んだPNG・JPEG（JPG）・WebP形式へ一括変換します。</p>
-      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>HEICを含め、画像はブラウザの外に出ません。</span></div>
 
       <div class="compressor-card converter-card">
         <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-describedby="dropHelp">
@@ -59,6 +57,7 @@
           <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">すべてダウンロード <small>.zip</small></button><p>各画像も個別に保存できます</p></div>
         </section>
       </div>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>HEICを含め、画像はブラウザの外に出ません。</span></div>
     </section>
 
     <section class="content-section" id="workflow">
@@ -69,9 +68,9 @@
     <section class="content-section split-section" id="formats"><div><div class="section-kicker">SUPPORTED INPUTS</div><h2>スマホから、制作データまで。</h2></div><div><p><strong>入力:</strong> PNG、JPEG、WebP、HEIC／HEIF、AVIF、GIF、BMP、TIFF</p><p><strong>出力:</strong> PNG、JPEG、WebP</p><p class="note">複数ページTIFFは最大サイズのページを、アニメーション画像は先頭フレームを静止画として変換します。AVIFの読み込み可否はブラウザのデコーダーに依存します。</p></div></section>
 
     <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>よくある質問</h2><details><summary>iPhoneのHEICを直接追加できますか？<span>＋</span></summary><p>はい。HEIC／HEIFをファイル選択またはドラッグ＆ドロップで追加し、PNG、JPEG、WebPへ変換できます。</p></details><details><summary>画像はアップロードされますか？<span>＋</span></summary><p>されません。HEICとTIFFの専用デコードを含め、読み込み・変換・ZIP作成はブラウザ内で行います。</p></details><details><summary>透明度はどうなりますか？<span>＋</span></summary><p>PNGとWebPは透明度を維持します。透明部分を含む画像をJPEGへ変換した場合は白背景になります。</p></details></section>
-  </main>
+  <section class="content-section tool-example" data-site-example><div><div class="section-kicker">使用例</div><h2>たとえば、こんな処理。</h2><p>例：iPhoneのHEIC写真を追加し、JPEGを選んでWeb掲載用ファイルへ一括変換します。</p></div></section></main>
 
-  <footer><div><a class="brand footer-brand" href="/ja/"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/image-compressor/">画像圧縮</a><a href="/ja/image-splitter/">画像分割</a><a href="#workflow">使い方</a></div><small>© 2026 SHIAGENT</small></footer>
+  <footer><div><a class="brand footer-brand" href="/ja/"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/about/">このサイトについて</a><a href="/ja/specifications/">対応環境</a><a href="/ja/local-processing/">ローカル処理</a><a href="/ja/faq/">FAQ</a><a href="/ja/changelog/">更新履歴</a><a href="/ja/status/">障害・既知の問題</a><a href="/ja/feedback/">フィードバック</a><a href="/ja/examples/">事例</a><a href="/ja/accessibility/">アクセシビリティ</a><a href="/ja/terms/">利用規約</a><a href="/ja/privacy/">プライバシーポリシー</a><a href="/ja/contact/">お問い合わせ</a></div><small>© 2026 SHIAGENT</small></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

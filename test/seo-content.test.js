@@ -55,7 +55,10 @@ test("production discovery files expose only canonical indexable pages", async (
   assert.ok(sitemap.includes('hreflang="ja" href="https://shiagent.com/ja/'));
   assert.ok(sitemap.includes('hreflang="en" href="https://shiagent.com/'));
   assert.ok(!sitemap.includes("line-art-generator"), "pending tools must stay out of the sitemap");
-  assert.equal(new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url)).size, 64);
+  const indexablePageCount = (await findPages(root)).length - 2; // bilingual pending line-art pages are noindex
+  assert.equal(new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url)).size, indexablePageCount);
+  assert.ok(sitemap.includes("https://shiagent.com/ja/terms/"));
+  assert.ok(sitemap.includes("https://shiagent.com/ja/privacy/"));
 
   assert.match(robots, /^User-agent: \*$/m);
   assert.match(robots, /^Sitemap: https:\/\/shiagent\.com\/sitemap\.xml$/m);

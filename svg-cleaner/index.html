@@ -12,18 +12,16 @@
   <link rel="stylesheet" href="/assets/css/site.css"><link rel="stylesheet" href="/assets/css/header.css">
   <script type="module" src="/assets/js/svg-cleaner.js"></script>
   <script type="module" src="/assets/js/workflow-handoff.js"></script>
-</head>
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" data-brand-icon><link rel="icon" href="/assets/brand/favicon-32.png" sizes="32x32" type="image/png" data-brand-icon><link rel="icon" href="/assets/brand/favicon-16.png" sizes="16x16" type="image/png" data-brand-icon><link rel="shortcut icon" href="/assets/brand/favicon.ico" data-brand-icon><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png" sizes="180x180" data-brand-icon><link rel="manifest" href="/site.webmanifest"><link rel="alternate" type="application/json" href="/ai/tools.json" title="SHIAGENT tool catalog"><link rel="help" href="/llms.txt"><link rel="stylesheet" href="/assets/css/information.css"><script type="module" src="/assets/js/site-observability.js"></script><script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script><script type="application/ld+json" data-seo="software-application">{"@context":"https://schema.org","@type":"WebApplication","name":"SVG Cleaner","description":"Clean up SVG files in your browser: remove metadata, comments, Inkscape and editor data, excess decimals and whitespace without changing how they look. No uploads.","url":"https://shiagent.com/svg-cleaner/","applicationCategory":"vector","operatingSystem":"Any","browserRequirements":"Requires a modern web browser with JavaScript enabled","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["On-device processing","No file upload","Browser-based processing"]}</script></head>
 <body>
   <a class="skip-link" href="#tool">Skip to tool</a>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/svg-cleaner/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/svg-cleaner/" hreflang="ja" lang="ja">日本語</a></div></div></header>
 
-  <main>
+  <main id="main-content">
     <section class="tool-hero" id="tool">
       <div class="breadcrumb"><a href="/">SHIAGENT</a><span>/</span><a href="/#tools">Vector tools</a><span>/</span><span>SVG Cleaner</span></div>
-      <div class="eyebrow"><span>VECTOR TOOL</span><span class="on-device">ON DEVICE</span></div>
       <h1>SVG Cleaner</h1>
       <p class="lead">Same look, cleaner SVG code.<br>Remove metadata and editor-specific data to make files lighter.</p>
-      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your SVGs stay in your browser.</span></div>
 
       <div class="compressor-card">
         <div class="drop-zone" id="dropZone" tabindex="0" role="button">
@@ -54,13 +52,14 @@
           <div class="download-row"><button class="button button-accent" id="downloadAllButton" type="button">Download all <small>.zip</small></button><p>Results are also added to the work tray automatically</p></div>
         </section>
       </div>
+      <div class="privacy-line"><span class="privacy-icon" aria-hidden="true">⌁</span><strong>Runs on your device</strong><span>Your SVGs stay in your browser.</span></div>
     </section>
 
     <section class="content-section" id="workflow"><div class="section-kicker">HOW IT WORKS</div><h2>Parse. Strip. Compare and save.</h2><div class="steps"><article><span>01</span><h3>Parse the SVG</h3><p>The file is parsed safely as XML, separating drawing elements from extra information.</p></article><article><span>02</span><h3>Clean it up</h3><p>Metadata and editor attributes are removed, and numbers and whitespace are compacted.</p></article><article><span>03</span><h3>Compare</h3><p>Check the look and size before and after, then save individually or as a ZIP.</p></article></div></section>
     <section class="content-section split-section" id="about"><div><div class="section-kicker">SAFE CLEANUP</div><h2>Keep everything needed to draw.</h2></div><div><p>Only the safe subset of common SVG optimizations is applied: the ones unlikely to change how the file looks.</p><p class="note">Before and after previews are shown side by side.</p></div></section>
     <section class="content-section faq-section"><div class="section-kicker">FAQ</div><h2>Common questions</h2><details><summary>Are my files uploaded?<span>＋</span></summary><p>No. SVG parsing and cleanup happen entirely inside your browser.</p></details><details><summary>Will my SVG look different?<span>＋</span></summary><p>Path shapes, colors, stroke widths, viewBox and everything else needed for drawing are kept. You can compare before and after previews before saving.</p></details><details><summary>What is removed?<span>＋</span></summary><p>Metadata, comments, attributes specific to editors such as Inkscape, excess decimal precision and whitespace, and unsafe attributes such as scripts.</p></details><details><summary>Can I still open the file in my editor?<span>＋</span></summary><p>Yes. However, editor-specific information such as layer names may be lost, so keep your original file for further editing.</p></details></section>
-  </main>
-  <footer><div><a class="brand footer-brand" href="/"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/image-to-svg/">Image to SVG</a><a href="/svg-white-fill/">Automatic SVG White Fill</a></div><small>© 2026 SHIAGENT</small></footer>
+  <section class="content-section tool-example" data-site-example><div><div class="section-kicker">Example</div><h2>One practical use.</h2><p>Example: remove editor metadata and redundant attributes from exported SVG files.</p></div></section></main>
+  <footer><div><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/faq/">FAQ</a><a href="/changelog/">Changelog</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div><small>© 2026 SHIAGENT</small></footer>
   <div class="toast" id="toast"></div>
 </body>
 </html>
