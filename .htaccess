@@ -35,7 +35,9 @@ RedirectMatch 404 ^/(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|shiagent
   Header always set Cross-Origin-Opener-Policy "same-origin"
   Header always set Cross-Origin-Resource-Policy "same-origin"
   Header set Cache-Control "public, max-age=0, must-revalidate"
-  <If "%{REQUEST_URI} =~ m#^/assets/#">
+  # Only brand images are cached. CSS, JS and WASM are not fingerprinted, so they must be
+  # revalidated on every load or a deploy could mix new and stale files.
+  <If "%{REQUEST_URI} =~ m#^/assets/brand/#">
     Header set Cache-Control "public, max-age=86400"
   </If>
 </IfModule>

@@ -13,8 +13,16 @@ test(".htaccess sends the same headers as _headers", () => {
     const value = rest.join(":").trim();
     assert.ok(htaccess.includes(`Header always set ${name} "${value}"`) || htaccess.includes(`Header set ${name} "${value}"`), `${name} missing or different in .htaccess`);
   }
-  assert.match(headers, /\/assets\/\*\n\s*Cache-Control: public, max-age=86400/);
-  assert.match(htaccess, /m#\^\/assets\/#">\n\s*Header set Cache-Control "public, max-age=86400"/);
+});
+
+test("only brand images are cached without revalidation", () => {
+  // CSS, JS and WASM are not fingerprinted: a long cache would let a deploy mix
+  // new and stale files (and Xserver's front cache would keep serving old ones).
+  assert.match(headers, /\/assets\/brand\/\*\n\s*Cache-Control: public, max-age=86400/);
+  assert.doesNotMatch(headers, /^\/assets\/\*$/m);
+  assert.match(htaccess, /m#\^\/assets\/brand\/#">\n\s*Header set Cache-Control "public, max-age=86400"/);
+  assert.doesNotMatch(htaccess, /m#\^\/assets\/#"/);
+  assert.match(htaccess, /Header set Cache-Control "public, max-age=0, must-revalidate"/);
 });
 
 test(".htaccess hides repository and development paths", () => {

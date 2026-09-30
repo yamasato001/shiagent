@@ -9,5 +9,7 @@
   Cross-Origin-Resource-Policy: same-origin
   Cache-Control: public, max-age=0, must-revalidate
 
-/assets/*
+# Only brand images are cached. CSS, JS and WASM are not fingerprinted, so they must be
+# revalidated on every load or a deploy could mix new and stale files.
+/assets/brand/*
   Cache-Control: public, max-age=86400
