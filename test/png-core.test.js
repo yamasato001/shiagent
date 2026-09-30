@@ -30,7 +30,7 @@ test("line art images are detected from white backgrounds and dark edges", () =>
   assert.equal(analysis.preset, "lineart");
 });
 
-test("flat illustrations use the smallest palette preset", () => {
+test("flat illustrations use the quality-focused illustration preset", () => {
   const width = 20;
   const height = 20;
   const data = new Uint8ClampedArray(width * height * 4);
@@ -44,7 +44,7 @@ test("flat illustrations use the smallest palette preset", () => {
   }
   const analysis = analyzePixels(data, width, height);
   assert.equal(analysis.kind, "illustration");
-  assert.equal(analysis.preset, "smallest");
+  assert.equal(analysis.preset, "illustration");
 });
 
 test("continuous-tone images use the balanced preset", () => {
@@ -57,6 +57,25 @@ test("continuous-tone images use the balanced preset", () => {
       data[i] = (x * 5 + y * 2) % 256;
       data[i + 1] = (x * 2 + y * 5) % 256;
       data[i + 2] = (x * 3 + y * 3) % 256;
+      data[i + 3] = 255;
+    }
+  }
+  const analysis = analyzePixels(data, width, height);
+  assert.equal(analysis.kind, "photo");
+  assert.equal(analysis.preset, "balanced");
+});
+
+test("smooth low-contrast photos are not mistaken for flat illustrations", () => {
+  const width = 96;
+  const height = 64;
+  const data = new Uint8ClampedArray(width * height * 4);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const i = (y * width + x) * 4;
+      const texture = ((x * 17 + y * 29) % 11) - 5;
+      data[i] = 70 + Math.round(x * 1.2) + texture;
+      data[i + 1] = 88 + Math.round(y * 1.1) + texture;
+      data[i + 2] = 112 + Math.round((x + y) * 0.45) + texture;
       data[i + 3] = 255;
     }
   }
@@ -99,8 +118,7 @@ test("crc32 matches the standard check value", () => {
 });
 
 test("ZIP output contains valid local, central and end signatures", async () => {
-  const zip = createZip([{ name: "sample.png", data: new Uint8Array([1, 2, 3]) }], new Date(2026, 0, 1));
-  const bytes = new Uint8Array(await zip.arrayBuffer());
+  const bytes = createZip([{ name: "sample.png", data: new Uint8Array([1, 2, 3]) }], new Date(2026, 0, 1));
   const view = new DataView(bytes.buffer);
   assert.equal(view.getUint32(0, true), 0x04034b50);
   assert.equal(view.getUint32(bytes.length - 22, true), 0x06054b50);

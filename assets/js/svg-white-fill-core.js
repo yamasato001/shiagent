@@ -9,6 +9,69 @@ export const FILL_PRESETS = Object.freeze({
   precise: Object.freeze({ name: "高精度", longSide: 2048, closeRadius: 2, inset: 3, minArea: 12 })
 });
 
+export function hasWhiteFillPixels(rgba, width, height) {
+  if (width < 3 || height < 3 || rgba.length < width * height * 4) return false;
+  const white = index => {
+    const offset = index * 4;
+    return rgba[offset + 3] >= 80 && rgba[offset] >= 245 && rgba[offset + 1] >= 245 && rgba[offset + 2] >= 245;
+  };
+  const minimumCore = Math.max(1, Math.round(width * height * .00001));
+  let corePixels = 0;
+  for (let y = 1; y < height - 1; y += 1) for (let x = 1; x < width - 1; x += 1) {
+    let solid = true;
+    for (let dy = -1; dy <= 1 && solid; dy += 1) for (let dx = -1; dx <= 1; dx += 1) {
+      if (!white((y + dy) * width + x + dx)) { solid = false; break; }
+    }
+    if (solid && ++corePixels >= minimumCore) return true;
+  }
+  return false;
+}
+
+export function newlyClosedRegionMask(currentMask, originalMask) {
+  return Uint8Array.from(currentMask, (value, index) => value && !originalMask[index] ? 1 : 0);
+}
+
+export function excludeMaskRegions(mask, width, height, points = []) {
+  const output = Uint8Array.from(mask);
+  if (!points.length) return output;
+  const labels = new Int32Array(output.length);
+  const queue = new Int32Array(output.length);
+  let label = 0;
+  for (let start = 0; start < output.length; start += 1) {
+    if (!output[start] || labels[start]) continue;
+    label += 1;
+    let head = 0, tail = 0;
+    queue[tail++] = start;
+    labels[start] = label;
+    while (head < tail) {
+      const index = queue[head++], x = index % width, y = Math.floor(index / width);
+      for (const next of [x ? index - 1 : -1, x + 1 < width ? index + 1 : -1, y ? index - width : -1, y + 1 < height ? index + width : -1]) {
+        if (next >= 0 && output[next] && !labels[next]) { labels[next] = label; queue[tail++] = next; }
+      }
+    }
+  }
+  const excludedLabels = new Set();
+  for (const point of points) {
+    const x = Math.max(0, Math.min(width - 1, Math.round(point[0] * (width - 1))));
+    const y = Math.max(0, Math.min(height - 1, Math.round(point[1] * (height - 1))));
+    let selectedLabel = labels[y * width + x];
+    if (!selectedLabel) {
+      const radius = Math.max(4, Math.round(Math.min(width, height) * .012));
+      let nearestDistance = Infinity;
+      for (let dy = -radius; dy <= radius; dy += 1) for (let dx = -radius; dx <= radius; dx += 1) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+        const candidate = labels[ny * width + nx];
+        const distance = dx * dx + dy * dy;
+        if (candidate > 0 && distance < nearestDistance) { selectedLabel = candidate; nearestDistance = distance; }
+      }
+    }
+    if (selectedLabel > 0) excludedLabels.add(selectedLabel);
+  }
+  if (excludedLabels.size) for (let index = 0; index < output.length; index += 1) if (excludedLabels.has(labels[index])) output[index] = 0;
+  return output;
+}
+
 export function viewBoxOfSvg(root) {
   const raw = root.getAttribute("viewBox");
   if (raw) {
@@ -80,26 +143,7 @@ export function closedRegionMask(alpha, width, height, preset, manual = {}) {
     }
     if (tail < preset.minArea) for (let i = 0; i < tail; i += 1) closed[queue[i]] = 0;
   }
-  const excludedLabels = new Set();
-  for (const point of manual.excludedPoints || []) {
-    const x = Math.max(0, Math.min(width - 1, Math.round(point[0] * (width - 1))));
-    const y = Math.max(0, Math.min(height - 1, Math.round(point[1] * (height - 1))));
-    let selectedLabel = labels[y * width + x];
-    if (!selectedLabel) {
-      const radius = Math.max(4, Math.round(Math.min(width, height) * .012));
-      let nearestDistance = Infinity;
-      for (let dy = -radius; dy <= radius; dy += 1) for (let dx = -radius; dx <= radius; dx += 1) {
-        const nx = x + dx, ny = y + dy;
-        if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
-        const candidate = labels[ny * width + nx];
-        const distance = dx * dx + dy * dy;
-        if (candidate > 0 && closed[ny * width + nx] && distance < nearestDistance) { selectedLabel = candidate; nearestDistance = distance; }
-      }
-    }
-    if (selectedLabel > 0) excludedLabels.add(selectedLabel);
-  }
-  if (excludedLabels.size) for (let index = 0; index < closed.length; index += 1) if (excludedLabels.has(labels[index])) closed[index] = 0;
-  return closed;
+  return excludeMaskRegions(closed, width, height, manual.excludedPoints);
 }
 
 export function countMaskRegions(mask, width, height) {
@@ -153,15 +197,18 @@ export function maskToPath(mask, width, height, viewBox) {
   return loops.join("");
 }
 
-export function insertWhiteFill(svgText, pathData) {
+export function insertWhiteFill(svgText, pathData, { preserveExisting = false } = {}) {
   const documentNode = new DOMParser().parseFromString(svgText, "image/svg+xml");
   if (documentNode.querySelector("parsererror")) throw new Error(messages.svgParseFailed);
   const root = documentNode.documentElement;
-  root.querySelector(`#${WHITE_FILL_ID}`)?.remove();
-  const group = documentNode.createElementNS("http://www.w3.org/2000/svg", "g");
-  group.setAttribute("id", WHITE_FILL_ID); group.setAttribute("fill", "#fff"); group.setAttribute("stroke", "none"); group.setAttribute("fill-rule", "evenodd");
+  let group = root.querySelector(`#${WHITE_FILL_ID}`);
+  if (group && !preserveExisting) { group.remove(); group = null; }
+  if (!group) {
+    group = documentNode.createElementNS("http://www.w3.org/2000/svg", "g");
+    group.setAttribute("id", WHITE_FILL_ID); group.setAttribute("fill", "#fff"); group.setAttribute("stroke", "none"); group.setAttribute("fill-rule", "evenodd");
+    const reference = [...root.children].find(child => !["defs", "metadata", "title", "desc"].includes(child.localName));
+    root.insertBefore(group, reference || null);
+  }
   if (pathData) { const path = documentNode.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d", pathData); path.setAttribute("fill", "#fff"); path.setAttribute("stroke", "none"); path.setAttribute("fill-rule", "evenodd"); group.append(path); }
-  const reference = [...root.children].find(child => !["defs", "metadata", "title", "desc"].includes(child.localName));
-  root.insertBefore(group, reference || null);
   return new XMLSerializer().serializeToString(root).replace(/>\s+</g, "><").trim();
 }

@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { createZipBlob } from "./browser-runtime.js";
 import { detectImageFormat, formatLabel } from "./image-converter-core.js";
 import { cleanedName, cleanImageMetadata } from "./image-metadata-core.js";
 import { locale, pick } from "./i18n.js";
@@ -168,7 +169,7 @@ async function downloadAll() {
   const done = entries.filter(entry => entry.status === "done");
   const zipEntries = [];
   for (const file of outputFiles(done)) zipEntries.push({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) });
-  if (zipEntries.length) downloadBlob(createZip(zipEntries), "shiagent-clean-images.zip");
+  if (zipEntries.length) downloadBlob(createZipBlob(zipEntries), "shiagent-clean-images.zip");
 }
 
 elements.select.addEventListener("click", event => { event.stopPropagation(); elements.input.click(); });

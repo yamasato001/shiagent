@@ -1,4 +1,5 @@
-import { TOOL_CATALOG, applyTool, canAppend, moveStep, readCustomWorkflows, toolById, validateWorkflow, writeCustomWorkflows } from "./custom-workflow-core.js";
+import { TOOL_CATALOG, applyTool, canAppend, moveStep, toolById, validateWorkflow } from "./custom-workflow-core.js";
+import { readCustomWorkflows, writeCustomWorkflows } from "./custom-workflow-storage.js";
 
 const root = document.querySelector("#customWorkflowBuilder");
 const ja = document.documentElement.lang === "ja";
@@ -18,6 +19,7 @@ let state = { id: null, name: "", inputType: "", steps: [] };
 let draggedIndex = -1;
 let activeCategory = "image";
 const els = Object.fromEntries([...root.querySelectorAll("[id]")].map(element => [element.id, element]));
+els.savedWorkflows = document.querySelector("#savedWorkflows");
 
 function uid() { return globalThis.crypto?.randomUUID?.() || `workflow-${Date.now()}-${Math.random().toString(16).slice(2)}`; }
 function escapeHtml(value) { return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]); }

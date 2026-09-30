@@ -150,7 +150,7 @@ async function htmlFiles(directory, prefix = "") {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = [];
   for (const entry of entries) {
-    if ([".git", "node_modules", "tmp"].includes(entry.name)) continue;
+    if ([".agents", ".codex", ".git", ".vscode", "assets", "dist", "node_modules", "pages", "public", "scripts", "src", "test", "tmp"].includes(entry.name)) continue;
     const relative = path.posix.join(prefix, entry.name);
     if (entry.isDirectory()) files.push(...await htmlFiles(new URL(`${entry.name}/`, directory), relative));
     else if (entry.name === "index.html") files.push(relative);
@@ -209,6 +209,12 @@ function installToolExample(source, contract, ja) {
   const example = toolExamples[contract.route]?.[ja ? 0 : 1];
   if (!example) return source;
   const section = `<section class="content-section tool-example" data-site-example><div><div class="section-kicker">${ja ? "使用例" : "Example"}</div><h2>${ja ? "たとえば、こんな処理。" : "One practical use."}</h2><p>${example}</p></div></section>`;
+  // The manual fill editor's <main> is the full-height interactive workspace.
+  // Keep supporting content outside it so rebuilding metadata cannot shrink
+  // the canvas area again.
+  if (contract.route === "svg-white-fill/editor") {
+    return source.replace("</main>", `</main>${section}`);
+  }
   return source.replace("</main>", `${section}</main>`);
 }
 
@@ -227,27 +233,50 @@ function attribute(tag, name) {
   return tag.match(new RegExp(`\\b${name}="([^"]*)"`, "i"))?.[1] ?? null;
 }
 
+function hasAttribute(tag, name) {
+  return new RegExp(`\\b${name}(?:\\s|=|>|$)`, "i").test(tag);
+}
+
 function selectorForId(source, ids) {
   return ids.find(id => new RegExp(`\\bid="${id}"`).test(source)) ? `#${ids.find(id => new RegExp(`\\bid="${id}"`).test(source))}` : null;
 }
 
 function discoverControls(source) {
-  return [...source.matchAll(/<(input|select|textarea)\b[^>]*\bid="([^"]+)"[^>]*>(?:[\s\S]*?<\/select>)?/gi)]
-    .map(match => {
-      const [tag, element, id] = match;
-      const type = element.toLowerCase() === "input" ? (attribute(tag, "type") || "text") : element.toLowerCase();
-      if (type === "file") return null;
-      const control = { selector: `#${id}`, element: element.toLowerCase(), type };
-      for (const key of ["min", "max", "step", "value"]) {
-        const value = attribute(tag, key);
-        if (value !== null) control[key] = value;
-      }
-      if (element.toLowerCase() === "select") {
-        control.values = [...tag.matchAll(/<option\b[^>]*value="([^"]*)"/gi)].map(match => match[1]);
-      }
-      return control;
-    })
-    .filter(Boolean);
+  const tags = [
+    ...source.matchAll(/<input\b[^>]*>/gi),
+    ...source.matchAll(/<select\b[^>]*>[\s\S]*?<\/select>/gi),
+    ...source.matchAll(/<textarea\b[^>]*>[\s\S]*?<\/textarea>/gi),
+  ].sort((a, b) => a.index - b.index);
+  return tags.map(match => {
+    const tag = match[0];
+    const element = tag.match(/^<(input|select|textarea)\b/i)?.[1].toLowerCase();
+    const type = element === "input" ? (attribute(tag, "type") || "text") : element;
+    if (type === "file" || type === "hidden") return null;
+    const id = attribute(tag, "id");
+    const name = attribute(tag, "name");
+    const inputValue = attribute(tag.match(/^<[^>]*>/)?.[0] || tag, "value");
+    const selector = id
+      ? `#${id}`
+      : name && type === "radio" && inputValue !== null
+        ? `input[name="${name}"][value="${inputValue}"]`
+        : null;
+    if (!selector) return null;
+    const control = { selector, element, type };
+    const openingTag = tag.match(/^<[^>]*>/)?.[0] || tag;
+    for (const key of ["min", "max", "step", "value"]) {
+      const value = attribute(openingTag, key);
+      if (value !== null) control[key] = value;
+    }
+    if (element === "select") {
+      const options = [...tag.matchAll(/<option\b[^>]*value="([^"]*)"[^>]*>/gi)];
+      control.values = options.map(option => option[1]);
+      const selected = options.find(option => hasAttribute(option[0], "selected"));
+      if (selected) control.value = selected[1];
+      else if (control.values.length) control.value = control.values[0];
+    }
+    if (type === "checkbox" || type === "radio") control.checked = hasAttribute(openingTag, "checked");
+    return control;
+  }).filter(Boolean);
 }
 
 function pageContract(file, source) {
@@ -262,6 +291,7 @@ function pageContract(file, source) {
   const action = override.action !== undefined ? override.action : (pdf.action || selectorForId(source, primaryActionIds));
   const download = override.download !== undefined ? override.download : (pdf.download || selectorForId(source, ["downloadAllButton", "downloadButton"]));
   const result = override.result !== undefined ? override.result : (pdf.result || selectorForId(source, ["resultsPanel", "resultPanel", "sourcePanel"]));
+  const status = override.statusSelector !== undefined ? override.statusSelector : (pdf.status || selectorForId(source, ["resultStatus", "progressText", "builderStatus", "fileStatus", "status"]));
   if (!input && !action && route !== "line-art-generator") return null;
   return {
     id: route.replaceAll("/", "-"),
@@ -270,13 +300,14 @@ function pageContract(file, source) {
     category: inferCategory(route),
     localProcessing: true,
     accepts: (override.accept || pdf.accept || attribute(fileTag || "", "accept") || "").split(",").map(value => value.trim()).filter(Boolean),
-    outputs: inferOutput(route),
+    outputs: override.outputs || inferOutput(route),
     automation: {
       input,
       action,
       result,
       download,
-      controls: discoverControls(source),
+      status,
+      controls: override.controls || pdf.controls || discoverControls(source),
       events: {
         ready: "shiagent:ready",
         state: "shiagent:statechange",
@@ -529,6 +560,8 @@ await writeFile(new URL("llms-full.txt", root), [
   "- getState(): returns input count, busy state, visible result state, status text, and the latest event.",
   "- loadFiles(File[]): attaches browser File objects and emits the same change event as human selection.",
   "- setValue(cssSelector, value): updates an option and emits input/change events.",
+  "- setValues(cssSelector, values[]): updates a repeated control group in DOM order, such as detected PDF page numbers.",
+  "- click(cssSelector): activates a documented secondary action, such as PDF auto-orientation.",
   "- run(): activates the primary processing action.",
   "- download(): activates the primary download action.",
   "- waitFor(eventName, timeoutMs): waits for a documented event.",
@@ -537,7 +570,7 @@ await writeFile(new URL("llms-full.txt", root), [
   "## Recommended sequence",
   "1. Open the selected tool path and await SHIAGENT.ready.",
   "2. Attach files with the browser's file-upload capability or SHIAGENT.loadFiles when File objects are already available in page context.",
-  "3. Set only controls listed in automation.controls.",
+  "3. Set only controls listed in automation.controls. For controls whose action is click, call SHIAGENT.click(selector). For repeated controls, call SHIAGENT.setValues(selector, values).",
   "4. Call SHIAGENT.run(), monitor getState(), and wait for shiagent:outputs, shiagent:traychange, or a visible result.",
   "5. Validate output count and statusText before downloading or navigating onward with tray:true.",
   "6. Never claim success solely because a button was clicked.",

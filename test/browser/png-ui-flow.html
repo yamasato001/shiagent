@@ -84,9 +84,9 @@ try {
   const resultStatus = document.querySelector("#resultStatus").textContent;
   const badges = [...document.querySelectorAll(".result-badges span")].map(node => node.textContent);
   const comparisons = document.querySelectorAll(".file-row.has-result .file-compare img").length;
-  const autoPass = modes.includes("Line Art") && modes.includes("Smallest") && modes.includes("Balanced") &&
+  const autoPass = modes.includes("Line Art") && modes.includes("Illustration") && modes.includes("Balanced") &&
     detection.includes("線画 1") && detection.includes("イラスト 1") && detection.includes("写真 1") &&
-    resultStatus.includes("3 / 3") && badges.includes("細線保護") && badges.includes("最大64色") &&
+    resultStatus.includes("3 / 3") && badges.includes("細線保護") &&
     badges.includes("最大256色") && badges.includes("透明度維持") && comparisons === 6;
 
   document.querySelector('input[name="mode"][value="exact"]').click();

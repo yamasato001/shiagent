@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { CUSTOM_WORKFLOW_STORAGE_KEY, canAppend, moveStep, readCustomWorkflows, validateWorkflow, writeCustomWorkflows } from "../assets/js/custom-workflow-core.js";
+import { CUSTOM_WORKFLOW_STORAGE_KEY, canAppend, moveStep, validateWorkflow } from "../assets/js/custom-workflow-core.js";
+import { readCustomWorkflows, writeCustomWorkflows } from "../assets/js/custom-workflow-storage.js";
 
 test("custom workflow compatibility blocks impossible chains", () => {
   assert.equal(canAppend("raster", [], "image-resizer"), true);
@@ -49,4 +50,5 @@ test("tool categories use accessible tabs and clear affects the current draft", 
   assert.match(script, /clearWorkflow\.addEventListener/);
   assert.match(script, /inputType: ""/);
   assert.match(script, /if \(!state\.inputType\)/);
+  assert.match(script, /els\.savedWorkflows = document\.querySelector\("#savedWorkflows"\)/);
 });

@@ -1,3 +1,5 @@
+import { applyConfiguredOutputSuffix } from "./output-name.js";
+
 const DATABASE_NAME = "shiagent-work-tray";
 const STORE_NAME = "files";
 const DATABASE_VERSION = 1;
@@ -21,14 +23,14 @@ function requestResult(request) {
   });
 }
 
-export async function replaceTray(files, source = "tool") {
+export async function replaceTray(files, source = "tool", options = {}) {
   const database = await openDatabase();
   const transaction = database.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
   store.clear();
   files.forEach((file, index) => store.put({
     id: `${Date.now()}-${index}`,
-    name: file.name,
+    name: options.applySuffix ? applyConfiguredOutputSuffix(file.name) : file.name,
     type: file.type || file.blob?.type || "application/octet-stream",
     blob: file.blob || file,
     source,

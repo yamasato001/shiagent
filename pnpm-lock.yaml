@@ -14,6 +14,9 @@ importers:
       '@jsquash/oxipng':
         specifier: 2.3.0
         version: 2.3.0
+      '@squoosh-kit/imagequant':
+        specifier: 0.2.10
+        version: 0.2.10
       esm-potrace-wasm:
         specifier: 0.5.1
         version: 0.5.1
@@ -279,6 +282,12 @@ packages:
   '@pdf-lib/upng@1.0.1':
     resolution: {integrity: sha512-dQK2FUMQtowVP00mtIksrlZhdFXQZPC+taih1q4CvPZ5vqdxR/LKBaFg0oAfzd1GlHZXXSPdQfzQnt+ViGvEIQ==}
 
+  '@squoosh-kit/imagequant@0.2.10':
+    resolution: {integrity: sha512-+J8W41zgVW1enstkLG9AumOgCQ9k6B3v8/6n0B/X6a0CnhNGKQigGK8AqX7lvdefAUGyg1J1YU0bJSEYxh8F9w==}
+
+  '@squoosh-kit/runtime@0.2.10':
+    resolution: {integrity: sha512-k3Rma4lkcExCKN63MKhCunsvSTyYbDjX4PPFr1lW0JgSqShobnF7EdCcL23moEsRnCGMWBE6SCRQyAs8gjsq/Q==}
+
   '@types/node@16.9.1':
     resolution: {integrity: sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==}
 
@@ -453,6 +462,14 @@ snapshots:
   '@pdf-lib/upng@1.0.1':
     dependencies:
       pako: 1.0.11
+
+  '@squoosh-kit/imagequant@0.2.10':
+    dependencies:
+      '@squoosh-kit/runtime': 0.2.10
+
+  '@squoosh-kit/runtime@0.2.10':
+    dependencies:
+      wasm-feature-detect: 1.9.0
 
   '@types/node@16.9.1': {}
 

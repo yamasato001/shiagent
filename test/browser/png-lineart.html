@@ -35,7 +35,7 @@ try {
   const buffer = await new Promise((resolve, reject) => {
     worker.addEventListener("message", event => event.data.error ? reject(new Error(event.data.error)) : resolve(event.data.result), { once: true });
     worker.addEventListener("error", event => reject(new Error(event.message)), { once: true });
-    worker.postMessage({ id: 1, type: "lineart", buffer: pixels.buffer, width, height, level: 3 }, [pixels.buffer]);
+    worker.postMessage({ id: 1, type: "lineart-compact", buffer: pixels.buffer, width, height, level: 3 }, [pixels.buffer]);
   });
   const blob = new Blob([buffer], { type: "image/png" });
   const bitmap = await createImageBitmap(blob);
@@ -48,7 +48,9 @@ try {
   const decoded = decodedContext.getImageData(0, 0, width, height).data;
   let squaredError = 0;
   let maxAlphaError = 0;
+  const colors = new Set();
   for (let i = 0; i < decoded.length; i += 4) {
+    colors.add(`${decoded[i]},${decoded[i + 1]},${decoded[i + 2]},${decoded[i + 3]}`);
     for (let channel = 0; channel < 3; channel += 1) {
       const delta = source.data[i + channel] - decoded[i + channel];
       squaredError += delta * delta;
@@ -59,13 +61,14 @@ try {
   const accentPreserved = decoded[accent] === 220 && decoded[accent + 1] === 20 && decoded[accent + 2] === 40;
   const rmse = Math.sqrt(squaredError / (width * height * 3));
   const pass = analysis.kind === "lineart" && analysis.preset === "lineart" &&
-    maxAlphaError === 0 && accentPreserved && rmse < 2;
+    maxAlphaError === 0 && accentPreserved && colors.size <= 100 && rmse < 0.75;
   result.textContent = JSON.stringify({
     status: pass ? "PASS" : "FAIL",
     detected: analysis.kind,
     preset: analysis.preset,
     originalBytes: originalBlob.size,
     outputBytes: blob.size,
+    colors: colors.size,
     rmse,
     maxAlphaError,
     accentPreserved

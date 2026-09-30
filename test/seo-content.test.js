@@ -9,7 +9,7 @@ async function findPages(directory, prefix = "") {
   const entries = await readdir(directory, { withFileTypes: true });
   const pages = [];
   for (const entry of entries) {
-    if ([".git", "node_modules", "tmp"].includes(entry.name)) continue;
+    if ([".agents", ".codex", ".git", ".vscode", "assets", "dist", "node_modules", "pages", "public", "scripts", "src", "test", "tmp"].includes(entry.name)) continue;
     const relative = path.posix.join(prefix, entry.name);
     if (entry.isDirectory()) pages.push(...await findPages(new URL(`${entry.name}/`, directory), relative));
     else if (entry.name === "index.html") pages.push(relative);

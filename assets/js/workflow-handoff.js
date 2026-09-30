@@ -3,6 +3,7 @@ import "./queue-drop.js";
 import { localPath, pick } from "./i18n.js";
 import common from "./i18n/common.js";
 import { chooseOutputDirectory, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
+import { applyConfiguredOutputSuffix } from "./output-name.js";
 
 const copy = pick(common).tray;
 if (!document.querySelector('link[data-work-tray-styles]')) {
@@ -24,7 +25,6 @@ const tools = [
   { name: copy.tools.rasterizer, path: localPath("/svg-to-image/"), accepts: file => isSvg(file) },
   { name: copy.tools.color, path: localPath("/color-tool/"), accepts: file => isPng(file) || isJpeg(file) || isWebp(file) || isSvg(file) },
   { name: copy.tools.favicon, path: localPath("/favicon-generator/"), accepts: file => isPng(file) || isJpeg(file) || isWebp(file) || isSvg(file) },
-  { name: copy.tools.favicon, path: localPath("/favicon-generator/"), accepts: file => isPng(file) || isJpeg(file) || isWebp(file) || isSvg(file) },
   { name: copy.tools.splitter, path: localPath("/image-splitter/"), accepts: file => isPng(file) || isJpeg(file) },
   { name: copy.tools.background, path: localPath("/background-remover/"), accepts: file => isRaster(file) },
   { name: copy.tools.fillEditor, path: localPath("/svg-white-fill/editor/"), accepts: file => isSvg(file) },
@@ -38,6 +38,7 @@ let outputFingerprint = "";
 let scanTimer;
 let scanning = false;
 let latestOutputs = [];
+let latestRawOutputs = [];
 
 function isPng(file) { return file.type === "image/png" || /\.png$/i.test(file.name); }
 function isJpeg(file) { return file.type === "image/jpeg" || /\.jpe?g$/i.test(file.name); }
@@ -57,8 +58,9 @@ function createDock() {
     <div class="work-tray-panel" id="workTrayPanel" hidden>
       <div class="work-tray-heading"><div class="work-tray-heading-copy"><small>${copy.current}</small><strong id="workTraySummary">${copy.empty}</strong></div><div class="work-tray-heading-actions"><button class="work-tray-clear" type="button" id="workTrayClear">${copy.clear}</button><button class="work-tray-close" type="button" id="workTrayClose" aria-label="${copy.close}">×</button></div></div>
       <div class="work-tray-files" id="workTrayFiles" data-empty-label="${copy.emptyHint}"></div>
-      <p>${copy.next}</p>
+      <p id="workTrayNextLabel">${copy.next}</p>
       <div class="work-tray-tools" id="workTrayTools"></div>
+      <p class="work-tray-tools-empty" id="workTrayToolsEmpty" hidden>${copy.noNext}</p>
       <small class="work-tray-note">${copy.note}</small>
     </div>`;
   document.body.append(dock);
@@ -108,16 +110,17 @@ function renderDock() {
     fileList.append(more);
   }
   const toolList = dock.querySelector("#workTrayTools");
+  const availableTools = tools
+    .map(tool => ({ tool, count: trayFiles.filter(tool.accepts).length }))
+    .filter(({ tool, count }) => tool !== currentTool && count > 0);
+  dock.querySelector("#workTrayNextLabel").hidden = availableTools.length === 0;
+  dock.querySelector("#workTrayToolsEmpty").hidden = trayFiles.length === 0 || availableTools.length > 0;
+  toolList.hidden = availableTools.length === 0;
   toolList.replaceChildren();
-  tools.forEach(tool => {
-    const count = trayFiles.filter(tool.accepts).length;
+  availableTools.forEach(({ tool, count }) => {
     const link = document.createElement("a");
-    link.href = count ? `${tool.path}?tray=1` : tool.path;
-    link.className = count ? "" : "is-disabled";
-    if (tool === currentTool) link.classList.add("is-current");
-    link.setAttribute("aria-disabled", String(!count));
-    link.innerHTML = `<span>${tool.name}</span><small>${tool === currentTool ? copy.here : count ? copy.count(count) : copy.none}</small>`;
-    if (!count) link.addEventListener("click", event => event.preventDefault());
+    link.href = `${tool.path}?tray=1`;
+    link.innerHTML = `<span>${tool.name}</span><small>${copy.count(count)}</small>`;
     toolList.append(link);
   });
 }
@@ -142,8 +145,12 @@ async function storeFiles(files, source) {
   }));
 }
 
-function normalizeOutputs(files) {
+function outputItems(files) {
   return [...(files || [])].map(file => file?.blob ? file : { name: file?.name, blob: file }).filter(file => file.name && file.blob);
+}
+
+function normalizeOutputs(files) {
+  return outputItems(files).map(file => ({ ...file, name: applyConfiguredOutputSuffix(file.name) }));
 }
 
 function showFolderMessage(message) {
@@ -227,6 +234,7 @@ async function scanResults() {
     const fingerprint = results.map(result => `${result.name}:${result.blob.size}`).join("|");
     if (results.length && fingerprint !== outputFingerprint) {
       outputFingerprint = fingerprint;
+      latestRawOutputs = outputItems(results);
       latestOutputs = normalizeOutputs(results);
       await storeFiles(results, `${currentTool?.name || "tool"}-result`);
     }
@@ -237,8 +245,14 @@ document.addEventListener("change", event => {
   if (event.target.matches("#fileInput") && event.target.files?.length) storeFiles(event.target.files, `${currentTool?.name || "tool"}-upload`).catch(console.error);
 });
 document.addEventListener("shiagent:outputs", event => {
-  latestOutputs = normalizeOutputs(event.detail.files);
-  storeFiles(event.detail.files, event.detail.source || "tool-result").catch(console.error);
+  latestRawOutputs = outputItems(event.detail.files);
+  latestOutputs = normalizeOutputs(latestRawOutputs);
+  storeFiles(latestOutputs, event.detail.source || "tool-result").catch(console.error);
+});
+document.addEventListener("shiagent:output-name-change", () => {
+  if (!latestRawOutputs.length) return;
+  latestOutputs = normalizeOutputs(latestRawOutputs);
+  storeFiles(latestOutputs, "output-name-change").catch(console.error);
 });
 new MutationObserver(() => {
   clearTimeout(scanTimer);

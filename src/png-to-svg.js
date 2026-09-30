@@ -1,10 +1,11 @@
 import { init, potrace } from "esm-potrace-wasm";
-import { createZip, detectRasterFormat, formatBytes } from "../assets/js/png-core.js";
+import { detectRasterFormat, formatBytes } from "../assets/js/png-core.js";
+import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas, toImageData } from "../assets/js/browser-runtime.js";
 import {
   OUTPUT_SIZES,
   QUALITY_PRESETS,
   SPLIT_PRESETS,
-  binaryToImageData,
+  binaryToRgba,
   compositeOnWhite,
   cropRgba,
   foregroundMask,
@@ -151,36 +152,22 @@ async function addFiles(fileList) {
 }
 
 async function decodeFile(file) {
-  let bitmap;
-  try {
-    bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-  } catch {
-    bitmap = await createImageBitmap(file);
-  }
-  const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  const canvas = await decodeBrowserImage(file, { willReadFrequently: true });
   const context = canvas.getContext("2d", { willReadFrequently: true });
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
   return { data: imageData.data, width: imageData.width, height: imageData.height };
 }
 
 async function rgbaPreviewUrl(rgba, width, height) {
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  canvas.getContext("2d").putImageData(new ImageData(rgba, width, height), 0, 0);
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  const canvas = canvasFromRgba({ data: rgba, width, height });
+  const blob = await encodeBrowserCanvas(canvas, "image/png");
   return URL.createObjectURL(blob);
 }
 
 async function traceAsset(asset, preset, canvasSize) {
   const processed = preprocessRgba(asset.data, asset.width, asset.height, preset);
   if (!processed.data.some(value => value === 0)) throw new Error(copy.noLines);
-  const traced = await potrace(binaryToImageData(processed.data, processed.width, processed.height), {
+  const traced = await potrace(toImageData(binaryToRgba(processed.data, processed.width, processed.height)), {
     turdsize: preset.turdsize,
     turnpolicy: 4,
     alphamax: preset.alphamax,
@@ -350,7 +337,7 @@ elements.convertButton.addEventListener("click", convertAll);
 document.querySelectorAll('input[name="conversionMode"]').forEach(input => input.addEventListener("change", updateMode));
 elements.downloadAllButton.addEventListener("click", () => {
   const encoder = new TextEncoder();
-  const zip = createZip(state.results.map(result => ({ name: result.name, data: encoder.encode(result.svg) })));
+  const zip = createZipBlob(state.results.map(result => ({ name: result.name, data: encoder.encode(result.svg) })));
   const url = URL.createObjectURL(zip);
   triggerDownload(url, "shiagent-svg.zip");
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);

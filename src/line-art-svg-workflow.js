@@ -1,8 +1,9 @@
 import { init, potrace } from "esm-potrace-wasm";
-import { createZip, detectRasterFormat, formatBytes } from "../assets/js/png-core.js";
+import { detectRasterFormat, formatBytes } from "../assets/js/png-core.js";
+import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas, toImageData } from "../assets/js/browser-runtime.js";
 import { contentBounds, paddedBounds } from "../assets/js/image-cropper-core.js";
 import { processBackground } from "../assets/js/background-remover-core.js";
-import { QUALITY_PRESETS, binaryToImageData, cropRgba, normalizeSvgCanvas, preprocessRgba } from "../assets/js/png-to-svg-core.js";
+import { QUALITY_PRESETS, binaryToRgba, cropRgba, normalizeSvgCanvas, preprocessRgba } from "../assets/js/png-to-svg-core.js";
 import { FILL_PRESETS, closedRegionMask, insertWhiteFill, maskToPath, viewBoxOfSvg } from "../assets/js/svg-white-fill-core.js";
 import { cleanSvg } from "../assets/js/svg-cleaner-core.js";
 import { whiteFillMode, workflowOutputName } from "../assets/js/line-art-svg-workflow-core.js";
@@ -54,10 +55,8 @@ async function addFiles(fileList) {
 }
 
 async function decode(file) {
-  let bitmap;
-  try { bitmap = await createImageBitmap(file, { imageOrientation: "from-image" }); } catch { bitmap = await createImageBitmap(file); }
-  const canvas = document.createElement("canvas"); canvas.width = bitmap.width; canvas.height = bitmap.height;
-  const context = canvas.getContext("2d", { willReadFrequently: true }); context.drawImage(bitmap, 0, 0); bitmap.close();
+  const canvas = await decodeBrowserImage(file, { willReadFrequently: true });
+  const context = canvas.getContext("2d", { willReadFrequently: true });
   const image = context.getImageData(0, 0, canvas.width, canvas.height);
   return { data: image.data, width: image.width, height: image.height };
 }
@@ -75,7 +74,7 @@ async function trace(raster) {
   const preset = QUALITY_PRESETS.smooth;
   const processed = preprocessRgba(raster.data, raster.width, raster.height, preset);
   if (!processed.data.some(value => value === 0)) throw new Error(copy.noContent(""));
-  const traced = await potrace(binaryToImageData(processed.data, processed.width, processed.height), { turdsize: preset.turdsize, turnpolicy: 4, alphamax: preset.alphamax, opticurve: 1, opttolerance: preset.opttolerance, pathonly: false, extractcolors: false, posterizelevel: 2, posterizationalgorithm: 0 });
+  const traced = await potrace(toImageData(binaryToRgba(processed.data, processed.width, processed.height)), { turdsize: preset.turdsize, turnpolicy: 4, alphamax: preset.alphamax, opticurve: 1, opttolerance: preset.opttolerance, pathonly: false, extractcolors: false, posterizelevel: 2, posterizationalgorithm: 0 });
   return normalizeSvgCanvas(traced, 512);
 }
 
@@ -98,9 +97,8 @@ async function addAutoFill(svg) {
 }
 
 async function previewUrl(raster) {
-  const canvas = document.createElement("canvas"); canvas.width = raster.width; canvas.height = raster.height;
-  canvas.getContext("2d").putImageData(new ImageData(raster.data, raster.width, raster.height), 0, 0);
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png")); return URL.createObjectURL(blob);
+  const canvas = canvasFromRgba(raster);
+  const blob = await encodeBrowserCanvas(canvas, "image/png"); return URL.createObjectURL(blob);
 }
 
 async function processEntry(entry, index, total, mode) {
@@ -136,7 +134,7 @@ async function run() {
     if (!state.results.length) throw new Error(copy.failed);
     if (mode === "manual") {
       elements.progress.textContent = copy.manualHandoff(state.results.length);
-      await replaceTray(state.results.map(result => ({ name: result.name, blob: result.blob })), "line-art-svg-workflow");
+      await replaceTray(state.results.map(result => ({ name: result.name, blob: result.blob })), "line-art-svg-workflow", { applySuffix: true });
       location.href = `${localPath("/svg-white-fill/editor/")}?tray=1&workflow=line-art-to-svg`;
       return;
     }
@@ -157,5 +155,5 @@ elements.drop.addEventListener("drop", event => addFiles(event.dataTransfer.file
 elements.list.addEventListener("click", event => { const button = event.target.closest("[data-remove]"); if (!button || state.running) return; const [entry] = state.entries.splice(Number(button.dataset.remove), 1); URL.revokeObjectURL(entry.previewUrl); resetResults(); render(); });
 document.querySelectorAll('input[name="whiteFill"]').forEach(input => input.addEventListener("change", updateFillSettings)); elements.run.addEventListener("click", run);
 elements.resultList.addEventListener("click", event => { const button = event.target.closest("[data-download]"); if (button) trigger(state.results[Number(button.dataset.download)]); });
-elements.downloadAll.addEventListener("click", async () => { const zip = createZip(state.results.map(result => ({ name: result.name, data: new TextEncoder().encode(result.svg) }))); const url = URL.createObjectURL(zip), anchor = document.createElement("a"); anchor.href = url; anchor.download = "shiagent-line-art-svg.zip"; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
+elements.downloadAll.addEventListener("click", async () => { const zip = createZipBlob(state.results.map(result => ({ name: result.name, data: new TextEncoder().encode(result.svg) }))); const url = URL.createObjectURL(zip), anchor = document.createElement("a"); anchor.href = url; anchor.download = "shiagent-line-art-svg.zip"; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
 updateFillSettings(); render();

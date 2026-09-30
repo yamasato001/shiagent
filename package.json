@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
+    "brand:favicons": "node scripts/generate-brand-favicons.mjs",
     "info:generate": "node scripts/generate-information-pages.mjs",
     "seo:refresh": "node scripts/refresh-seo-metadata.mjs",
     "launch:check": "node scripts/launch-check.mjs",
+    "check:boundaries": "node --check assets/js/browser-runtime.js && node --check assets/js/custom-workflow-storage.js && node --test test/core-boundary.test.js",
     "check": "node --check assets/js/png-core.js && node --check assets/js/png-compressor.js && node --check assets/js/folder-download.js && node --check assets/js/image-converter-core.js && node --check assets/js/image-converter.js && node --check assets/js/image-resizer-core.js && node --check assets/js/image-resizer.js && node --check assets/js/image-cropper-core.js && node --check assets/js/image-cropper.js && node --check assets/js/canvas-padding-core.js && node --check assets/js/canvas-padding.js && node --check assets/js/image-joiner-core.js && node --check assets/js/image-joiner.js && node --check assets/js/image-metadata-core.js && node --check assets/js/image-metadata-cleaner.js && node --check assets/js/phone-photo-workflow-core.js && node --check assets/js/phone-photo-workflow.js && node --check assets/js/material-normalizer-workflow-core.js && node --check assets/js/material-normalizer-workflow.js && node --check assets/js/pdf-core.js && node --check assets/js/pdf-page-number-core.js && node --check assets/js/pdf-edge-ocr.js && node --check assets/js/pdf-tray.js && node --check assets/js/agent-bridge.js && node --check src/pdf-workspace.js && node --check src/pdf-page-order-workflow.js && node --check assets/js/svg-rasterizer-core.js && node --check assets/js/svg-rasterizer.js && node --check assets/js/color-tool-core.js && node --check assets/js/color-tool.js && node --check assets/js/favicon-generator-core.js && node --check assets/js/favicon-generator.js && node --check assets/js/png-to-svg-core.js && node --check src/png-optimizer-worker.js && node --check src/image-decoder-worker.js && node --check src/png-to-svg.js && node --check scripts/serve.mjs && node --check scripts/build.mjs && node --check scripts/tool-contracts.mjs && node --check scripts/refresh-seo-metadata.mjs",
     "test": "node --test"
   },
@@ -18,6 +20,7 @@
   "dependencies": {
     "@discourse/heic": "^1.0.0",
     "@jsquash/oxipng": "2.3.0",
+    "@squoosh-kit/imagequant": "0.2.10",
     "esm-potrace-wasm": "0.5.1",
     "image-q": "4.0.0",
     "pdf-lib": "^1.17.1",

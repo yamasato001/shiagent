@@ -12,6 +12,8 @@ Every page loads window.SHIAGENT. Await window.SHIAGENT.ready before automation.
 - getState(): returns input count, busy state, visible result state, status text, and the latest event.
 - loadFiles(File[]): attaches browser File objects and emits the same change event as human selection.
 - setValue(cssSelector, value): updates an option and emits input/change events.
+- setValues(cssSelector, values[]): updates a repeated control group in DOM order, such as detected PDF page numbers.
+- click(cssSelector): activates a documented secondary action, such as PDF auto-orientation.
 - run(): activates the primary processing action.
 - download(): activates the primary download action.
 - waitFor(eventName, timeoutMs): waits for a documented event.
@@ -20,7 +22,7 @@ Every page loads window.SHIAGENT. Await window.SHIAGENT.ready before automation.
 ## Recommended sequence
 1. Open the selected tool path and await SHIAGENT.ready.
 2. Attach files with the browser's file-upload capability or SHIAGENT.loadFiles when File objects are already available in page context.
-3. Set only controls listed in automation.controls.
+3. Set only controls listed in automation.controls. For controls whose action is click, call SHIAGENT.click(selector). For repeated controls, call SHIAGENT.setValues(selector, values).
 4. Call SHIAGENT.run(), monitor getState(), and wait for shiagent:outputs, shiagent:traychange, or a visible result.
 5. Validate output count and statusText before downloading or navigating onward with tray:true.
 6. Never claim success solely because a button was clicked.

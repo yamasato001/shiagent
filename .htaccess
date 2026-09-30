@@ -1,0 +1,38 @@
+# SHIAGENT production (Xserver / Apache 2.4).
+# The document root is a git clone of this repository, updated by
+# .github/workflows/deploy.yml. Keep the headers in sync with _headers
+# (used by Cloudflare Pages / Netlify); test/deploy-config.test.js checks it.
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+AddType application/wasm .wasm
+AddType text/javascript .js .mjs
+AddType application/manifest+json .webmanifest
+AddDefaultCharset utf-8
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# Repository and development files are never served.
+RedirectMatch 404 ^/(\.git|\.github|\.vscode|\.pnpm-store|node_modules|src|scripts|test|design|logo_data|tmp)(/|$)
+RedirectMatch 404 ^/(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|shiagent\.code-workspace|_headers|\.gitignore|\.htaccess|README\.md|LAUNCH\.md)$
+
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' data:; connect-src 'self' blob: https://formsubmit.co; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; upgrade-insecure-requests"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Resource-Policy "same-origin"
+  Header set Cache-Control "public, max-age=0, must-revalidate"
+  <If "%{REQUEST_URI} =~ m#^/assets/#">
+    Header set Cache-Control "public, max-age=86400"
+  </If>
+</IfModule>

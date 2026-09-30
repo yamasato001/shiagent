@@ -39,6 +39,7 @@ export function analyzePixels(data, width, height) {
   const totalPixels = Math.max(1, width * height);
   const stride = Math.max(1, Math.floor(totalPixels / 50000));
   const buckets = new Set();
+  const exactColors = new Set();
   let sampled = 0;
   let grayscale = 0;
   let white = 0;
@@ -65,6 +66,10 @@ export function analyzePixels(data, width, height) {
     if ((r * 0.2126 + g * 0.7152 + b * 0.0722) < 96 && a > 16) dark += 1;
     saturationSum += max === 0 ? 0 : (max - min) / max;
     buckets.add(`${r >> 4},${g >> 4},${b >> 4},${a >> 5}`);
+    // Coarse buckets alone mistake smooth photographs for flat artwork. A
+    // capped exact-color count distinguishes repeated fills from continuous
+    // tone and sensor/texture noise without retaining an unbounded histogram.
+    if (exactColors.size <= 2048) exactColors.add(((r << 24) | (g << 16) | (b << 8) | a) >>> 0);
 
     if (pixel + 1 < totalPixels && pixel % width !== width - 1) {
       const j = i + 4;
@@ -90,21 +95,25 @@ export function analyzePixels(data, width, height) {
     transparentRatio: transparent / sampled,
     averageSaturation: saturationSum / sampled,
     edgeRatio: edgeTests ? edgeHits / edgeTests : 0,
-    colorBuckets: buckets.size
+    colorBuckets: buckets.size,
+    exactColors: exactColors.size
   };
   const isLineArt = metrics.grayscaleRatio > 0.78 &&
     metrics.backgroundRatio > 0.35 &&
     metrics.darkRatio > 0.003 &&
     metrics.edgeRatio > 0.004 &&
     metrics.averageSaturation < 0.12;
-  const isFlatIllustration = metrics.colorBuckets < Math.min(160, sampled * 0.08);
+  const exactColorLimit = Math.min(2048, Math.max(8, sampled * 0.06));
+  const hasGraphicStructure = metrics.transparentRatio > 0.005 ||
+    metrics.averageSaturation > 0.2 || metrics.edgeRatio > 0.002;
+  const isFlatIllustration = metrics.exactColors <= exactColorLimit && hasGraphicStructure;
   const isIllustration = isFlatIllustration || (
     metrics.averageSaturation > 0.28 &&
     metrics.edgeRatio > 0.015 &&
     metrics.edgeRatio < 0.25
   );
   const kind = isLineArt ? "lineart" : isIllustration ? "illustration" : "photo";
-  const preset = isLineArt ? "lineart" : isFlatIllustration ? "smallest" : "balanced";
+  const preset = isLineArt ? "lineart" : isFlatIllustration ? "illustration" : "balanced";
   return { preset, kind, metrics };
 }
 
@@ -168,7 +177,7 @@ function dosDate(date) {
   return (((Math.max(1980, date.getFullYear()) - 1980) & 127) << 9) | (((date.getMonth() + 1) & 15) << 5) | (date.getDate() & 31);
 }
 
-export function createZip(entries, modified = new Date()) {
+export function createZip(entries, modified = new Date(1980, 0, 1)) {
   const encoder = new TextEncoder();
   const localParts = [];
   const centralParts = [];
@@ -204,5 +213,13 @@ export function createZip(entries, modified = new Date()) {
   ev.setUint32(0, 0x06054b50, true); ev.setUint16(4, 0, true); ev.setUint16(6, 0, true);
   ev.setUint16(8, entries.length, true); ev.setUint16(10, entries.length, true);
   ev.setUint32(12, centralSize, true); ev.setUint32(16, offset, true); ev.setUint16(20, 0, true);
-  return new Blob([...localParts, ...centralParts, end], { type: "application/zip" });
+  const parts = [...localParts, ...centralParts, end];
+  const size = parts.reduce((sum, part) => sum + part.byteLength, 0);
+  const bytes = new Uint8Array(size);
+  let cursor = 0;
+  for (const part of parts) {
+    bytes.set(part, cursor);
+    cursor += part.byteLength;
+  }
+  return bytes;
 }

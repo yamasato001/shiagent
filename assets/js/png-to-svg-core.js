@@ -296,7 +296,7 @@ export function cropRgba(rgba, width, height, box, padding = 16) {
   return { data: output, width: cropWidth, height: cropHeight };
 }
 
-export function binaryToImageData(binary, width, height) {
+export function binaryToRgba(binary, width, height) {
   const rgba = new Uint8ClampedArray(binary.length * 4);
   for (let index = 0; index < binary.length; index += 1) {
     const value = binary[index];
@@ -304,7 +304,7 @@ export function binaryToImageData(binary, width, height) {
     rgba[target] = rgba[target + 1] = rgba[target + 2] = value;
     rgba[target + 3] = 255;
   }
-  return new ImageData(rgba, width, height);
+  return { data: rgba, width, height };
 }
 
 const parseNumber = value => {

@@ -11,6 +11,38 @@ npm run dev
 Open `http://localhost:4173/ja/image-compressor/` for Japanese or
 `http://localhost:4173/image-compressor/` for English.
 
+`npm run dev` serves the project root directly. The HTML files in the root and
+route directories are the files that are published; there is no separate
+`dist/` site tree.
+
+### VS Code Live Server
+
+Use the status-bar **Go Live** button or open `index.html` with Live Server.
+Live Server publishes the repository root directly. The English home page is
+`/`; use `/ja/` for Japanese.
+
+Run `npm run build` after changing files under `src/` or updating dependencies.
+It rebuilds the browser workers in `assets/dist/` and refreshes generated SEO
+and tool-discovery files. Ordinary HTML, CSS and JavaScript edits are visible
+directly without copying pages to another directory.
+
+## Project structure
+
+```text
+index.html                 English home page
+ja/                        Japanese pages
+image-compressor/          English tool route
+pdf/                       English PDF routes
+workflows/                 English workflow routes
+assets/                    Published CSS, JavaScript, bundles and brand assets
+src/                       Source for bundled browser workers
+scripts/                   Build, metadata and local-server scripts
+```
+
+The filesystem matches the public URL. For example,
+`ja/image-compressor/index.html` is published directly as
+`/ja/image-compressor/`.
+
 The Japanese PNG/JPEG/WebP-to-SVG tool is available at
 `http://localhost:4173/ja/image-to-svg/`. It detects mixed input from file
 signatures and reproduces the Matopuri conversion pipeline in the browser:

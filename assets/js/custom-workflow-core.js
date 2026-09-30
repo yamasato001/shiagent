@@ -75,13 +75,3 @@ export function moveStep(inputType, stepIds, from, to) {
   return validateWorkflow(inputType, next).valid ? next : null;
 }
 
-export function readCustomWorkflows(storage = localStorage) {
-  try {
-    const value = JSON.parse(storage.getItem(CUSTOM_WORKFLOW_STORAGE_KEY) || "[]");
-    return Array.isArray(value) ? value : [];
-  } catch { return []; }
-}
-
-export function writeCustomWorkflows(workflows, storage = localStorage) {
-  storage.setItem(CUSTOM_WORKFLOW_STORAGE_KEY, JSON.stringify(workflows));
-}

@@ -1,5 +1,11 @@
-import { pick } from "./i18n.js";
-import renameText from "./i18n/batch-rename.js";
+export class DuplicateOutputNameError extends Error {
+  constructor(outputName) {
+    super(`Duplicate output name: ${outputName}`);
+    this.name = "DuplicateOutputNameError";
+    this.code = "DUPLICATE_OUTPUT_NAME";
+    this.outputName = outputName;
+  }
+}
 
 export function splitFileName(fileName) {
   const index = fileName.lastIndexOf(".");
@@ -11,7 +17,7 @@ export function sanitizeStem(value) {
   return String(value || "").replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, " ").trim().replace(/[. ]+$/, "");
 }
 
-export function createRenamedFiles(files, options = {}) {
+export function planRenames(files, options = {}) {
   const base = sanitizeStem(options.base || "file") || "file";
   const prefix = sanitizeStem(options.prefix || "");
   const suffix = sanitizeStem(options.suffix || "");
@@ -23,8 +29,8 @@ export function createRenamedFiles(files, options = {}) {
     const { extension } = splitFileName(file.name);
     const parts = [prefix, base, String(start + index).padStart(digits, "0"), suffix].filter(Boolean);
     const name = `${parts.join(separator)}${extension}`;
-    if (names.has(name.toLowerCase())) throw new Error(pick(renameText).duplicate(name));
+    if (names.has(name.toLowerCase())) throw new DuplicateOutputNameError(name);
     names.add(name.toLowerCase());
-    return new File([file], name, { type: file.type, lastModified: file.lastModified });
+    return { source: file, name };
   });
 }

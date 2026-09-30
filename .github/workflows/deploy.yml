@@ -1,0 +1,77 @@
+name: Deploy to Xserver
+
+# Pushing to main updates production. The server's document root is a git
+# clone of this repository (see LAUNCH.md "Automatic deployment"), so the
+# committed files, including the prebuilt assets/dist bundles, are what ships.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Never run two deployments at once; a newer push waits for the current one.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      # Tests and syntax checks use only Node built-ins; no install needed.
+      - name: Test
+        run: node --test
+      - name: Syntax check
+        run: npm run check
+
+  tag:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bump patch version tag
+        run: |
+          set -e
+          git fetch origin --tags
+          latest=$(git tag --list 'v*.*.*' | sort -V | tail -n1)
+          if [ -z "$latest" ]; then
+            new="v1.0.0"
+          else
+            IFS='.' read -r major minor patch <<< "${latest#v}"
+            new="v${major}.${minor}.$((patch + 1))"
+          fi
+          echo "Latest tag: ${latest:-none} / New tag: $new"
+          git tag "$new"
+          git push origin "$new"
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_READY: ${{ secrets.XSERVER_HOST != '' && secrets.XSERVER_SSH_KEY != '' && secrets.XSERVER_DEPLOY_PATH != '' }}
+    steps:
+      # Until the Xserver secrets are registered (LAUNCH.md), skip instead of failing.
+      - name: Skip until Xserver secrets are set
+        if: env.DEPLOY_READY != 'true'
+        run: echo "::notice::Xserver secrets are not set yet; skipping deployment. See LAUNCH.md."
+      - name: SSH into Xserver and sync to origin/main
+        if: env.DEPLOY_READY == 'true'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.XSERVER_HOST }}
+          username: ${{ secrets.XSERVER_USER }}
+          key: ${{ secrets.XSERVER_SSH_KEY }}
+          port: ${{ secrets.XSERVER_PORT }}
+          script: |
+            set -e
+            cd "${{ secrets.XSERVER_DEPLOY_PATH }}"
+            git fetch origin main
+            git reset --hard origin/main
+            git log -1 --format='Deployed %h %s'

@@ -1,5 +1,6 @@
 import { contentBounds } from "./image-cropper-core.js";
-import { createZip, formatBytes, savedPercent } from "./png-core.js";
+import { formatBytes, savedPercent } from "./png-core.js";
+import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import { detectImageFormat, OUTPUT_FORMATS, outputQuality, requiresSoftwareDecoder } from "./image-converter-core.js";
 import {
   MAX_LONG_SIDE, MAX_OUTPUT_PIXELS, MAX_START_NUMBER, MIN_LONG_SIDE, downscaleSteps, fitLongSide,
@@ -111,15 +112,12 @@ function ensureOptimizerWorker() {
 function stopOptimizerWorker(error = Object.assign(new Error(copy.cancelled), { name: "AbortError" })) { optimizerWorker?.terminate(); optimizerWorker = null; for (const request of optimizerRequests.values()) request.reject(error); optimizerRequests.clear(); }
 
 async function decode(entry) {
-  const canvas = document.createElement("canvas"), context = canvas.getContext("2d");
   if (entry.software) {
     const buffer = await entry.file.arrayBuffer();
     const decoded = await new Promise((resolve, reject) => { const id = ++decoderId; decoderRequests.set(id, { resolve, reject }); ensureDecoderWorker().postMessage({ id, buffer, format: entry.format }, [buffer]); });
-    canvas.width = decoded.width; canvas.height = decoded.height; context.putImageData(new ImageData(new Uint8ClampedArray(decoded.data), decoded.width, decoded.height), 0, 0); return canvas;
+    return canvasFromRgba(decoded);
   }
-  let bitmap;
-  try { bitmap = await createImageBitmap(entry.file, { imageOrientation: "from-image" }); } catch { throw new Error(copy.undecodable(entry.file.name)); }
-  canvas.width = bitmap.width; canvas.height = bitmap.height; context.drawImage(bitmap, 0, 0); bitmap.close(); return canvas;
+  try { return await decodeBrowserImage(entry.file); } catch { throw new Error(copy.undecodable(entry.file.name)); }
 }
 
 function cropSource(source) {
@@ -151,7 +149,7 @@ function resize(source, target, outputFormat) {
 }
 function encode(canvas, format) {
   const definition = OUTPUT_FORMATS[format];
-  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error(copy.encodeFailed)), definition.mime, outputQuality(format, elements.quality.value)));
+  return encodeBrowserCanvas(canvas, definition.mime, outputQuality(format, elements.quality.value)).catch(() => { throw new Error(copy.encodeFailed); });
 }
 async function optimizePng(blob) {
   const buffer = await blob.arrayBuffer(), level = elements.quality.value === "compact" ? 4 : elements.quality.value === "high" ? 2 : 3;
@@ -198,7 +196,7 @@ function showResults(success) {
   document.dispatchEvent(new CustomEvent("shiagent:outputs", { detail: { files: done.map(entry => ({ name: entry.resultName, blob: entry.resultBlob })), source: "web-image-optimizer-result" } }));
 }
 function downloadBlob(blob, name) { const url = URL.createObjectURL(blob), anchor = document.createElement("a"); anchor.href = url; anchor.download = name; document.body.append(anchor); anchor.click(); anchor.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }
-async function downloadAll() { const done = entries.filter(entry => entry.status === "done"); if (!done.length) return; const files = await Promise.all(done.map(async entry => ({ name: entry.resultName, data: new Uint8Array(await entry.resultBlob.arrayBuffer()) }))); downloadBlob(createZip(files), "web-images.zip"); showToast(copy.downloaded); }
+async function downloadAll() { const done = entries.filter(entry => entry.status === "done"); if (!done.length) return; const files = await Promise.all(done.map(async entry => ({ name: entry.resultName, data: new Uint8Array(await entry.resultBlob.arrayBuffer()) }))); downloadBlob(createZipBlob(files), "web-images.zip"); showToast(copy.downloaded); }
 function clearAll() { if (running) return; entries.forEach(dispose); entries = []; resetResults(); render(); }
 function resetAfterSettingChange() { if (!running && entries.some(entry => entry.status !== "ready")) resetResults(); render(); }
 function settingsChanged() { elements.presetInputs.forEach(input => { input.checked = false; }); resetAfterSettingChange(); }

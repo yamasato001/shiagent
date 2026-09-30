@@ -1,6 +1,6 @@
 import { PDFDocument, degrees } from "pdf-lib";
 import { GlobalWorkerOptions, getDocument } from "pdfjs-dist/build/pdf.mjs";
-import { createZip } from "../assets/js/png-core.js";
+import { createZipBlob } from "../assets/js/browser-runtime.js";
 import { chooseOutputDirectory, supportsFolderDownload, writeFilesToDirectory } from "../assets/js/folder-download.js";
 import { detectRasterOrientation, detectTextOrientation, rotateAngle, safePdfName } from "../assets/js/pdf-core.js";
 import { pageNumberCandidatesFromText, resolvePageNumberSequence, sequenceIssues, sortPagesByDetectedNumber } from "../assets/js/pdf-page-number-core.js";
@@ -209,7 +209,7 @@ async function downloadAll() {
   if (done.length === 1) return downloadSource(done[0]);
   const files = [];
   for (const source of done) files.push({ name: outputName(source), data: await outputBytes(source) });
-  download(createZip(files), "shiagent_sorted_pdfs.zip");
+  download(createZipBlob(files), "shiagent_sorted_pdfs.zip");
 }
 async function downloadFolder() {
   const done = sources.filter(source => source.status === "done");

@@ -2,22 +2,24 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const renameHtml = await readFile(new URL("../ja/batch-rename/index.html", import.meta.url), "utf8");
-const splitterHtml = await readFile(new URL("../ja/image-splitter/index.html", import.meta.url), "utf8");
-const vectorHtml = await readFile(new URL("../ja/image-to-svg/index.html", import.meta.url), "utf8");
-const compressorHtml = await readFile(new URL("../ja/image-compressor/index.html", import.meta.url), "utf8");
-const converterHtml = await readFile(new URL("../ja/image-converter/index.html", import.meta.url), "utf8");
-const resizerHtml = await readFile(new URL("../ja/image-resizer/index.html", import.meta.url), "utf8");
-const cropperHtml = await readFile(new URL("../ja/image-cropper/index.html", import.meta.url), "utf8");
-const paddingHtml = await readFile(new URL("../ja/canvas-padding/index.html", import.meta.url), "utf8");
-const joinerHtml = await readFile(new URL("../ja/image-joiner/index.html", import.meta.url), "utf8");
-const metadataHtml = await readFile(new URL("../ja/metadata-cleaner/index.html", import.meta.url), "utf8");
-const rasterizerHtml = await readFile(new URL("../ja/svg-to-image/index.html", import.meta.url), "utf8");
-const colorHtml = await readFile(new URL("../ja/color-tool/index.html", import.meta.url), "utf8");
-const faviconHtml = await readFile(new URL("../ja/favicon-generator/index.html", import.meta.url), "utf8");
-const whiteFillHtml = await readFile(new URL("../ja/svg-white-fill/index.html", import.meta.url), "utf8");
-const cleanerHtml = await readFile(new URL("../ja/svg-cleaner/index.html", import.meta.url), "utf8");
-const whiteFillEditorHtml = await readFile(new URL("../ja/svg-white-fill/editor/index.html", import.meta.url), "utf8");
+const published = new URL("../", import.meta.url);
+const readPublished = path => readFile(new URL(path, published), "utf8");
+const renameHtml = await readPublished("ja/batch-rename/index.html");
+const splitterHtml = await readPublished("ja/image-splitter/index.html");
+const vectorHtml = await readPublished("ja/image-to-svg/index.html");
+const compressorHtml = await readPublished("ja/image-compressor/index.html");
+const converterHtml = await readPublished("ja/image-converter/index.html");
+const resizerHtml = await readPublished("ja/image-resizer/index.html");
+const cropperHtml = await readPublished("ja/image-cropper/index.html");
+const paddingHtml = await readPublished("ja/canvas-padding/index.html");
+const joinerHtml = await readPublished("ja/image-joiner/index.html");
+const metadataHtml = await readPublished("ja/metadata-cleaner/index.html");
+const rasterizerHtml = await readPublished("ja/svg-to-image/index.html");
+const colorHtml = await readPublished("ja/color-tool/index.html");
+const faviconHtml = await readPublished("ja/favicon-generator/index.html");
+const whiteFillHtml = await readPublished("ja/svg-white-fill/index.html");
+const cleanerHtml = await readPublished("ja/svg-cleaner/index.html");
+const whiteFillEditorHtml = await readPublished("ja/svg-white-fill/editor/index.html");
 const siteCss = await readFile(new URL("../assets/css/site.css", import.meta.url), "utf8");
 const workTrayCss = await readFile(new URL("../assets/css/work-tray.css", import.meta.url), "utf8");
 const queueDropJs = await readFile(new URL("../assets/js/queue-drop.js", import.meta.url), "utf8");
@@ -60,6 +62,22 @@ test("work tray exposes a clear control backed by IndexedDB cleanup", () => {
   assert.match(workflowHandoffJs, /assets\/css\/work-tray\.css/);
   assert.match(workTrayCss, /\.work-tray-heading > \.work-tray-heading-actions \{[^}]*flex-direction: row/);
   assert.match(workTrayCss, /\.work-tray \.work-tray-clear \{[^}]*width: auto[^}]*white-space: nowrap/);
+});
+
+test("work tray stays inside small viewports", () => {
+  assert.match(workTrayCss, /\.work-tray-panel \{[^}]*max-height: calc\(100dvh - 99px\)[^}]*overflow-y: auto/);
+  assert.match(workTrayCss, /\.work-tray-heading \{[^}]*position: sticky[^}]*top: 0/);
+  assert.match(workTrayCss, /@media \(max-width: 430px\) \{[\s\S]*?\.work-tray \{[^}]*right: max\(10px, env\(safe-area-inset-right\)\)[^}]*left: max\(10px, env\(safe-area-inset-left\)\)[^}]*width: auto/);
+  assert.match(workTrayCss, /@media \(max-height: 520px\) \{[\s\S]*?max-height: calc\(100dvh - 78px\)/);
+});
+
+test("work tray shows only compatible next tools", () => {
+  assert.match(workflowHandoffJs, /\.filter\(\(\{ tool, count \}\) => tool !== currentTool && count > 0\)/);
+  assert.match(workflowHandoffJs, /toolList\.hidden = availableTools\.length === 0/);
+  assert.match(workflowHandoffJs, /workTrayToolsEmpty/);
+  assert.doesNotMatch(workflowHandoffJs, /is-disabled|aria-disabled/);
+  assert.equal((workflowHandoffJs.match(/path: localPath\("\/favicon-generator\/"\)/g) || []).length, 1);
+  assert.match(workTrayCss, /\.work-tray-tools\[hidden\] \{ display: none; \}/);
 });
 
 test("work tray closes when the user clicks outside it", () => {
@@ -182,4 +200,77 @@ test("manual white-fill editor auto-updates close, exclude and erase operations"
   assert.match(whiteFillEditorHtml, /操作のたびに自動更新/);
   assert.match(whiteFillEditorJs, /for \(const session of state\.sessions\) await requestPreview\(session\)/);
   assert.match(whiteFillEditorJs, /function markStale\(session\)[\s\S]*requestPreview\(session\)/);
+  assert.match(whiteFillEditorHtml, /id="nextButton"/);
+  assert.doesNotMatch(whiteFillEditorHtml, /saveNextButton|確定して次へ/);
+  assert.match(whiteFillEditorJs, /async function moveNext\(\)[\s\S]*await ensureFinalResult\(session\)/);
+});
+
+test("manual white-fill editor saves directly to a chosen folder", () => {
+  assert.match(whiteFillEditorHtml, /id="folderButton"/);
+  assert.match(whiteFillEditorHtml, /id="downloadAllButton"/);
+  assert.match(whiteFillEditorHtml, /id="editedSuffixInput"[^>]*checked/);
+  assert.match(whiteFillEditorHtml, /ファイル名に _edited を付ける/);
+  assert.match(whiteFillEditorJs, /showOpenFilePicker/);
+  assert.match(whiteFillEditorJs, /sourceHandle/);
+  assert.match(whiteFillEditorJs, /chooseOutputDirectory\(window, session\?\.sourceHandle \|\| "downloads"\)/);
+  assert.match(whiteFillEditorJs, /applyConfiguredOutputSuffix\(`\$\{stem\}\.svg`\)/);
+  assert.match(whiteFillEditorJs, /async function downloadAll\(\)/);
+  assert.match(whiteFillEditorJs, /writeFilesToDirectory\(directory, results\)/);
+  assert.match(whiteFillEditorHtml, /class="editor-topbar"[\s\S]*id="editedSuffixInput"[\s\S]*id="downloadAllButton"[\s\S]*class="editor-nav"/);
+  assert.doesNotMatch(whiteFillEditorHtml, /class="editor-sidebar"[\s\S]*id="downloadAllButton"/);
+  assert.match(whiteFillEditorHtml, /class="editor-workspace"[^>]*>[\s\S]*class="editor-zoom"/);
+  assert.doesNotMatch(whiteFillEditorHtml, /class="editor-topbar"[\s\S]*class="editor-zoom"[\s\S]*class="editor-layout"/);
+});
+
+test("manual white-fill usage example does not shrink the editor workspace", async () => {
+  for (const html of [whiteFillEditorHtml, await readPublished("svg-white-fill/editor/index.html")]) {
+    assert.match(html, /<\/main><section class="content-section tool-example"/);
+    assert.doesNotMatch(html, /<main class="svg-editor"[\s\S]*<section class="content-section tool-example"[\s\S]*<\/main>/);
+  }
+});
+
+test("manual white-fill editor exposes touch gestures and compact mobile controls", () => {
+  assert.match(whiteFillEditorHtml, /editor-help-touch[^>]*>タップ: 編集/);
+  assert.match(whiteFillEditorHtml, /editor-help-touch[^>]*>ピンチ: 拡大縮小/);
+  assert.match(siteCss, /\.editor-canvas-wrap canvas \{[^}]*touch-action: none/);
+  assert.match(siteCss, /@media \(max-width: 760px\) \{[\s\S]*?\.editor-mode-group \{[^}]*grid-template-columns: repeat\(3/);
+  assert.match(siteCss, /\.editor-help-touch \{ display: inline; \}/);
+  assert.match(whiteFillEditorJs, /addEventListener\("pointerdown", touchPointerDown\)/);
+  assert.match(whiteFillEditorJs, /touchGesture\.zoom \* distance \/ touchGesture\.distance/);
+  assert.match(whiteFillEditorJs, /Math\.hypot\(dx, dy\) > 6/);
+});
+
+test("manual white-fill editor uses fast cached previews and full-resolution exports", () => {
+  assert.match(whiteFillEditorJs, /const PREVIEW_LONG_SIDE = 768/);
+  assert.match(whiteFillEditorJs, /analysisCache: new Map\(\)/);
+  assert.match(whiteFillEditorJs, /session\.analysisCache\.has\(longSide\)/);
+  assert.match(whiteFillEditorJs, /Math\.min\(PREVIEW_LONG_SIDE, selected\.longSide\)/);
+  assert.match(whiteFillEditorJs, /calculateAtResolution\(session, selected, selected\.longSide\)/);
+  assert.match(whiteFillEditorJs, /await ensureFinalResult\(session\)/);
+});
+
+test("manual white-fill editor auto-fills only SVGs without an existing white fill", () => {
+  assert.match(whiteFillEditorJs, /autoFillClosedRegions: null/);
+  assert.match(whiteFillEditorJs, /session\.autoFillClosedRegions = !managedFillMask && !hasWhiteFill/);
+  assert.match(whiteFillEditorJs, /newlyClosedRegionMask\(mask, originalMask\)/);
+  assert.match(whiteFillEditorJs, /excludeMaskRegions\(mask, width, height, excludedPoints\)/);
+  assert.match(whiteFillEditorJs, /const managedSvg = managedFillSvg\(parsed\)/);
+});
+
+test("close-gap mode supports drag-release guide lines and keeps two-tap input", () => {
+  assert.match(whiteFillEditorHtml, /ドラッグまたは2点タップ/);
+  assert.match(whiteFillEditorJs, /function commitGuideLine\(session, start, end\)/);
+  assert.match(whiteFillEditorJs, /state\.dragLine = \{ session, start, end: start/);
+  assert.match(whiteFillEditorJs, /commitGuideLine\(gesture\.session, gesture\.start, gesture\.end\)/);
+  assert.match(whiteFillEditorJs, /if \(!session\.pending\) \{ session\.pending = point/);
+});
+
+test("close-gap mode supports continuous click polylines", () => {
+  assert.match(whiteFillEditorHtml, /data-close-method=\"polyline\"/);
+  assert.match(whiteFillEditorHtml, /data-tooltip=\"クリックごとに線をつなぎ/);
+  assert.match(whiteFillEditorJs, /closeMethod: \"segment\"/);
+  assert.match(whiteFillEditorJs, /sameCanvasPoint\(session\.pending, point\)/);
+  assert.match(whiteFillEditorJs, /session\.pending = closeMethod\(\) === \"polyline\" \? point : null/);
+  assert.match(siteCss, /\.editor-close-methods button:hover::after/);
+  assert.doesNotMatch(whiteFillEditorJs, /editor-group editor-close-methods/);
 });

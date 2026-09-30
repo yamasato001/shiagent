@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import { detectImageFormat, formatLabel } from "./image-converter-core.js";
 import { colorOutputName, processColorPixels, transformCssColor, transformCssText } from "./color-tool-core.js";
 import { locale, pick } from "./i18n.js";
@@ -112,13 +113,11 @@ function render() {
   }).join("");
 }
 
-function encodeCanvas(canvas, format) {
+async function encodeCanvas(canvas, format) {
   const mime = format === "webp" ? "image/webp" : "image/png";
-  return new Promise((resolve, reject) => canvas.toBlob(blob => {
-    if (!blob) reject(new Error(copy.encodeFailed));
-    else if (format === "webp" && blob.type !== mime) reject(new Error(copy.webpUnsupported));
-    else resolve(blob);
-  }, mime, Number(elements.quality.value) / 100));
+  const blob = await encodeBrowserCanvas(canvas, mime, Number(elements.quality.value) / 100).catch(() => { throw new Error(copy.encodeFailed); });
+  if (format === "webp" && blob.type !== mime) throw new Error(copy.webpUnsupported);
+  return blob;
 }
 
 async function processEntry(entry, settings) {
@@ -128,10 +127,9 @@ async function processEntry(entry, settings) {
     entry.resultBlob = new Blob([source], { type: "image/svg+xml" });
     entry.outputFormat = "svg";
   } else {
-    const bitmap = await createImageBitmap(entry.file, { imageOrientation: "from-image" });
-    if (bitmap.width > 32767 || bitmap.height > 32767 || bitmap.width * bitmap.height > 100_000_000) { bitmap.close(); throw new Error(copy.tooLarge); }
-    const canvas = document.createElement("canvas"); canvas.width = bitmap.width; canvas.height = bitmap.height;
-    const context = canvas.getContext("2d", { alpha: true }); context.drawImage(bitmap, 0, 0); bitmap.close();
+    const canvas = await decodeBrowserImage(entry.file, { willReadFrequently: true });
+    if (canvas.width > 32767 || canvas.height > 32767 || canvas.width * canvas.height > 100_000_000) throw new Error(copy.tooLarge);
+    const context = canvas.getContext("2d", { alpha: true, willReadFrequently: true });
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     imageData.data.set(processColorPixels(imageData.data, settings)); context.putImageData(imageData, 0, 0);
     entry.outputFormat = elements.outputFormat.value;
@@ -168,7 +166,7 @@ async function run() {
 }
 
 function downloadBlob(blob, name) { const url = URL.createObjectURL(blob), link = document.createElement("a"); link.href = url; link.download = name; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
-async function downloadAll() { const files = outputFiles(entries.filter(entry => entry.status === "done")), zipEntries = []; for (const file of files) zipEntries.push({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) }); if (zipEntries.length) downloadBlob(createZip(zipEntries), "shiagent-color-results.zip"); }
+async function downloadAll() { const files = outputFiles(entries.filter(entry => entry.status === "done")), zipEntries = []; for (const file of files) zipEntries.push({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) }); if (zipEntries.length) downloadBlob(createZipBlob(zipEntries), "shiagent-color-results.zip"); }
 
 function setMode(mode) { const radio = document.querySelector(`input[name="colorMode"][value="${mode}"]`); if (radio) radio.checked = true; resetResults(); render(); }
 function syncColor(input, text) { text.value = input.value.toUpperCase(); }

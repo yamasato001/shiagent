@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { createZipBlob, encodeBrowserCanvas } from "./browser-runtime.js";
 import { addPngDensity, parseSvgSize, rasterDimensions, rasterizedName } from "./svg-rasterizer-core.js";
 import { locale, pick } from "./i18n.js";
 import rasterizerText from "./i18n/svg-rasterizer.js";
@@ -145,14 +146,12 @@ function render() {
   }).join("");
 }
 
-function canvasBlob(canvas, format) {
+async function canvasBlob(canvas, format) {
   const mime = format === "webp" ? "image/webp" : "image/png";
   const quality = Number(elements.quality.value) / 100;
-  return new Promise((resolve, reject) => canvas.toBlob(blob => {
-    if (!blob) reject(new Error(copy.encodeFailed));
-    else if (format === "webp" && blob.type !== mime) reject(new Error(copy.webpUnsupported));
-    else resolve(blob);
-  }, mime, quality));
+  const blob = await encodeBrowserCanvas(canvas, mime, quality).catch(() => { throw new Error(copy.encodeFailed); });
+  if (format === "webp" && blob.type !== mime) throw new Error(copy.webpUnsupported);
+  return blob;
 }
 
 function loadImage(url) {
@@ -246,7 +245,7 @@ async function downloadAll() {
   const files = outputFiles(entries.filter(entry => entry.status === "done"));
   const zipEntries = [];
   for (const file of files) zipEntries.push({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) });
-  if (zipEntries.length) downloadBlob(createZip(zipEntries), "shiagent-rasterized-images.zip");
+  if (zipEntries.length) downloadBlob(createZipBlob(zipEntries), "shiagent-rasterized-images.zip");
 }
 
 elements.select.addEventListener("click", event => { event.stopPropagation(); elements.input.click(); });

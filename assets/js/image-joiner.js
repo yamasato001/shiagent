@@ -1,4 +1,5 @@
 import { formatBytes } from "./png-core.js";
+import { canvasFromRgba, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import { detectImageFormat, formatLabel, OUTPUT_FORMATS, outputQuality, requiresSoftwareDecoder } from "./image-converter-core.js";
 import { joinLayout, joinedName } from "./image-joiner-core.js";
 import { lang, locale, pick } from "./i18n.js";
@@ -64,8 +65,6 @@ function stopDecoderWorker(error = Object.assign(new Error(copy.cancelled), { na
 }
 
 async function decodeToCanvas(entry) {
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d", { alpha: true });
   if (requiresSoftwareDecoder(entry.format)) {
     const buffer = await entry.file.arrayBuffer();
     const decoded = await new Promise((resolve, reject) => {
@@ -73,26 +72,17 @@ async function decodeToCanvas(entry) {
       decoderRequests.set(id, { resolve, reject });
       ensureDecoderWorker().postMessage({ id, buffer, format: entry.format }, [buffer]);
     });
-    canvas.width = decoded.width;
-    canvas.height = decoded.height;
-    context.putImageData(new ImageData(new Uint8ClampedArray(decoded.data), decoded.width, decoded.height), 0, 0);
-    return canvas;
+    return canvasFromRgba(decoded);
   }
-  const bitmap = await createImageBitmap(entry.file, { imageOrientation: "from-image" });
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
-  return canvas;
+  return decodeBrowserImage(entry.file);
 }
 
 function encodeCanvas(canvas, format) {
   const definition = OUTPUT_FORMATS[format];
-  return new Promise((resolve, reject) => canvas.toBlob(blob => {
-    if (!blob) return reject(new Error(copy.encodeFailed(definition.label)));
-    if (blob.type !== definition.mime) return reject(new Error(copy.encodeUnsupported(definition.label)));
-    resolve(blob);
-  }, definition.mime, outputQuality(format, elements.quality.value)));
+  return encodeBrowserCanvas(canvas, definition.mime, outputQuality(format, elements.quality.value)).then(blob => {
+    if (blob.type !== definition.mime) throw new Error(copy.encodeUnsupported(definition.label));
+    return blob;
+  });
 }
 
 function disposeEntry(entry) {

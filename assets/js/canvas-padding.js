@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import { detectImageFormat, formatLabel, OUTPUT_FORMATS, outputQuality, requiresSoftwareDecoder } from "./image-converter-core.js";
 import { fixedCanvasPlacement, paddedName, relativePaddingPlacement } from "./canvas-padding-core.js";
 import { lang, locale, pick } from "./i18n.js";
@@ -62,8 +63,7 @@ function stopDecoderWorker(error = Object.assign(new Error(copy.cancelled), { na
 
 async function decode(entry) {
   if (entry.canvas) return entry.canvas;
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d", { alpha: true });
+  let canvas;
   if (requiresSoftwareDecoder(entry.format)) {
     const buffer = await entry.file.arrayBuffer();
     const decoded = await new Promise((resolve, reject) => {
@@ -71,16 +71,8 @@ async function decode(entry) {
       decoderRequests.set(id, { resolve, reject });
       ensureDecoderWorker().postMessage({ id, buffer, format: entry.format }, [buffer]);
     });
-    canvas.width = decoded.width;
-    canvas.height = decoded.height;
-    context.putImageData(new ImageData(new Uint8ClampedArray(decoded.data), decoded.width, decoded.height), 0, 0);
-  } else {
-    const bitmap = await createImageBitmap(entry.file, { imageOrientation: "from-image" });
-    canvas.width = bitmap.width;
-    canvas.height = bitmap.height;
-    context.drawImage(bitmap, 0, 0);
-    bitmap.close();
-  }
+    canvas = canvasFromRgba(decoded);
+  } else canvas = await decodeBrowserImage(entry.file);
   entry.canvas = canvas;
   return canvas;
 }
@@ -92,11 +84,10 @@ function outputFormat(entry) {
 
 function encode(canvas, format) {
   const definition = OUTPUT_FORMATS[format];
-  return new Promise((resolve, reject) => canvas.toBlob(blob => {
-    if (!blob) return reject(new Error(copy.encodeFailed(definition.label)));
-    if (blob.type !== definition.mime) return reject(new Error(copy.encodeUnsupported(definition.label)));
-    resolve(blob);
-  }, definition.mime, outputQuality(format, elements.quality.value)));
+  return encodeBrowserCanvas(canvas, definition.mime, outputQuality(format, elements.quality.value)).then(blob => {
+    if (blob.type !== definition.mime) throw new Error(copy.encodeUnsupported(definition.label));
+    return blob;
+  });
 }
 
 function disposeEntry(entry) {
@@ -275,7 +266,7 @@ async function downloadAll() {
   const done = state.entries.filter(entry => entry.status === "done");
   const zipEntries = [];
   for (const file of outputFiles(done)) zipEntries.push({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) });
-  if (zipEntries.length) download(createZip(zipEntries), "shiagent-padded-images.zip");
+  if (zipEntries.length) download(createZipBlob(zipEntries), "shiagent-padded-images.zip");
 }
 
 elements.select.addEventListener("click", event => { event.stopPropagation(); elements.input.click(); });

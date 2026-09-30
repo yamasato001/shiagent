@@ -1,4 +1,5 @@
-import { analyzePixels, createZip, detectRasterFormat, formatBytes, jpegQuality, outputName, savedPercent } from "./png-core.js";
+import { analyzePixels, detectRasterFormat, formatBytes, jpegQuality, outputName, savedPercent } from "./png-core.js";
+import { createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import "./queue-drop.js";
 
 const lang = document.documentElement.dataset.pageLang || "ja";
@@ -129,14 +130,14 @@ function quantizePng(imageData, width, height, mode, level) {
   }).then(result => new Blob([result], { type: "image/png" }));
 }
 
-function processLineArtPng(imageData, width, height, level) {
+function processLineArtPng(imageData, width, height, level, compact = false) {
   const buffer = imageData.data.buffer;
   return new Promise((resolve, reject) => {
     const id = ++optimizerRequestId;
     optimizerRequests.set(id, { resolve, reject });
     ensureOptimizerWorker().postMessage({
       id,
-      type: "lineart",
+      type: compact ? "lineart-compact" : "lineart",
       buffer,
       width,
       height,
@@ -288,23 +289,16 @@ function escapeHtml(value) {
 }
 
 async function decodeFile(file) {
-  const bitmap = await createImageBitmap(file);
-  const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  const canvas = await decodeBrowserImage(file, { willReadFrequently: true });
   const context = canvas.getContext("2d", { alpha: true, willReadFrequently: true });
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
   return { canvas, imageData: context.getImageData(0, 0, canvas.width, canvas.height) };
 }
 
-function encodeRaster(canvas, format, quality) {
+async function encodeRaster(canvas, format, quality) {
   const mime = format === "webp" ? "image/webp" : "image/jpeg";
-  return new Promise((resolve, reject) => canvas.toBlob(
-    blob => blob?.type === mime ? resolve(blob) : reject(new Error(`${format.toUpperCase()} encoding failed`)),
-    mime,
-    quality
-  ));
+  const blob = await encodeBrowserCanvas(canvas, mime, quality);
+  if (blob.type !== mime) throw new Error(`${format.toUpperCase()} encoding failed`);
+  return blob;
 }
 
 async function compressEntry(entry, requestedMode) {
@@ -349,12 +343,18 @@ async function compressEntry(entry, requestedMode) {
     entry.kind = analysis.kind;
     mode = requestedMode === "auto" ? analysis.preset : requestedMode;
     if (elements.effort.value === "careful" && mode === "smallest") mode = "balanced";
-    if (mode === "balanced" || mode === "smallest") {
+    if (mode === "balanced" || mode === "smallest" || mode === "illustration") {
       entry.processingStrategy = decoded.canvas.width * decoded.canvas.height > MAX_PALETTE_PIXELS ? "bounded" : "palette";
       blob = await quantizePng(decoded.imageData, decoded.canvas.width, decoded.canvas.height, mode, effortLevel);
     } else {
       entry.processingStrategy = "lineart";
-      blob = await processLineArtPng(decoded.imageData, decoded.canvas.width, decoded.canvas.height, effortLevel);
+      blob = await processLineArtPng(
+        decoded.imageData,
+        decoded.canvas.width,
+        decoded.canvas.height,
+        effortLevel,
+        entry.autoSelected
+      );
     }
   }
   entry.usedMode = mode;
@@ -446,7 +446,7 @@ async function downloadAll() {
     if (seen) name = makeOutputName(entry, `-${seen + 1}`);
     zipEntries.push({ name, data: new Uint8Array(await entry.resultBlob.arrayBuffer()) });
   }
-  downloadBlob(createZip(zipEntries), "shiagent-images.zip");
+  downloadBlob(createZipBlob(zipEntries), "shiagent-images.zip");
   showToast(copy.downloaded);
 }
 

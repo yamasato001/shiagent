@@ -21,7 +21,34 @@
           "paths": { "type": "object", "required": ["en", "ja"] },
           "accepts": { "type": "array", "items": { "type": "string" } },
           "outputs": { "type": "array", "items": { "type": "string" } },
-          "automation": { "type": "object", "required": ["input", "action", "result", "download", "controls", "events"] }
+          "automation": {
+            "type": "object",
+            "required": ["input", "action", "result", "download", "controls", "events"],
+            "properties": {
+              "input": { "type": ["string", "null"] },
+              "action": { "type": ["string", "null"] },
+              "result": { "type": ["string", "null"] },
+              "download": { "type": ["string", "null"] },
+              "status": { "type": ["string", "null"] },
+              "controls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["selector", "element", "type"],
+                  "properties": {
+                    "selector": { "type": "string" },
+                    "element": { "type": "string" },
+                    "type": { "type": "string" },
+                    "values": { "type": "array", "items": { "type": "string" } },
+                    "checked": { "type": "boolean" },
+                    "repeated": { "type": "boolean" },
+                    "action": { "enum": ["click"] }
+                  }
+                }
+              },
+              "events": { "type": "object" }
+            }
+          }
         }
       }
     }

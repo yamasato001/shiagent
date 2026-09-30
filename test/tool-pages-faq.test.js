@@ -7,7 +7,7 @@ const root = new URL("../", import.meta.url);
 async function toolPages(directory, prefix = "") {
   const pages = [];
   for (const name of await readdir(new URL(directory, root))) {
-    if (["node_modules", "assets", "design", "scripts", "src", "test", ".git"].includes(name)) continue;
+    if ([".agents", ".codex", ".git", ".vscode", "assets", "design", "dist", "node_modules", "pages", "public", "scripts", "src", "test", "tmp"].includes(name)) continue;
     const path = `${directory}${name}/`;
     if (!(await stat(new URL(path, root))).isDirectory()) continue;
     try {

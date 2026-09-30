@@ -1,3 +1,5 @@
+import { applyConfiguredOutputSuffix } from "./output-name.js";
+
 export function supportsFolderDownload(scope = globalThis) {
   return typeof scope?.showDirectoryPicker === "function";
 }
@@ -7,9 +9,9 @@ export function safeFolderFileName(value, fallbackIndex = 0) {
   return cleaned || `file_${String(fallbackIndex + 1).padStart(2, "0")}`;
 }
 
-export async function chooseOutputDirectory(scope = globalThis) {
+export async function chooseOutputDirectory(scope = globalThis, startIn = "downloads") {
   if (!supportsFolderDownload(scope)) throw new Error("Folder download is not supported");
-  return scope.showDirectoryPicker({ id: "shiagent-exports", mode: "readwrite", startIn: "downloads" });
+  return scope.showDirectoryPicker({ id: "shiagent-exports", mode: "readwrite", startIn });
 }
 
 export async function writeFilesToDirectory(directory, files, onProgress = () => {}) {
@@ -19,7 +21,7 @@ export async function writeFilesToDirectory(directory, files, onProgress = () =>
     const item = files[index];
     const payload = item?.blob || item;
     if (!payload || typeof payload !== "object") continue;
-    const original = safeFolderFileName(item?.name || payload.name, index);
+    const original = safeFolderFileName(applyConfiguredOutputSuffix(item?.name || payload.name), index);
     const dot = original.lastIndexOf(".");
     const stem = dot > 0 ? original.slice(0, dot) : original;
     const extension = dot > 0 ? original.slice(dot) : "";
@@ -36,3 +38,4 @@ export async function writeFilesToDirectory(directory, files, onProgress = () =>
   }
   return written;
 }
+

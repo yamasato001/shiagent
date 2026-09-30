@@ -43,14 +43,140 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#processButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
-        "controls": [],
+        "status": "#resultStatus",
+        "controls": [
+          {
+            "selector": "input[name=\"removal\"][value=\"connected\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "connected",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"removal\"][value=\"global\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "global",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"removal\"][value=\"none\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "none",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"key\"][value=\"auto\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "auto",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"key\"][value=\"manual\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "manual",
+            "checked": false
+          },
+          {
+            "selector": "#keyColor",
+            "element": "input",
+            "type": "color",
+            "value": "#ffffff"
+          },
+          {
+            "selector": "#tolerance",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "60",
+            "value": "12"
+          },
+          {
+            "selector": "#softness",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "40",
+            "value": "10"
+          },
+          {
+            "selector": "input[name=\"fill\"][value=\"transparent\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "transparent",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"fill\"][value=\"white\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "white",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"fill\"][value=\"black\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "black",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"fill\"][value=\"custom\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "custom",
+            "checked": false
+          },
+          {
+            "selector": "#fillColor",
+            "element": "input",
+            "type": "color",
+            "value": "#f2e8d5"
+          },
+          {
+            "selector": "#outputFormat",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "png",
+              "webp",
+              "jpeg"
+            ],
+            "value": "png"
+          },
+          {
+            "selector": "input[name=\"preview\"][value=\"checker\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "checker",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"preview\"][value=\"white\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "white",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"preview\"][value=\"dark\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "dark",
+            "checked": false
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -88,11 +214,53 @@
         "action": "#applyButton",
         "result": "#resultsPanel",
         "download": "#downloadButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "#prefixInput",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#baseInput",
+            "element": "input",
+            "type": "text",
+            "value": "file"
+          },
+          {
+            "selector": "#startInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "max": "999999",
+            "value": "1"
+          },
+          {
+            "selector": "#digitsInput",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "1",
+              "2",
+              "3",
+              "4"
+            ],
+            "value": "2"
+          },
           {
             "selector": "#suffixInput",
             "element": "input",
-            "type": "text",
+            "type": "text"
+          },
+          {
+            "selector": "#separatorInput",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "_",
+              "-",
+              "none"
+            ],
             "value": "_"
           }
         ],
@@ -148,14 +316,48 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#paddingButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"paddingMode\"][value=\"relative\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "relative",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"paddingMode\"][value=\"fixed\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "fixed",
+            "checked": false
+          },
+          {
+            "selector": "#paddingInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "max": "10000",
+            "value": "10"
+          },
+          {
+            "selector": "#paddingUnit",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "percent",
+              "px"
+            ],
+            "value": "percent"
+          },
           {
             "selector": "#canvasWidth",
             "element": "input",
@@ -165,21 +367,66 @@
             "value": "512"
           },
           {
+            "selector": "#canvasHeight",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "32767",
+            "value": "512"
+          },
+          {
+            "selector": "#insetInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "value": "0"
+          },
+          {
+            "selector": "#allowUpscale",
+            "element": "input",
+            "type": "checkbox",
+            "checked": false
+          },
+          {
+            "selector": "#backgroundSelect",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "transparent",
+              "white",
+              "black",
+              "custom"
+            ],
+            "value": "transparent"
+          },
+          {
             "selector": "#customColor",
             "element": "input",
             "type": "color",
             "value": "#ffffff"
           },
           {
+            "selector": "#outputFormat",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "original",
+              "png",
+              "jpeg",
+              "webp"
+            ],
+            "value": "original"
+          },
+          {
             "selector": "#quality",
             "element": "select",
             "type": "select",
-            "value": "compact",
             "values": [
               "compact",
               "standard",
               "high"
-            ]
+            ],
+            "value": "standard"
           }
         ],
         "events": {
@@ -223,24 +470,105 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "image/svg+xml",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#processButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"colorMode\"][value=\"transparent\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "transparent",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"colorMode\"][value=\"replace\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "replace",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"colorMode\"][value=\"grayscale\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "grayscale",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"colorMode\"][value=\"monochrome\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "monochrome",
+            "checked": false
+          },
+          {
+            "selector": "#targetColor",
+            "element": "input",
+            "type": "color",
+            "value": "#ffffff"
+          },
+          {
+            "selector": "#targetHex",
+            "element": "input",
+            "type": "text",
+            "value": "#FFFFFF"
+          },
+          {
+            "selector": "#replacementColor",
+            "element": "input",
+            "type": "color",
+            "value": "#ff3b30"
+          },
+          {
+            "selector": "#replacementHex",
+            "element": "input",
+            "type": "text",
+            "value": "#FF3B30"
+          },
+          {
+            "selector": "#toleranceInput",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "100",
+            "value": "10"
+          },
+          {
+            "selector": "#thresholdInput",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "255",
+            "value": "128"
+          },
+          {
+            "selector": "#outputFormat",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "png",
+              "webp"
+            ],
+            "value": "png"
+          },
           {
             "selector": "#qualityInput",
             "element": "select",
             "type": "select",
-            "value": "75",
             "values": [
               "75",
               "86",
               "94"
-            ]
+            ],
+            "value": "86"
           }
         ],
         "events": {
@@ -292,7 +620,22 @@
         "action": "#generateButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"fitMode\"][value=\"cover\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "cover",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"fitMode\"][value=\"contain\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "contain",
+            "checked": false
+          },
           {
             "selector": "#paddingInput",
             "element": "input",
@@ -300,6 +643,27 @@
             "min": "0",
             "max": "30",
             "value": "0"
+          },
+          {
+            "selector": "input[name=\"backgroundMode\"][value=\"white\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "white",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"backgroundMode\"][value=\"transparent\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "transparent",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"backgroundMode\"][value=\"custom\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "custom",
+            "checked": false
           },
           {
             "selector": "#backgroundColor",
@@ -364,14 +728,62 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#compressButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
-        "controls": [],
+        "status": "#resultStatus",
+        "controls": [
+          {
+            "selector": "input[name=\"mode\"][value=\"auto\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "auto",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"mode\"][value=\"exact\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "exact",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"mode\"][value=\"balanced\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "balanced",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"mode\"][value=\"smallest\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "smallest",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"mode\"][value=\"lineart\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "lineart",
+            "checked": false
+          },
+          {
+            "selector": "#effort",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "standard",
+              "careful"
+            ],
+            "value": "standard"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -424,14 +836,49 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#convertButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
-        "controls": [],
+        "status": "#resultStatus",
+        "controls": [
+          {
+            "selector": "input[name=\"outputFormat\"][value=\"png\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "png",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"outputFormat\"][value=\"jpeg\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "jpeg",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"outputFormat\"][value=\"webp\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "webp",
+            "checked": false
+          },
+          {
+            "selector": "#quality",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "compact",
+              "standard",
+              "high"
+            ],
+            "value": "standard"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -484,52 +931,137 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#cropButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"cropMode\"][value=\"manual\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "manual",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"cropMode\"][value=\"auto\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "auto",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"cropMode\"][value=\"normalize\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "normalize",
+            "checked": false
+          },
+          {
+            "selector": "#manualFile",
+            "element": "select",
+            "type": "select",
+            "values": []
+          },
           {
             "selector": "#backgroundMode",
             "element": "select",
             "type": "select",
-            "value": "auto",
             "values": [
               "auto",
               "transparent",
               "white",
               "custom"
-            ]
+            ],
+            "value": "auto"
           },
           {
             "selector": "#backgroundColor",
             "element": "input",
             "type": "color",
+            "value": "#ffffff"
+          },
+          {
+            "selector": "#toleranceInput",
+            "element": "input",
+            "type": "range",
             "min": "0",
             "max": "40",
-            "value": "#ffffff"
+            "value": "8"
+          },
+          {
+            "selector": "#safeEdgeInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "value": "3"
+          },
+          {
+            "selector": "#paddingInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "value": "5"
+          },
+          {
+            "selector": "#paddingUnit",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "percent",
+              "px"
+            ],
+            "value": "percent"
           },
           {
             "selector": "#canvasWidth",
             "element": "input",
             "type": "number",
             "min": "1",
-            "max": "100",
             "value": "512"
+          },
+          {
+            "selector": "#canvasHeight",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "value": "512"
+          },
+          {
+            "selector": "#occupancyInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "100",
+            "value": "80"
+          },
+          {
+            "selector": "#outputFormat",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "original",
+              "png",
+              "jpeg",
+              "webp"
+            ],
+            "value": "png"
           },
           {
             "selector": "#quality",
             "element": "select",
             "type": "select",
-            "value": "compact",
             "values": [
               "compact",
               "standard",
               "high"
-            ]
+            ],
+            "value": "standard"
           }
         ],
         "events": {
@@ -591,7 +1123,65 @@
         "action": "#joinButton",
         "result": "#resultsPanel",
         "download": "#downloadButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"joinMode\"][value=\"horizontal\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "horizontal",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"joinMode\"][value=\"vertical\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "vertical",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"joinMode\"][value=\"grid\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "grid",
+            "checked": false
+          },
+          {
+            "selector": "#columnsInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "100",
+            "value": "2"
+          },
+          {
+            "selector": "#gapInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "max": "1000",
+            "value": "0"
+          },
+          {
+            "selector": "#paddingInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "max": "1000",
+            "value": "0"
+          },
+          {
+            "selector": "#backgroundSelect",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "transparent",
+              "white",
+              "black",
+              "custom"
+            ],
+            "value": "transparent"
+          },
           {
             "selector": "#customColor",
             "element": "input",
@@ -599,15 +1189,26 @@
             "value": "#f2f2f2"
           },
           {
+            "selector": "#outputFormat",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "png",
+              "jpeg",
+              "webp"
+            ],
+            "value": "png"
+          },
+          {
             "selector": "#quality",
             "element": "select",
             "type": "select",
-            "value": "compact",
             "values": [
               "compact",
               "standard",
               "high"
-            ]
+            ],
+            "value": "standard"
           }
         ],
         "events": {
@@ -662,24 +1263,83 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#resizeButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"resizeMode\"][value=\"pixels\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "pixels",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"resizeMode\"][value=\"percent\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "percent",
+            "checked": false
+          },
+          {
+            "selector": "#widthInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "32767",
+            "value": "1920"
+          },
+          {
+            "selector": "#heightInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "32767",
+            "value": "1080"
+          },
+          {
+            "selector": "#keepAspectInput",
+            "element": "input",
+            "type": "checkbox",
+            "checked": true
+          },
+          {
+            "selector": "#percentInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "1000",
+            "step": "1",
+            "value": "50"
+          },
+          {
+            "selector": "#outputFormat",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "original",
+              "png",
+              "jpeg",
+              "webp"
+            ],
+            "value": "original"
+          },
           {
             "selector": "#quality",
             "element": "select",
             "type": "select",
-            "value": "compact",
             "values": [
               "compact",
               "standard",
               "high"
-            ]
+            ],
+            "value": "standard"
           }
         ],
         "events": {
@@ -717,14 +1377,38 @@
         ".jpeg"
       ],
       "outputs": [
-        "image/png"
+        "image/png",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#splitButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
-        "controls": [],
+        "status": "#resultStatus",
+        "controls": [
+          {
+            "selector": "input[name=\"split\"][value=\"fine\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "fine",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"split\"][value=\"standard\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "standard",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"split\"][value=\"grouped\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "grouped",
+            "checked": false
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -762,14 +1446,94 @@
         ".webp"
       ],
       "outputs": [
-        "image/svg+xml"
+        "image/svg+xml",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#convertButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
-        "controls": [],
+        "status": "#resultStatus",
+        "controls": [
+          {
+            "selector": "input[name=\"conversionMode\"][value=\"split\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "split",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"conversionMode\"][value=\"single\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "single",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"quality\"][value=\"standard\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "standard",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"quality\"][value=\"smooth\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "smooth",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"quality\"][value=\"strong\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "strong",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"outputSize\"][value=\"256\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "256",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"outputSize\"][value=\"512\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "512",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"outputSize\"][value=\"1024\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "1024",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"split\"][value=\"fine\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "fine",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"split\"][value=\"standard\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "standard",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"split\"][value=\"grouped\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "grouped",
+            "checked": false
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -806,6 +1570,7 @@
         "action": null,
         "result": null,
         "download": null,
+        "status": null,
         "controls": [],
         "events": {
           "ready": "shiagent:ready",
@@ -846,13 +1611,15 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#cleanButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [],
         "events": {
           "ready": "shiagent:ready",
@@ -893,7 +1660,15 @@
         "action": "#pdfExport",
         "result": "#pdfPages",
         "download": "#pdfExport",
-        "controls": [],
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -938,7 +1713,26 @@
         "action": "#pdfExport",
         "result": "#pdfPages",
         "download": "#pdfExport",
-        "controls": [],
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfImageSize",
+            "element": "select",
+            "type": "select",
+            "value": "auto",
+            "values": [
+              "auto",
+              "a4p",
+              "a4l"
+            ]
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -978,7 +1772,15 @@
         "action": "#pdfExport",
         "result": "#pdfPages",
         "download": "#pdfExport",
-        "controls": [],
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1018,7 +1820,15 @@
         "action": "#pdfExport",
         "result": "#pdfPages",
         "download": "#pdfExport",
-        "controls": [],
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1058,7 +1868,20 @@
         "action": "#pdfExport",
         "result": "#pdfPages",
         "download": "#pdfExport",
-        "controls": [],
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfReverse",
+            "element": "input",
+            "type": "checkbox"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1098,7 +1921,21 @@
         "action": "#pdfExport",
         "result": "#pdfPages",
         "download": "#pdfExport",
-        "controls": [],
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfAutoOrient",
+            "element": "button",
+            "type": "button",
+            "action": "click"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1128,14 +1965,25 @@
       "localProcessing": true,
       "accepts": [],
       "outputs": [
-        "application/pdf"
+        "application/pdf",
+        "application/zip"
       ],
       "automation": {
         "input": "#pdfOrderInput",
         "action": "#pdfOrderRun",
         "result": "#pdfOrderResults",
         "download": "#pdfOrderDownloadAll",
-        "controls": [],
+        "status": "#pdfOrderStatus",
+        "controls": [
+          {
+            "selector": "input[data-page-number]",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "step": "1",
+            "repeated": true
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1168,14 +2016,51 @@
         ".pdf"
       ],
       "outputs": [
-        "application/pdf"
+        "application/pdf",
+        "application/zip"
       ],
       "automation": {
         "input": "#pdfInput",
         "action": "#pdfExport",
         "result": "#pdfPages",
         "download": "#pdfExport",
-        "controls": [],
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfSelection",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "selected",
+              "odd",
+              "even",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfRange",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfOutput",
+            "element": "select",
+            "type": "select",
+            "value": "separate",
+            "values": [
+              "combined",
+              "separate"
+            ]
+          },
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1208,13 +2093,15 @@
         ".svg"
       ],
       "outputs": [
-        "image/svg+xml"
+        "image/svg+xml",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#processButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [],
         "events": {
           "ready": "shiagent:ready",
@@ -1249,25 +2136,123 @@
       ],
       "outputs": [
         "image/png",
-        "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#rasterizeButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"sizeMode\"][value=\"scale\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "scale",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"sizeMode\"][value=\"pixels\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "pixels",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"sizeMode\"][value=\"dpi\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "dpi",
+            "checked": false
+          },
+          {
+            "selector": "#scaleInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "1600",
+            "value": "100"
+          },
+          {
+            "selector": "#widthInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "32767",
+            "value": "1024"
+          },
+          {
+            "selector": "#heightInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "32767",
+            "value": "1024"
+          },
+          {
+            "selector": "#keepAspectInput",
+            "element": "input",
+            "type": "checkbox",
+            "checked": true
+          },
+          {
+            "selector": "#dpiInput",
+            "element": "input",
+            "type": "number",
+            "min": "24",
+            "max": "1200",
+            "value": "300"
+          },
+          {
+            "selector": "#outputFormat",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "png",
+              "webp"
+            ],
+            "value": "png"
+          },
           {
             "selector": "#qualityInput",
             "element": "select",
             "type": "select",
-            "value": "75",
             "values": [
               "75",
               "86",
               "94"
-            ]
+            ],
+            "value": "86"
+          },
+          {
+            "selector": "input[name=\"backgroundMode\"][value=\"transparent\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "transparent",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"backgroundMode\"][value=\"white\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "white",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"backgroundMode\"][value=\"black\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "black",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"backgroundMode\"][value=\"custom\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "custom",
+            "checked": false
           },
           {
             "selector": "#backgroundColor",
@@ -1308,14 +2293,38 @@
         ".svg"
       ],
       "outputs": [
-        "image/svg+xml"
+        "image/svg+xml",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#processButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
-        "controls": [],
+        "status": "#resultStatus",
+        "controls": [
+          {
+            "selector": "input[name=\"preset\"][value=\"strict\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "strict",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"preset\"][value=\"standard\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "standard",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"preset\"][value=\"precise\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "precise",
+            "checked": false
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1352,10 +2361,50 @@
       ],
       "automation": {
         "input": "#fileInput",
-        "action": "#saveNextButton",
-        "result": "#previewSvg",
+        "action": "#nextButton",
+        "result": "#editorCanvas",
         "download": "#downloadButton",
-        "controls": [],
+        "status": "#fileStatus",
+        "controls": [
+          {
+            "selector": "#editedSuffixInput",
+            "element": "input",
+            "type": "checkbox",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"editMode\"][value=\"close\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "close",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"editMode\"][value=\"exclude\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "exclude",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"editMode\"][value=\"erase\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "erase",
+            "checked": false
+          },
+          {
+            "selector": "#presetInput",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "strict",
+              "standard",
+              "precise"
+            ],
+            "value": "standard"
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1408,22 +2457,53 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#runButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "#trimBackground",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "auto",
+              "white",
+              "transparent"
+            ],
+            "value": "auto"
+          },
           {
             "selector": "#toleranceInput",
             "element": "input",
             "type": "range",
             "min": "0",
             "max": "80",
-            "step": "1",
             "value": "12"
+          },
+          {
+            "selector": "#paddingInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "max": "200",
+            "step": "1",
+            "value": "5"
+          },
+          {
+            "selector": "#paddingUnit",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "percent",
+              "px"
+            ],
+            "value": "percent"
           },
           {
             "selector": "#widthInput",
@@ -1434,27 +2514,60 @@
             "value": "512"
           },
           {
+            "selector": "#heightInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "8192",
+            "value": "512"
+          },
+          {
+            "selector": "#baseNameInput",
+            "element": "input",
+            "type": "text",
+            "value": "asset"
+          },
+          {
+            "selector": "#startNumberInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "999999",
+            "value": "1"
+          },
+          {
+            "selector": "#formatInput",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "png",
+              "jpeg",
+              "webp"
+            ],
+            "value": "png"
+          },
+          {
             "selector": "#qualityInput",
             "element": "select",
             "type": "select",
-            "value": "compact",
             "values": [
               "compact",
               "standard",
               "high"
-            ]
+            ],
+            "value": "standard"
           },
           {
             "selector": "#backgroundInput",
             "element": "select",
             "type": "select",
-            "value": "transparent",
             "values": [
               "transparent",
               "white",
               "black",
               "custom"
-            ]
+            ],
+            "value": "transparent"
           },
           {
             "selector": "#backgroundColorInput",
@@ -1515,34 +2628,89 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#runButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "#trimBackground",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "auto",
+              "white",
+              "transparent"
+            ],
+            "value": "auto"
+          },
           {
             "selector": "#toleranceInput",
             "element": "input",
             "type": "range",
             "min": "0",
             "max": "80",
-            "step": "1",
             "value": "12"
+          },
+          {
+            "selector": "#widthInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "8192",
+            "value": "512"
+          },
+          {
+            "selector": "#heightInput",
+            "element": "input",
+            "type": "number",
+            "min": "1",
+            "max": "8192",
+            "value": "512"
+          },
+          {
+            "selector": "#occupancyInput",
+            "element": "input",
+            "type": "range",
+            "min": "10",
+            "max": "100",
+            "value": "80"
+          },
+          {
+            "selector": "#paddingInput",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "max": "200",
+            "step": "1",
+            "value": "10"
+          },
+          {
+            "selector": "#paddingUnit",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "percent",
+              "px"
+            ],
+            "value": "percent"
           },
           {
             "selector": "#backgroundInput",
             "element": "select",
             "type": "select",
-            "value": "white",
             "values": [
               "white",
               "transparent",
               "black",
               "custom"
-            ]
+            ],
+            "value": "white"
           },
           {
             "selector": "#backgroundColorInput",
@@ -1551,15 +2719,26 @@
             "value": "#ffffff"
           },
           {
+            "selector": "#formatInput",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "png",
+              "jpeg",
+              "webp"
+            ],
+            "value": "png"
+          },
+          {
             "selector": "#qualityInput",
             "element": "select",
             "type": "select",
-            "value": "compact",
             "values": [
               "compact",
               "standard",
               "high"
-            ]
+            ],
+            "value": "standard"
           },
           {
             "selector": "#baseNameInput",
@@ -1605,20 +2784,32 @@
       "localProcessing": true,
       "accepts": [],
       "outputs": [
-        "image/png",
-        "image/jpeg",
-        "image/webp"
+        "varies by selected workflow"
       ],
       "automation": {
         "input": null,
         "action": "#runWorkflow",
-        "result": "#workflowRun",
+        "result": "#workflowSteps",
         "download": null,
+        "status": "#builderStatus",
         "controls": [
           {
             "selector": "#workflowName",
             "element": "input",
-            "type": "text",
+            "type": "text"
+          },
+          {
+            "selector": "#inputType",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "",
+              "raster",
+              "webRaster",
+              "svg",
+              "pdf",
+              "files"
+            ],
             "value": ""
           }
         ],
@@ -1659,14 +2850,45 @@
         ".webp"
       ],
       "outputs": [
-        "image/svg+xml"
+        "image/svg+xml",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#runButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
-        "controls": [],
+        "status": "#resultStatus",
+        "controls": [
+          {
+            "selector": "input[name=\"whiteFill\"][value=\"none\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "none",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"whiteFill\"][value=\"yes\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "yes",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"fillMethod\"][value=\"auto\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "auto",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"fillMethod\"][value=\"manual\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "manual",
+            "checked": false
+          }
+        ],
         "events": {
           "ready": "shiagent:ready",
           "state": "shiagent:statechange",
@@ -1719,38 +2941,90 @@
       "outputs": [
         "image/png",
         "image/jpeg",
-        "image/webp"
+        "image/webp",
+        "application/zip"
       ],
       "automation": {
         "input": "#fileInput",
         "action": "#runButton",
         "result": "#resultsPanel",
         "download": "#downloadAllButton",
+        "status": "#resultStatus",
         "controls": [
+          {
+            "selector": "input[name=\"webPreset\"][value=\"blog\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "blog",
+            "checked": true
+          },
+          {
+            "selector": "input[name=\"webPreset\"][value=\"thumbnail\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "thumbnail",
+            "checked": false
+          },
+          {
+            "selector": "input[name=\"webPreset\"][value=\"original\"]",
+            "element": "input",
+            "type": "radio",
+            "value": "original",
+            "checked": false
+          },
+          {
+            "selector": "#cropInput",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "none",
+              "auto"
+            ],
+            "value": "none"
+          },
           {
             "selector": "#resizeInput",
             "element": "input",
             "type": "checkbox",
+            "checked": true
+          },
+          {
+            "selector": "#longSideInput",
+            "element": "input",
+            "type": "number",
             "min": "16",
             "max": "4096",
             "step": "1",
             "value": "1200"
           },
           {
+            "selector": "#formatInput",
+            "element": "select",
+            "type": "select",
+            "values": [
+              "webp",
+              "jpeg",
+              "png",
+              "source"
+            ],
+            "value": "webp"
+          },
+          {
             "selector": "#qualityInput",
             "element": "select",
             "type": "select",
-            "value": "compact",
             "values": [
               "compact",
               "standard",
               "high"
-            ]
+            ],
+            "value": "standard"
           },
           {
             "selector": "#renameInput",
             "element": "input",
-            "type": "checkbox"
+            "type": "checkbox",
+            "checked": false
           },
           {
             "selector": "#baseNameInput",

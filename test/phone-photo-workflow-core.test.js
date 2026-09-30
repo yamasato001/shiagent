@@ -56,7 +56,8 @@ test("Web Image Optimizer exposes presets and the complete processing flow", asy
 
 test("Web Image Optimizer re-encodes outputs, strips metadata and losslessly optimizes PNG", async () => {
   const script = await readFile(new URL("../assets/js/phone-photo-workflow.js", import.meta.url), "utf8");
-  assert.match(script, /canvas\.toBlob/);
+  assert.match(script, /encodeBrowserCanvas/);
+  assert.doesNotMatch(script, /canvas\.toBlob/);
   assert.match(script, /png-optimizer-worker\.js/);
   assert.match(script, /format === "png" \? await optimizePng/);
   assert.doesNotMatch(script, /captureTimeFromBytes|shiagent-phone-photo-sequences-v1/);

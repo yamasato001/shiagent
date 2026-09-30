@@ -1,5 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
-import { createRenamedFiles } from "./batch-rename-core.js";
+import { formatBytes } from "./png-core.js";
+import { createRenamedFiles, createZipBlob } from "./browser-runtime.js";
 import { replaceTray } from "./work-tray.js";
 import { localPath, pick } from "./i18n.js";
 import common from "./i18n/common.js";
@@ -19,6 +19,7 @@ const elements = {
 const state = { files: [], renamed: [] };
 
 function options() { return { prefix: elements.prefix.value, base: elements.base.value, start: elements.start.value, digits: elements.digits.value, suffix: elements.suffix.value, separator: elements.separator.value }; }
+function errorMessage(error) { return error?.code === "DUPLICATE_OUTPUT_NAME" ? copy.duplicate(error.outputName) : error?.message || String(error); }
 function showToast(message) { elements.toast.textContent = message; elements.toast.classList.add("show"); setTimeout(() => elements.toast.classList.remove("show"), 2600); }
 function previews() { try { return createRenamedFiles(state.files, options()); } catch { return []; } }
 function resetResult() { state.renamed = []; elements.resultsPanel.hidden = true; elements.statusText.textContent = ""; }
@@ -61,10 +62,10 @@ function applyRename() {
     elements.handoffNote.textContent = copy.handoff(splitterCount, vectorCount);
     elements.statusText.textContent = copy.applied; elements.resultsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     document.dispatchEvent(new CustomEvent("shiagent:outputs", { detail: { files: state.renamed, source: "batch-rename-result" } }));
-  } catch (error) { showToast(error.message); }
+  } catch (error) { showToast(errorMessage(error)); }
 }
 
-async function handoff(target, filter) { const files = state.renamed.filter(filter); await replaceTray(files, "batch-rename"); location.href = `${target}?tray=1`; }
+async function handoff(target, filter) { const files = state.renamed.filter(filter); await replaceTray(files, "batch-rename", { applySuffix: true }); location.href = `${target}?tray=1`; }
 function clearAll() { state.files = []; resetResult(); render(); }
 
 elements.selectButton.addEventListener("click", event => { event.stopPropagation(); elements.fileInput.click(); });
@@ -76,7 +77,7 @@ elements.dropZone.addEventListener("drop", event => addFiles(event.dataTransfer.
 for (const input of [elements.prefix, elements.base, elements.start, elements.digits, elements.suffix, elements.separator]) input.addEventListener("input", () => { resetResult(); render(); });
 elements.resetButton.addEventListener("click", () => { elements.prefix.value = ""; elements.base.value = "file"; elements.start.value = "1"; elements.digits.value = "2"; elements.suffix.value = ""; elements.separator.value = "_"; resetResult(); render(); });
 elements.applyButton.addEventListener("click", applyRename);
-elements.downloadButton.addEventListener("click", async () => { const entries = await Promise.all(state.renamed.map(async file => ({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) }))); const url = URL.createObjectURL(createZip(entries)); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "shiagent-renamed-files.zip"; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
+elements.downloadButton.addEventListener("click", async () => { const entries = await Promise.all(state.renamed.map(async file => ({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) }))); const url = URL.createObjectURL(createZipBlob(entries)); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "shiagent-renamed-files.zip"; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
 elements.toSplitterButton.addEventListener("click", () => handoff(localPath("/image-splitter/"), file => /\.(png|jpe?g)$/i.test(file.name)));
 elements.toSvgButton.addEventListener("click", () => handoff(localPath("/image-to-svg/"), file => /\.(png|jpe?g|webp)$/i.test(file.name)));
 

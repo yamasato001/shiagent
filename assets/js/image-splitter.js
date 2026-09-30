@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import { SPLIT_PRESETS, compositeOnWhite, cropRgba, foregroundMask, projectionSplit, safeBaseName } from "./png-to-svg-core.js";
 import { pick } from "./i18n.js";
 import common from "./i18n/common.js";
@@ -111,13 +112,8 @@ function addFiles(fileList) {
 }
 
 async function decodeFile(file) {
-  const bitmap = await createImageBitmap(file);
-  const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  const canvas = await decodeBrowserImage(file, { willReadFrequently: true });
   const context = canvas.getContext("2d", { willReadFrequently: true });
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
   return { data: imageData.data, width: imageData.width, height: imageData.height };
 }
@@ -133,20 +129,12 @@ function opaqueRgba(rgb) {
   return output;
 }
 
-function canvasFromRgba(rgba, width, height) {
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  canvas.getContext("2d").putImageData(new ImageData(rgba, width, height), 0, 0);
-  return canvas;
-}
-
 function canvasToPng(canvas) {
-  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error(copy.pngFailed)), "image/png"));
+  return encodeBrowserCanvas(canvas, "image/png").catch(() => { throw new Error(copy.pngFailed); });
 }
 
 async function detectionPreview(rgba, width, height, boxes) {
-  const canvas = canvasFromRgba(rgba, width, height);
+  const canvas = canvasFromRgba({ data: rgba, width, height });
   const context = canvas.getContext("2d");
   const scale = Math.max(1, Math.min(width, height) / 500);
   context.lineWidth = Math.max(2, Math.round(3 * scale));
@@ -190,7 +178,7 @@ async function splitFile(file, fileIndex, totalFiles) {
     elements.progressText.textContent = `${fileIndex + 1}/${totalFiles} ${file.name} — ${copy.writing(index + 1, boxes.length)}`;
     await new Promise(resolve => requestAnimationFrame(resolve));
     const crop = cropRgba(sourceRgba, source.width, source.height, boxes[index], 16);
-    const blob = await canvasToPng(canvasFromRgba(crop.data, crop.width, crop.height));
+    const blob = await canvasToPng(canvasFromRgba(crop));
     const name = `${baseName}_${String(index + 1).padStart(2, "0")}.png`;
     state.results.push({ name, blob, url: URL.createObjectURL(blob), width: crop.width, height: crop.height, sourceName: file.name });
   }
@@ -282,7 +270,7 @@ elements.removeAllButton.addEventListener("click", clearAll);
 elements.splitButton.addEventListener("click", splitAll);
 elements.downloadAllButton.addEventListener("click", async () => {
   const entries = await Promise.all(state.results.map(async result => ({ name: result.name, data: new Uint8Array(await result.blob.arrayBuffer()) })));
-  const url = URL.createObjectURL(createZip(entries));
+  const url = URL.createObjectURL(createZipBlob(entries));
   triggerDownload(url, "shiagent-split-images.zip");
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 });

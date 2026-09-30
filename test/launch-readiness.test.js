@@ -51,3 +51,9 @@ test("diagnostics are sanitized, bounded and never sent automatically", async ()
   assert.match(script, /sessionStorage/);
   assert.doesNotMatch(script, /fetch\(|sendBeacon\(/);
 });
+
+test("VS Code Live Server publishes the project root directly", async () => {
+  const settings = JSON.parse(await readFile(new URL("../.vscode/settings.json", import.meta.url), "utf8"));
+  assert.equal(settings["liveServer.settings.root"], undefined);
+  assert.equal(settings["liveServer.settings.file"], "index.html");
+});

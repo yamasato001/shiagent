@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import { convertedName, detectImageFormat, formatLabel, OUTPUT_FORMATS, outputQuality, requiresSoftwareDecoder } from "./image-converter-core.js";
 import { lang, locale, pick } from "./i18n.js";
 import converterText from "./i18n/image-converter.js";
@@ -70,21 +71,11 @@ async function decodeInWorker(file, format) {
 }
 
 async function decodeToCanvas(entry) {
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d", { alpha: true });
   if (requiresSoftwareDecoder(entry.format)) {
     const decoded = await decodeInWorker(entry.file, entry.format);
-    canvas.width = decoded.width;
-    canvas.height = decoded.height;
-    context.putImageData(new ImageData(new Uint8ClampedArray(decoded.data), decoded.width, decoded.height), 0, 0);
-    return canvas;
+    return canvasFromRgba(decoded);
   }
-  const bitmap = await createImageBitmap(entry.file, { imageOrientation: "from-image" });
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
-  return canvas;
+  return decodeBrowserImage(entry.file);
 }
 
 function encodeCanvas(source, format, qualityPreset) {
@@ -98,11 +89,10 @@ function encodeCanvas(source, format, qualityPreset) {
     context.fillRect(0, 0, canvas.width, canvas.height);
   }
   context.drawImage(source, 0, 0);
-  return new Promise((resolve, reject) => canvas.toBlob(blob => {
-    if (!blob) return reject(new Error(copy.encodeFailed(definition.label)));
-    if (blob.type !== definition.mime) return reject(new Error(copy.encodeUnsupported(definition.label)));
-    resolve(blob);
-  }, definition.mime, outputQuality(format, qualityPreset)));
+  return encodeBrowserCanvas(canvas, definition.mime, outputQuality(format, qualityPreset)).then(blob => {
+    if (blob.type !== definition.mime) throw new Error(copy.encodeUnsupported(definition.label));
+    return blob;
+  });
 }
 
 function disposeEntry(entry) {
@@ -279,7 +269,7 @@ async function downloadAll() {
     if (seen) name = convertedName(entry.file.name, outputFormat, `-${seen + 1}`);
     zipEntries.push({ name, data: new Uint8Array(await entry.resultBlob.arrayBuffer()) });
   }
-  downloadBlob(createZip(zipEntries), `shiagent-${OUTPUT_FORMATS[outputFormat].extension}-images.zip`);
+  downloadBlob(createZipBlob(zipEntries), `shiagent-${OUTPUT_FORMATS[outputFormat].extension}-images.zip`);
 }
 
 elements.select.addEventListener("click", event => { event.stopPropagation(); elements.input.click(); });

@@ -8,7 +8,7 @@ const root = new URL("../", import.meta.url);
 async function publicPages(directory = root, prefix = "") {
   const pages = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
-    if ([".git", "assets", "design", "node_modules", "scripts", "src", "test", "tmp"].includes(entry.name)) continue;
+    if ([".agents", ".codex", ".git", ".vscode", "assets", "design", "dist", "node_modules", "pages", "public", "scripts", "src", "test", "tmp"].includes(entry.name)) continue;
     const relative = path.posix.join(prefix, entry.name);
     if (entry.isDirectory()) pages.push(...await publicPages(new URL(`${entry.name}/`, directory), relative));
     else if (entry.name === "index.html") pages.push(relative);

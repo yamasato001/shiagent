@@ -28,7 +28,7 @@ for (const [language, prefix, other, otherPrefix, nav] of [
   });
 }
 
-test("tool content starts on the same grid line as the SHIAGENT wordmark", async () => {
+test("tool content and shared footer use the same site grid", async () => {
   const [header, site, pdf, pdfOrder] = await Promise.all([
     readFile(new URL("../assets/css/header.css", import.meta.url), "utf8"),
     readFile(new URL("../assets/css/site.css", import.meta.url), "utf8"),
@@ -40,17 +40,23 @@ test("tool content starts on the same grid line as the SHIAGENT wordmark", async
   assert.match(header, /\.site-header \.language > a[^}]*align-items: center[^}]*justify-content: center/);
   assert.match(site, /\.tool-hero \{ width: min\(100%, var\(--max\)\)[^}]*padding: 34px clamp\(20px, 4vw, 48px\) 88px/);
   assert.match(site, /\.content-section \{ width: min\(100%, var\(--max\)\)[^}]*padding: 95px clamp\(20px, 4vw, 48px\)/);
-  assert.match(site, /footer \{ width: min\(100%, var\(--max\)\)[^}]*padding: 55px clamp\(20px, 4vw, 48px\) 35px/);
+  assert.match(header, /footer \{ width: min\(100%, 1160px\)[^}]*padding: 55px clamp\(20px, 4vw, 48px\) 35px/);
+  assert.match(header, /html \{ scrollbar-gutter: stable; \}/);
+  assert.match(header, /\.site-header \{[^}]*line-height: 1\.2;[^}]*letter-spacing: normal/);
+  assert.match(header, /footer \{[^}]*line-height: 1\.4;[^}]*letter-spacing: normal/);
+  assert.doesNotMatch(site, /footer \{/);
   assert.match(pdf, /\.pdf-hero \{ width: min\(100%, 1160px\)[^}]*clamp\(20px, 4vw, 48px\)/);
   assert.match(pdfOrder, /\.pdf-order-shell \.tool-hero \{ width: min\(100%, 1160px\)[^}]*clamp\(20px, 4vw, 48px\)/);
 });
 
-test("tool footers use the same overflow-safe mobile width as the home page", async () => {
-  const [home, site] = await Promise.all([
+test("every footer uses one overflow-safe mobile layout", async () => {
+  const [header, home, site] = await Promise.all([
+    readFile(new URL("../assets/css/header.css", import.meta.url), "utf8"),
     readFile(new URL("../assets/css/home.css", import.meta.url), "utf8"),
     readFile(new URL("../assets/css/site.css", import.meta.url), "utf8"),
   ]);
-  const mobileFooter = /@media \(max-width: (?:720|760)px\) \{[\s\S]*?footer \{[^}]*margin: 0 18px;[^}]*width: auto;[^}]*padding-left: 0;[^}]*padding-right: 0;[^}]*grid-template-columns: 1fr;[^}]*\}/;
-  assert.match(home, mobileFooter);
-  assert.match(site, mobileFooter);
+  const mobileFooter = /@media \(max-width: 760px\) \{[\s\S]*?footer \{[^}]*width: auto;[^}]*margin: 0 18px;[^}]*padding-left: 0;[^}]*padding-right: 0;[^}]*grid-template-columns: 1fr;[^}]*\}/;
+  assert.match(header, mobileFooter);
+  assert.doesNotMatch(home, /footer \{/);
+  assert.doesNotMatch(site, /footer \{/);
 });

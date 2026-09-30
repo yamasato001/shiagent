@@ -8,7 +8,7 @@ const slugs = ["about", "specifications", "local-processing", "faq", "changelog"
 test("trust information is published as complete bilingual page pairs", async () => {
   for (const slug of slugs) {
     for (const prefix of ["", "ja/"]) {
-      const page = await readFile(new URL(`../${prefix}${slug}/index.html`, import.meta.url), "utf8");
+      const page = await readFile(new URL(`${prefix}${slug}/index.html`, root), "utf8");
       assert.match(page, /<h1>/, `${prefix}${slug} needs a heading`);
       assert.match(page, /<link rel="canonical" href="https:\/\/shiagent\.com\//, `${prefix}${slug} needs a canonical URL`);
       assert.match(page, /<a class="skip-link" href="#main-content">/, `${prefix}${slug} needs a skip link`);
@@ -18,11 +18,11 @@ test("trust information is published as complete bilingual page pairs", async ()
 });
 
 test("every active tool publishes a localized practical example", async () => {
-  const catalog = JSON.parse(await readFile(new URL("../ai/tools.json", import.meta.url), "utf8"));
+  const catalog = JSON.parse(await readFile(new URL("ai/tools.json", root), "utf8"));
   for (const tool of catalog.tools.filter(tool => tool.status === "active")) {
     for (const locale of ["en", "ja"]) {
       const relative = `${tool.paths[locale].replace(/^\//, "")}index.html`;
-      const html = await readFile(new URL(`../${relative}`, import.meta.url), "utf8");
+      const html = await readFile(new URL(relative, root), "utf8");
       assert.match(html, /data-site-example/, `${tool.id} (${locale}) needs a usage example`);
     }
   }
@@ -30,9 +30,9 @@ test("every active tool publishes a localized practical example", async () => {
 
 test("examples, status, feedback and accessibility are concrete rather than placeholder claims", async () => {
   for (const asset of ["outline-source.svg", "outline-clean.svg", "background-before.svg", "background-after.svg", "sheet-before.svg", "sheet-after.svg"]) {
-    assert.ok((await stat(new URL(`../assets/examples/${asset}`, import.meta.url))).size > 100, `${asset} is missing`);
+    assert.ok((await stat(new URL(`assets/examples/${asset}`, root))).size > 100, `${asset} is missing`);
   }
-  const status = JSON.parse(await readFile(new URL("../status/status.json", import.meta.url), "utf8"));
+  const status = JSON.parse(await readFile(new URL("status/status.json", root), "utf8"));
   assert.equal(status.monitoring, "release-status-not-live-monitoring");
   assert.equal(status.components.find(item => item.id === "local-ai-line-art")?.status, "pending");
   const feedback = await readFile(new URL("../assets/js/feedback.js", import.meta.url), "utf8");

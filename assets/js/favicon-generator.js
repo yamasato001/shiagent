@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import { detectImageFormat, formatLabel } from "./image-converter-core.js";
 import { parseSvgSize } from "./svg-rasterizer-core.js";
 import { createIco, createManifest, faviconLinks, iconPlacement, ICON_SPECS } from "./favicon-generator-core.js";
@@ -38,7 +39,7 @@ function sanitizeSvg(source, size) {
   return new XMLSerializer().serializeToString(root);
 }
 
-function disposeSource() { if (sourceEntry?.previewUrl) URL.revokeObjectURL(sourceEntry.previewUrl); sourceEntry?.bitmap?.close?.(); sourceEntry = null; }
+function disposeSource() { if (sourceEntry?.previewUrl) URL.revokeObjectURL(sourceEntry.previewUrl); sourceEntry = null; }
 function disposeResults() { results.forEach(result => { if (result.url) URL.revokeObjectURL(result.url); }); results = []; }
 
 async function addFile(file) {
@@ -52,9 +53,9 @@ async function addFile(file) {
     } else {
       const format = detectImageFormat(await file.slice(0, 64).arrayBuffer());
       if (!["png", "jpeg", "webp"].includes(format)) throw new Error(copy.unsupported);
-      const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-      if (bitmap.width * bitmap.height > 100_000_000) { bitmap.close(); throw new Error(copy.tooLarge); }
-      sourceEntry = { file, format, width: bitmap.width, height: bitmap.height, bitmap, previewUrl: URL.createObjectURL(file) };
+      const rasterCanvas = await decodeBrowserImage(file);
+      if (rasterCanvas.width * rasterCanvas.height > 100_000_000) throw new Error(copy.tooLarge);
+      sourceEntry = { file, format, width: rasterCanvas.width, height: rasterCanvas.height, rasterCanvas, previewUrl: URL.createObjectURL(file) };
     }
   } catch (error) { disposeSource(); showToast(error instanceof Error ? error.message : copy.unsupported); }
   elements.input.value = ""; render();
@@ -82,11 +83,11 @@ function loadSvgImage(url) {
 }
 
 async function drawableSource() {
-  if (sourceEntry.bitmap) return sourceEntry.bitmap;
+  if (sourceEntry.rasterCanvas) return sourceEntry.rasterCanvas;
   return loadSvgImage(sourceEntry.previewUrl);
 }
 
-function canvasToPng(canvas) { return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error(copy.encodeFailed)), "image/png")); }
+function canvasToPng(canvas) { return encodeBrowserCanvas(canvas, "image/png").catch(() => { throw new Error(copy.encodeFailed); }); }
 
 async function makeIcon(drawable, spec) {
   const canvas = document.createElement("canvas"); canvas.width = spec.size; canvas.height = spec.size;
@@ -136,7 +137,7 @@ function renderResults() {
 
 function outputFiles() { return results.map(result => new File([result.blob], result.name, { type: result.type || result.blob.type })); }
 function downloadBlob(blob, name) { const url = URL.createObjectURL(blob), link = document.createElement("a"); link.href = url; link.download = name; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
-async function downloadAll() { const entries = []; for (const file of outputFiles()) entries.push({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) }); if (entries.length) downloadBlob(createZip(entries), "shiagent-favicon-package.zip"); }
+async function downloadAll() { const entries = []; for (const file of outputFiles()) entries.push({ name: file.name, data: new Uint8Array(await file.arrayBuffer()) }); if (entries.length) downloadBlob(createZipBlob(entries, undefined, { applySuffix: false }), "shiagent-favicon-package.zip"); }
 
 elements.select.addEventListener("click", event => { event.stopPropagation(); elements.input.click(); }); elements.input.addEventListener("change", () => addFile(elements.input.files?.[0]));
 elements.drop.addEventListener("click", event => { if (!event.target.closest("button")) elements.input.click(); }); elements.drop.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); elements.input.click(); } });

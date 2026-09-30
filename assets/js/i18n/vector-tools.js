@@ -24,6 +24,13 @@ export default {
       excludes: n => `${n}箇所`,
       status: (index, total, name, stale) => `${index}/${total}  ${name}${stale ? "  ● 自動更新中" : ""}`,
       choose: "SVGを選択してください",
+      folderSave: "表示中を保存",
+      folderSaveAll: "すべて保存",
+      changeFolder: "保存先を変更",
+      folderSelected: name => `保存先を「${name}」に設定しました。`,
+      folderSaved: (name, folder) => `${name} を「${folder}」に保存しました。`,
+      folderSavedAll: (count, folder) => `${count}件のSVGを「${folder}」に保存しました。`,
+      folderFailed: "フォルダへの保存に失敗しました。",
       allDone: "すべてのSVGを確定しました。結果は作業トレイに入っています。"
     }
   },
@@ -51,6 +58,13 @@ export default {
       excludes: n => `${n} area${n === 1 ? "" : "s"}`,
       status: (index, total, name, stale) => `${index}/${total}  ${name}${stale ? "  ● Updating" : ""}`,
       choose: "Choose SVG files",
+      folderSave: "Save current",
+      folderSaveAll: "Save all",
+      changeFolder: "Change folder",
+      folderSelected: name => `Output folder set to “${name}”.`,
+      folderSaved: (name, folder) => `Saved ${name} to “${folder}”.`,
+      folderSavedAll: (count, folder) => `Saved ${count} SVG file${count === 1 ? "" : "s"} to “${folder}”.`,
+      folderFailed: "Could not save to the selected folder.",
       allDone: "All SVG files are finalized. The results are in the work tray."
     }
   }

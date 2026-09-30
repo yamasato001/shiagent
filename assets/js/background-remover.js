@@ -1,4 +1,5 @@
-import { createZip, formatBytes } from "./png-core.js";
+import { formatBytes } from "./png-core.js";
+import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas, toImageData } from "./browser-runtime.js";
 import { hexToRgb, outputFormat, outputName, rgbToHex } from "./background-remover-core.js";
 import { detectImageFormat, requiresSoftwareDecoder } from "./image-converter-core.js";
 import { lang, pick } from "./i18n.js";
@@ -188,25 +189,18 @@ async function decodeFile(entry) {
   const { file } = entry;
   if (entry.software) {
     const decoded = await decodeInWorker(file, entry.format);
-    const imageData = new ImageData(new Uint8ClampedArray(decoded.data), decoded.width, decoded.height);
+    const imageData = toImageData(decoded);
     if (!entry.previewUrl) {
       entry.previewUrl = URL.createObjectURL(await encode(imageData.data, imageData.width, imageData.height, "png"));
     }
     return imageData;
   }
-  let bitmap;
   try {
-    bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const canvas = await decodeBrowserImage(file, { willReadFrequently: true });
+    return canvas.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, canvas.width, canvas.height);
   } catch {
     throw new Error(copy.undecodable(file.name));
   }
-  const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
-  const context = canvas.getContext("2d", { willReadFrequently: true });
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
-  return context.getImageData(0, 0, canvas.width, canvas.height);
 }
 
 function runWorker(imageData, options) {
@@ -235,16 +229,9 @@ function runWorker(imageData, options) {
 }
 
 function encode(rgba, width, height, format) {
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  canvas.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(rgba), width, height), 0, 0);
+  const canvas = canvasFromRgba({ data: rgba, width, height });
   const quality = format === "png" ? undefined : 0.92;
-  return new Promise((resolve, reject) => canvas.toBlob(
-    blob => blob ? resolve(blob) : reject(new Error(copy.encodeFailed)),
-    MIME_BY_FORMAT[format],
-    quality
-  ));
+  return encodeBrowserCanvas(canvas, MIME_BY_FORMAT[format], quality).catch(() => { throw new Error(copy.encodeFailed); });
 }
 
 async function processEntry(entry) {
@@ -491,7 +478,7 @@ elements.downloadAllButton.addEventListener("click", async () => {
     if (seen) name = name.replace(/(\.[^.]+)$/, `-${seen + 1}$1`);
     zipEntries.push({ name, data: new Uint8Array(await entry.resultBlob.arrayBuffer()) });
   }
-  const url = URL.createObjectURL(createZip(zipEntries));
+  const url = URL.createObjectURL(createZipBlob(zipEntries));
   triggerDownload(url, "shiagent-background.zip");
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 });

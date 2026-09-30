@@ -1,24 +1,31 @@
 import { formatBytes } from "./png-core.js";
-import { FILL_PRESETS, closedRegionMask, countMaskRegions, insertWhiteFill, maskToPath, viewBoxOfSvg } from "./svg-white-fill-core.js";
+import { FILL_PRESETS, WHITE_FILL_ID, closedRegionMask, countMaskRegions, excludeMaskRegions, hasWhiteFillPixels, insertWhiteFill, maskToPath, newlyClosedRegionMask, viewBoxOfSvg } from "./svg-white-fill-core.js";
 import { cleanSvg } from "./svg-cleaner-core.js";
+import { chooseOutputDirectory, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
 import { pick } from "./i18n.js";
 import common from "./i18n/common.js";
 import vectorText from "./i18n/vector-tools.js";
+import { applyConfiguredOutputSuffix } from "./output-name.js";
 
 const shared = pick(common), copy = pick(vectorText).editor;
 const lineArtWorkflow = new URLSearchParams(location.search).get("workflow") === "line-art-to-svg";
+const PREVIEW_LONG_SIDE = 768;
 
 const $ = selector => document.querySelector(selector);
 const elements = {
   input: $("#fileInput"), select: $("#selectButton"), status: $("#fileStatus"), previous: $("#previousButton"),
-  skip: $("#skipButton"), saveNext: $("#saveNextButton"), zoomOut: $("#zoomOutButton"), resetZoom: $("#resetZoomButton"),
+  next: $("#nextButton"), zoomOut: $("#zoomOutButton"), resetZoom: $("#resetZoomButton"),
   zoomIn: $("#zoomInButton"), preset: $("#presetInput"), undo: $("#undoButton"), clear: $("#clearEditsButton"),
-  download: $("#downloadButton"), originalSize: $("#originalSize"), outputSize: $("#outputSize"), regions: $("#regionCount"),
+  download: $("#downloadButton"), downloadAll: $("#downloadAllButton"), folder: $("#folderButton"), editedSuffix: $("#editedSuffixInput"),
+  originalSize: $("#originalSize"), outputSize: $("#outputSize"), regions: $("#regionCount"),
   lines: $("#lineCount"), excludes: $("#excludeCount"), workspace: $("#editorDropZone"), canvas: $("#editorCanvas"),
-  empty: $("#emptyMessage"), toast: $("#toast")
+  empty: $("#emptyMessage"), toast: $("#toast"), closeMethods: $("#closeMethodOptions"),
+  closeMethodButtons: [...document.querySelectorAll("[data-close-method]")]
 };
 const context = elements.canvas.getContext("2d");
-const state = { sessions: [], index: 0, display: null, zoom: 1, panX: 0, panY: 0, panning: null };
+const state = { sessions: [], index: 0, display: null, zoom: 1, panX: 0, panY: 0, panning: null, dragLine: null, closeMethod: "segment", outputDirectory: null };
+const touchPointers = new Map();
+let touchGesture = null, touchMoved = false, suppressClickUntil = 0;
 const isSvg = file => file.type === "image/svg+xml" || /\.svg$/i.test(file.name);
 const current = () => state.sessions[state.index];
 
@@ -38,16 +45,33 @@ function loadImage(blob) {
   });
 }
 
-async function createSession(file) {
+function managedFillSvg(documentNode) {
+  const managed = documentNode.querySelector(`#${WHITE_FILL_ID}`);
+  if (!managed?.children.length) return null;
+  const root = documentNode.documentElement.cloneNode(false);
+  for (const child of documentNode.documentElement.children) {
+    if (["defs", "style"].includes(child.localName)) root.append(child.cloneNode(true));
+  }
+  root.append(managed.cloneNode(true));
+  return new XMLSerializer().serializeToString(root);
+}
+
+async function createSession(file, sourceHandle = null) {
   const original = await file.text();
   const parsed = new DOMParser().parseFromString(original, "image/svg+xml");
   if (parsed.querySelector("parsererror")) throw new Error(copy.parseFailed(file.name));
+  const managedSvg = managedFillSvg(parsed);
   const clean = insertWhiteFill(original, "");
-  const [originalImage, lineImage] = await Promise.all([loadImage(file), loadImage(new Blob([clean], { type: "image/svg+xml" }))]);
+  const [originalImage, lineImage, managedFillImage] = await Promise.all([
+    loadImage(file),
+    loadImage(new Blob([clean], { type: "image/svg+xml" })),
+    managedSvg ? loadImage(new Blob([managedSvg], { type: "image/svg+xml" })) : null
+  ]);
   return {
-    file, original, originalImage, lineImage, viewBox: viewBoxOfSvg(parsed.documentElement),
+    file, sourceHandle, original, originalImage, lineImage, managedFillImage, viewBox: viewBoxOfSvg(parsed.documentElement),
     lines: [], excludedPoints: [], pending: null, history: [], stale: true,
-    revision: 0, previewPromise: null, result: null, maskCanvas: null
+    revision: 0, previewPromise: null, result: null, finalResult: null, finalRevision: -1,
+    maskCanvas: null, analysisCache: new Map(), autoFillClosedRegions: null
   };
 }
 
@@ -58,25 +82,52 @@ function resetViewport() {
   elements.resetZoom.textContent = "100%";
 }
 
-async function addFiles(fileList) {
-  const files = [...fileList].filter(isSvg);
-  if (!files.length) return showToast(shared.selectSvg);
+async function addFiles(fileEntries) {
+  const entries = [...fileEntries].map(entry => entry?.file ? entry : { file: entry, sourceHandle: null }).filter(entry => isSvg(entry.file));
+  if (!entries.length) return showToast(shared.selectSvg);
   try {
     state.sessions = [];
-    for (const file of files) state.sessions.push(await createSession(file));
+    state.outputDirectory = null;
+    for (const entry of entries) state.sessions.push(await createSession(entry.file, entry.sourceHandle));
     state.index = 0;
     resetViewport();
     elements.input.value = "";
     render();
     for (const session of state.sessions) await requestPreview(session);
+    render();
   } catch (error) {
     console.error(error);
     showToast(error.message);
   }
 }
 
+async function selectFiles() {
+  if (typeof window.showOpenFilePicker !== "function") return elements.input.click();
+  try {
+    const handles = await window.showOpenFilePicker({
+      id: "shiagent-svg-inputs",
+      multiple: true,
+      types: [{ description: "SVG", accept: { "image/svg+xml": [".svg"] } }]
+    });
+    const entries = await Promise.all(handles.map(async sourceHandle => ({ file: await sourceHandle.getFile(), sourceHandle })));
+    await addFiles(entries);
+  } catch (error) {
+    if (error?.name !== "AbortError") { console.error(error); showToast(error.message); }
+  }
+}
+
 function mode() {
   return document.querySelector('input[name="editMode"]:checked')?.value || "close";
+}
+
+function closeMethod() {
+  return state.closeMethod;
+}
+
+function sameCanvasPoint(first, second) {
+  if (!first || !second || !state.display) return false;
+  const ratio = window.devicePixelRatio || 1;
+  return Math.hypot((first[0] - second[0]) * state.display.width, (first[1] - second[1]) * state.display.height) <= 12 * ratio;
 }
 
 function updateStats() {
@@ -87,6 +138,7 @@ function updateStats() {
   elements.lines.textContent = copy.lines(session?.lines.length || 0);
   elements.excludes.textContent = copy.excludes(session?.excludedPoints.length || 0);
   elements.download.disabled = !session?.result || session.stale;
+  elements.downloadAll.disabled = !state.sessions.length || state.sessions.some(item => !item.result || item.stale);
 }
 
 function render() {
@@ -94,8 +146,7 @@ function render() {
   elements.empty.hidden = !!session;
   elements.status.textContent = session ? copy.status(state.index + 1, state.sessions.length, session.file.name, session.stale) : copy.choose;
   elements.previous.disabled = !session || state.index === 0;
-  elements.skip.disabled = !session || state.index >= state.sessions.length - 1;
-  elements.saveNext.disabled = !session;
+  elements.next.disabled = !session;
   updateStats();
   draw();
 }
@@ -155,6 +206,13 @@ function draw() {
     context.lineTo(x + b[0] * width, y + b[1] * height);
     context.stroke();
   }
+  if (state.dragLine?.session === session) {
+    const { start, end } = state.dragLine;
+    context.beginPath();
+    context.moveTo(x + start[0] * width, y + start[1] * height);
+    context.lineTo(x + end[0] * width, y + end[1] * height);
+    context.stroke();
+  }
   context.strokeStyle = "#2070ff";
   for (const point of session.excludedPoints) {
     const px = x + point[0] * width;
@@ -205,16 +263,16 @@ function eraseNearest(session, point) {
 function publishResults() {
   document.dispatchEvent(new CustomEvent("shiagent:outputs", {
     detail: {
-      files: state.sessions.filter(session => session.result && !session.stale).map(session => ({ name: session.result.name, blob: session.result.blob })),
+      files: state.sessions.filter(session => session.result && !session.stale).map(session => exportResult(session)),
       source: "svg-white-fill-editor"
     }
   }));
 }
 
-async function calculatePreview(session, revision) {
-  const selected = FILL_PRESETS[elements.preset.value];
-  const width = session.viewBox[2] >= session.viewBox[3] ? selected.longSide : Math.max(1, Math.round(selected.longSide * session.viewBox[2] / session.viewBox[3]));
-  const height = session.viewBox[3] >= session.viewBox[2] ? selected.longSide : Math.max(1, Math.round(selected.longSide * session.viewBox[3] / session.viewBox[2]));
+function analysisFor(session, longSide) {
+  if (session.analysisCache.has(longSide)) return session.analysisCache.get(longSide);
+  const width = session.viewBox[2] >= session.viewBox[3] ? longSide : Math.max(1, Math.round(longSide * session.viewBox[2] / session.viewBox[3]));
+  const height = session.viewBox[3] >= session.viewBox[2] ? longSide : Math.max(1, Math.round(longSide * session.viewBox[3] / session.viewBox[2]));
   const renderCanvas = document.createElement("canvas");
   renderCanvas.width = width;
   renderCanvas.height = height;
@@ -223,9 +281,42 @@ async function calculatePreview(session, revision) {
   const rgba = renderContext.getImageData(0, 0, width, height).data;
   const alpha = new Uint8ClampedArray(width * height);
   for (let index = 0; index < alpha.length; index += 1) alpha[index] = rgba[index * 4 + 3];
+  let managedFillMask = null;
+  if (session.managedFillImage) {
+    renderContext.clearRect(0, 0, width, height);
+    renderContext.drawImage(session.managedFillImage, 0, 0, width, height);
+    const managedRgba = renderContext.getImageData(0, 0, width, height).data;
+    managedFillMask = Uint8Array.from({ length: width * height }, (_, index) => managedRgba[index * 4 + 3] > 20 ? 1 : 0);
+  }
+  const analysis = { width, height, alpha, managedFillMask, hasWhiteFill: hasWhiteFillPixels(rgba, width, height) };
+  session.analysisCache.set(longSide, analysis);
+  return analysis;
+}
+
+function scaledPreset(selected, longSide) {
+  const scale = longSide / selected.longSide;
+  return {
+    ...selected,
+    longSide,
+    closeRadius: selected.closeRadius ? Math.max(1, Math.round(selected.closeRadius * scale)) : 0,
+    inset: selected.inset ? Math.max(1, Math.round(selected.inset * scale)) : 0,
+    minArea: Math.max(1, Math.round(selected.minArea * scale * scale))
+  };
+}
+
+function calculateAtResolution(session, selected, longSide) {
+  const { width, height, alpha, managedFillMask, hasWhiteFill } = analysisFor(session, longSide);
+  const effectivePreset = longSide === selected.longSide ? selected : scaledPreset(selected, longSide);
   const lines = session.lines.map(([a, b]) => [[...a], [...b]]);
   const excludedPoints = session.excludedPoints.map(point => [...point]);
-  const mask = closedRegionMask(alpha, width, height, selected, { lines, excludedPoints });
+  if (session.autoFillClosedRegions === null) session.autoFillClosedRegions = !managedFillMask && !hasWhiteFill;
+  let mask = closedRegionMask(alpha, width, height, effectivePreset, { lines });
+  if (!session.autoFillClosedRegions) {
+    const originalMask = closedRegionMask(alpha, width, height, effectivePreset);
+    mask = newlyClosedRegionMask(mask, originalMask);
+    if (managedFillMask) mask = Uint8Array.from(mask, (value, index) => value || managedFillMask[index] ? 1 : 0);
+  }
+  mask = excludeMaskRegions(mask, width, height, excludedPoints);
   const path = maskToPath(mask, width, height, session.viewBox);
   const filledSvg = insertWhiteFill(session.original, path);
   const svg = lineArtWorkflow ? cleanSvg(filledSvg).svg : filledSvg;
@@ -240,12 +331,38 @@ async function calculatePreview(session, revision) {
     maskData.data[target] = maskData.data[target + 1] = maskData.data[target + 2] = maskData.data[target + 3] = 255;
   }
   maskContext.putImageData(maskData, 0, 0);
+  return {
+    maskCanvas,
+    result: { name: session.file.name, svg, blob, regions: countMaskRegions(mask, width, height) }
+  };
+}
+
+async function calculatePreview(session, revision) {
+  const selected = FILL_PRESETS[elements.preset.value];
+  const generated = calculateAtResolution(session, selected, Math.min(PREVIEW_LONG_SIDE, selected.longSide));
   if (revision !== session.revision) return false;
-  session.maskCanvas = maskCanvas;
-  session.result = { name: lineArtWorkflow ? session.file.name : session.file.name.replace(/\.svg$/i, "-edited.svg"), svg, blob, regions: countMaskRegions(mask, width, height) };
+  session.maskCanvas = generated.maskCanvas;
+  session.result = generated.result;
   session.stale = false;
   publishResults();
   return true;
+}
+
+async function ensureFinalResult(session) {
+  if (!session) return null;
+  if (session.stale && !await requestPreview(session)) return null;
+  if (session.finalResult && session.finalRevision === session.revision) return session.finalResult;
+  const revision = session.revision;
+  await new Promise(resolve => requestAnimationFrame(resolve));
+  const selected = FILL_PRESETS[elements.preset.value];
+  const generated = calculateAtResolution(session, selected, selected.longSide);
+  if (revision !== session.revision) return ensureFinalResult(session);
+  session.maskCanvas = generated.maskCanvas;
+  session.result = session.finalResult = generated.result;
+  session.finalRevision = revision;
+  publishResults();
+  if (current() === session) render();
+  return session.finalResult;
 }
 
 function requestPreview(session) {
@@ -274,25 +391,137 @@ function requestPreview(session) {
 function markStale(session) {
   session.revision += 1;
   session.stale = true;
+  session.finalResult = null;
+  session.finalRevision = -1;
   updateStats();
   draw();
   requestPreview(session);
 }
 
-function canvasClick(event) {
+function editCanvasAt(clientX, clientY) {
   const session = current();
-  const point = canvasPoint(event);
+  const point = canvasPoint({ clientX, clientY });
   if (!session || !point) return;
   if (mode() === "close") {
     if (!session.pending) { session.pending = point; draw(); return; }
+    if (closeMethod() === "polyline" && sameCanvasPoint(session.pending, point)) {
+      session.pending = null;
+      draw();
+      return;
+    }
     session.lines.push([session.pending, point]);
     session.history.push({ type: "line" });
-    session.pending = null;
+    session.pending = closeMethod() === "polyline" ? point : null;
   } else if (mode() === "exclude") {
     session.excludedPoints.push(point);
     session.history.push({ type: "exclude" });
   } else if (!eraseNearest(session, point)) return;
   markStale(session);
+}
+
+function commitGuideLine(session, start, end) {
+  if (!session || !start || !end) return;
+  session.lines.push([start, end]);
+  session.history.push({ type: "line" });
+  session.pending = null;
+  state.dragLine = null;
+  markStale(session);
+}
+
+function canvasClick(event) {
+  if (performance.now() < suppressClickUntil) return;
+  editCanvasAt(event.clientX, event.clientY);
+}
+
+function touchCenter(points) {
+  return points.reduce((center, point) => ({ x: center.x + point.x / points.length, y: center.y + point.y / points.length }), { x: 0, y: 0 });
+}
+
+function beginTouchGesture() {
+  const points = [...touchPointers.values()];
+  if (points.length === 1) {
+    const canvasStart = canvasPoint({ clientX: points[0].x, clientY: points[0].y });
+    if (mode() === "close" && closeMethod() === "segment" && !touchMoved && canvasStart) {
+      touchGesture = { type: "line", point: points[0], start: canvasStart, end: canvasStart, session: current() };
+      state.dragLine = { session: current(), start: canvasStart, end: canvasStart };
+    } else touchGesture = { type: "pan", point: points[0], panX: state.panX, panY: state.panY };
+  } else if (points.length >= 2) {
+    state.dragLine = null;
+    const [first, second] = points;
+    touchGesture = {
+      type: "pinch",
+      center: touchCenter([first, second]),
+      distance: Math.max(1, Math.hypot(second.x - first.x, second.y - first.y)),
+      zoom: state.zoom,
+      panX: state.panX,
+      panY: state.panY
+    };
+    touchMoved = true;
+  }
+}
+
+function touchPointerDown(event) {
+  if (event.pointerType !== "touch") return;
+  event.preventDefault();
+  if (!touchPointers.size) touchMoved = false;
+  touchPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  elements.canvas.setPointerCapture?.(event.pointerId);
+  beginTouchGesture();
+}
+
+function touchPointerMove(event) {
+  if (event.pointerType !== "touch" || !touchPointers.has(event.pointerId)) return;
+  event.preventDefault();
+  touchPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  const points = [...touchPointers.values()];
+  if (points.length === 1 && touchGesture?.type === "line") {
+    const dx = points[0].x - touchGesture.point.x;
+    const dy = points[0].y - touchGesture.point.y;
+    if (Math.hypot(dx, dy) > 6) touchMoved = true;
+    const end = canvasPoint({ clientX: points[0].x, clientY: points[0].y });
+    if (touchMoved && end) {
+      touchGesture.end = end;
+      state.dragLine.end = end;
+      draw();
+    }
+  } else if (points.length === 1 && touchGesture?.type === "pan") {
+    const dx = points[0].x - touchGesture.point.x;
+    const dy = points[0].y - touchGesture.point.y;
+    if (Math.hypot(dx, dy) > 6) touchMoved = true;
+    if (touchMoved) {
+      state.panX = touchGesture.panX + dx;
+      state.panY = touchGesture.panY + dy;
+      draw();
+    }
+  } else if (points.length >= 2 && touchGesture?.type === "pinch") {
+    const [first, second] = points;
+    const center = touchCenter([first, second]);
+    const distance = Math.max(1, Math.hypot(second.x - first.x, second.y - first.y));
+    state.zoom = Math.max(.25, Math.min(8, touchGesture.zoom * distance / touchGesture.distance));
+    state.panX = touchGesture.panX + center.x - touchGesture.center.x;
+    state.panY = touchGesture.panY + center.y - touchGesture.center.y;
+    elements.resetZoom.textContent = `${Math.round(state.zoom * 100)}%`;
+    draw();
+  }
+}
+
+function touchPointerEnd(event, cancelled = false) {
+  if (event.pointerType !== "touch" || !touchPointers.has(event.pointerId)) return;
+  event.preventDefault();
+  const completedGesture = touchGesture;
+  touchPointers.delete(event.pointerId);
+  if (touchPointers.size) beginTouchGesture();
+  else {
+    if (!cancelled && completedGesture?.type === "line" && touchMoved) {
+      commitGuideLine(completedGesture.session, completedGesture.start, completedGesture.end);
+    } else {
+      state.dragLine = null;
+      if (!cancelled && !touchMoved) editCanvasAt(event.clientX, event.clientY);
+      else draw();
+    }
+    suppressClickUntil = performance.now() + 500;
+    touchGesture = null;
+  }
 }
 
 function undo() {
@@ -317,20 +546,81 @@ function clearEdits() {
   markStale(session);
 }
 
-function download() {
-  const session = current();
-  if (!session?.result || session.stale) return;
-  const url = URL.createObjectURL(session.result.blob);
+function browserDownload(result) {
+  const url = URL.createObjectURL(result.blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = session.result.name;
+  anchor.download = result.name;
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-async function saveNext() {
+function exportResult(session, result = session.result) {
+  const stem = session.file.name.replace(/\.svg$/i, "");
+  const name = applyConfiguredOutputSuffix(`${stem}.svg`);
+  return { ...result, name };
+}
+
+async function chooseFolder() {
   const session = current();
-  if (!session || !await requestPreview(session)) return;
+  try {
+    state.outputDirectory = await chooseOutputDirectory(window, session?.sourceHandle || "downloads");
+    showToast(copy.folderSelected(state.outputDirectory.name));
+    return state.outputDirectory;
+  } catch (error) {
+    if (error?.name !== "AbortError") { console.error(error); showToast(copy.folderFailed); }
+    return null;
+  }
+}
+
+async function download() {
+  const session = current();
+  if (!session?.result || session.stale) return;
+  const usesFolder = supportsFolderDownload(window);
+  const directory = usesFolder ? state.outputDirectory || await chooseFolder() : null;
+  if (usesFolder && !directory) return;
+  const finalResult = await ensureFinalResult(session);
+  if (!finalResult) return;
+  const result = exportResult(session, finalResult);
+  if (!usesFolder) return browserDownload(result);
+  try {
+    await writeFilesToDirectory(directory, [result]);
+    showToast(copy.folderSaved(result.name, directory.name));
+  } catch (error) {
+    console.error(error);
+    showToast(copy.folderFailed);
+  }
+}
+
+async function downloadAll() {
+  if (!state.sessions.length) return;
+  const usesFolder = supportsFolderDownload(window);
+  const directory = usesFolder ? state.outputDirectory || await chooseFolder() : null;
+  if (usesFolder && !directory) return;
+  const previews = await Promise.all(state.sessions.map(requestPreview));
+  if (previews.some(result => !result)) return;
+  const results = [];
+  for (const session of state.sessions) {
+    const finalResult = await ensureFinalResult(session);
+    if (!finalResult) return;
+    results.push(exportResult(session, finalResult));
+  }
+  if (!usesFolder) {
+    for (const result of results) browserDownload(result);
+    return;
+  }
+  try {
+    const count = await writeFilesToDirectory(directory, results);
+    showToast(copy.folderSavedAll(count, directory.name));
+  } catch (error) {
+    console.error(error);
+    showToast(copy.folderFailed);
+  }
+}
+
+async function moveNext() {
+  const session = current();
+  if (!session || !await ensureFinalResult(session)) return;
   if (state.index < state.sessions.length - 1) {
     state.index += 1;
     resetViewport();
@@ -354,9 +644,13 @@ function changeZoom(multiplier) {
   draw();
 }
 
-elements.select.addEventListener("click", () => elements.input.click());
+elements.select.addEventListener("click", selectFiles);
 elements.input.addEventListener("change", () => addFiles(elements.input.files));
 elements.canvas.addEventListener("click", canvasClick);
+elements.canvas.addEventListener("pointerdown", touchPointerDown);
+elements.canvas.addEventListener("pointermove", touchPointerMove);
+elements.canvas.addEventListener("pointerup", event => touchPointerEnd(event));
+elements.canvas.addEventListener("pointercancel", event => touchPointerEnd(event, true));
 elements.zoomOut.addEventListener("click", () => changeZoom(1 / 1.25));
 elements.zoomIn.addEventListener("click", () => changeZoom(1.25));
 elements.resetZoom.addEventListener("click", () => { resetViewport(); draw(); });
@@ -366,27 +660,75 @@ elements.canvas.addEventListener("wheel", event => {
   changeZoom(event.deltaY < 0 ? 1.15 : 1 / 1.15);
 }, { passive: false });
 elements.canvas.addEventListener("mousedown", event => {
-  if (event.button !== 1) return;
-  event.preventDefault();
-  state.panning = { x: event.clientX, y: event.clientY, panX: state.panX, panY: state.panY };
+  if (event.button === 0 && mode() === "close" && closeMethod() === "segment") {
+    const start = canvasPoint(event);
+    const session = current();
+    if (!start || !session) return;
+    state.dragLine = { session, start, end: start, x: event.clientX, y: event.clientY, moved: false, pointerType: "mouse" };
+    draw();
+  } else if (event.button === 1) {
+    event.preventDefault();
+    state.panning = { x: event.clientX, y: event.clientY, panX: state.panX, panY: state.panY };
+  }
 });
 window.addEventListener("mousemove", event => {
-  if (!state.panning) return;
-  state.panX = state.panning.panX + event.clientX - state.panning.x;
-  state.panY = state.panning.panY + event.clientY - state.panning.y;
-  draw();
+  if (state.dragLine?.pointerType === "mouse") {
+    const end = canvasPoint(event);
+    if (Math.hypot(event.clientX - state.dragLine.x, event.clientY - state.dragLine.y) > 4) state.dragLine.moved = true;
+    if (end) state.dragLine.end = end;
+    if (state.dragLine.moved) draw();
+  } else if (state.panning) {
+    state.panX = state.panning.panX + event.clientX - state.panning.x;
+    state.panY = state.panning.panY + event.clientY - state.panning.y;
+    draw();
+  }
 });
-window.addEventListener("mouseup", () => { state.panning = null; });
+window.addEventListener("mouseup", event => {
+  if (event.button === 0 && state.dragLine?.pointerType === "mouse") {
+    const gesture = state.dragLine;
+    state.dragLine = null;
+    if (gesture.moved) {
+      suppressClickUntil = performance.now() + 500;
+      commitGuideLine(gesture.session, gesture.start, gesture.end);
+    } else draw();
+  }
+  if (event.button === 1) state.panning = null;
+});
 elements.canvas.addEventListener("auxclick", event => event.preventDefault());
 elements.undo.addEventListener("click", undo);
 elements.clear.addEventListener("click", clearEdits);
 elements.download.addEventListener("click", download);
-elements.saveNext.addEventListener("click", saveNext);
+elements.downloadAll.addEventListener("click", downloadAll);
+elements.folder.addEventListener("click", chooseFolder);
+elements.editedSuffix.addEventListener("change", publishResults);
+function resetPendingLine() {
+  const session = current();
+  if (session) session.pending = null;
+  state.dragLine = null;
+  elements.closeMethods.classList.toggle("is-inactive", mode() !== "close");
+  draw();
+}
+document.querySelectorAll('input[name="editMode"]').forEach(input => input.addEventListener("change", resetPendingLine));
+elements.closeMethodButtons.forEach(button => button.addEventListener("click", () => {
+  const closeMode = document.querySelector('input[name="editMode"][value="close"]');
+  state.closeMethod = button.dataset.closeMethod;
+  closeMode.checked = true;
+  elements.closeMethodButtons.forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+  resetPendingLine();
+}));
+elements.next.addEventListener("click", moveNext);
 elements.previous.addEventListener("click", () => move(-1));
-elements.skip.addEventListener("click", () => move(1));
 elements.preset.addEventListener("change", () => { if (current()) markStale(current()); });
 for (const type of ["dragenter", "dragover"]) elements.workspace.addEventListener(type, event => event.preventDefault());
-elements.workspace.addEventListener("drop", event => { event.preventDefault(); addFiles(event.dataTransfer.files); });
+elements.workspace.addEventListener("drop", async event => {
+  event.preventDefault();
+  const entries = await Promise.all([...event.dataTransfer.items].filter(item => item.kind === "file").map(async item => {
+    const file = item.getAsFile();
+    const sourceHandle = typeof item.getAsFileSystemHandle === "function" ? await item.getAsFileSystemHandle().catch(() => null) : null;
+    return { file, sourceHandle: sourceHandle?.kind === "file" ? sourceHandle : null };
+  }));
+  addFiles(entries.length ? entries : event.dataTransfer.files);
+});
 window.addEventListener("resize", draw);
 window.addEventListener("keydown", event => {
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") { event.preventDefault(); undo(); }
@@ -394,4 +736,10 @@ window.addEventListener("keydown", event => {
   else if (event.key === "Delete") undo();
 });
 
+if (supportsFolderDownload(window)) {
+  elements.folder.hidden = false;
+  elements.download.firstChild.textContent = `${copy.folderSave} `;
+  elements.downloadAll.firstChild.textContent = `${copy.folderSaveAll} `;
+  elements.folder.textContent = copy.changeFolder;
+}
 render();

@@ -9,7 +9,7 @@ async function findPublicPages(directory, prefix = "") {
   const entries = await readdir(directory, { withFileTypes: true });
   const pages = [];
   for (const entry of entries) {
-    if ([".git", "assets", "design", "logo_data", "node_modules", "scripts", "test", "tmp"].includes(entry.name)) continue;
+    if ([".agents", ".codex", ".git", ".vscode", "assets", "design", "dist", "logo_data", "node_modules", "pages", "public", "scripts", "src", "test", "tmp"].includes(entry.name)) continue;
     const relative = path.posix.join(prefix, entry.name);
     if (entry.isDirectory()) pages.push(...await findPublicPages(new URL(`${entry.name}/`, directory), relative));
     else if (entry.name === "index.html" || relative === "404.html" || relative === "ja/404.html") pages.push(relative);
@@ -52,4 +52,12 @@ test("brand assets and PWA icon declarations are publishable", async () => {
     { src: "/assets/brand/icon-192.png", sizes: "192x192", type: "image/png" },
     { src: "/assets/brand/icon-512.png", sizes: "512x512", type: "image/png" },
   ]);
+});
+
+test("browser favicons use the full canvas without an outer margin", async () => {
+  const svg = await readFile(new URL("../assets/brand/favicon.svg", import.meta.url), "utf8");
+  assert.match(svg, /<path d="M0,0 H16 V16 H32 V32 H0 Z"/);
+  assert.doesNotMatch(svg, /M2,2|H30 V30/);
+  const generator = await readFile(new URL("../scripts/generate-brand-favicons.mjs", import.meta.url), "utf8");
+  assert.match(generator, /return px < 16 \|\| py >= 16/);
 });

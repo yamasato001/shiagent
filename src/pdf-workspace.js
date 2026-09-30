@@ -1,6 +1,6 @@
 import { PDFDocument, degrees } from "pdf-lib";
 import { GlobalWorkerOptions, getDocument } from "pdfjs-dist/build/pdf.mjs";
-import { createZip } from "../assets/js/png-core.js";
+import { createZipBlob } from "../assets/js/browser-runtime.js";
 import { detectRasterOrientation, detectTextOrientation, interleaveGroups, PDF_MODE_FEATURES, rotateAngle, safePdfName, selectPageIndexes } from "../assets/js/pdf-core.js";
 import { clearPdfTray, mountPdfTray, readPdfTray, replacePdfTray } from "../assets/js/pdf-tray.js";
 import { readTray } from "../assets/js/work-tray.js";
@@ -313,7 +313,7 @@ async function exportPdf() {
         files.push({ name: outputName, data });
         trayFiles.push(new File([data], outputName, { type: "application/pdf" }));
       }
-      download(createZip(files), name.replace(/\.pdf$/, ".zip"));
+      download(createZipBlob(files), name.replace(/\.pdf$/, ".zip"));
     } else {
       const data = await buildPdf(models);
       download(new Blob([data], { type: "application/pdf" }), name);

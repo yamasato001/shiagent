@@ -1,0 +1,61 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>PNG large Auto browser test</title>
+<pre id="result">RUNNING</pre>
+<script type="module">
+import { analyzePixels } from "/assets/js/png-core.js";
+const result = document.querySelector("#result");
+const width = 2100;
+const height = 1000;
+const pixels = new Uint8ClampedArray(width * height * 4);
+let seed = 0x12345678;
+const random = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return (seed >>> 0) / 4294967296; };
+for (let y = 0; y < height; y += 1) {
+  for (let x = 0; x < width; x += 1) {
+    const i = (y * width + x) * 4;
+    const nx = x / width;
+    const ny = y / height;
+    const noise = (random() - .5) * 14;
+    pixels[i] = 45 + 145 * nx + 28 * Math.sin(ny * 7) + noise;
+    pixels[i + 1] = 72 + 118 * ny + 22 * Math.sin(nx * 9) + noise;
+    pixels[i + 2] = 105 + 92 * (1 - nx) + 18 * Math.cos(ny * 11) + noise;
+    pixels[i + 3] = 255;
+  }
+}
+const analysis = analyzePixels(pixels, width, height);
+const worker = new Worker("/assets/dist/png-optimizer-worker.js", { type: "module" });
+const started = performance.now();
+const buffer = await new Promise((resolve, reject) => {
+  worker.onmessage = event => event.data.error ? reject(new Error(event.data.error)) : resolve(event.data.result);
+  worker.onerror = event => reject(new Error(event.message));
+  const copy = pixels.slice();
+  worker.postMessage({ id: 1, type: "quantize", buffer: copy.buffer, width, height, mode: analysis.preset, level: 3 }, [copy.buffer]);
+});
+worker.terminate();
+const blob = new Blob([buffer], { type: "image/png" });
+const bitmap = await createImageBitmap(blob);
+const canvas = document.createElement("canvas");
+canvas.width = width; canvas.height = height;
+const context = canvas.getContext("2d", { willReadFrequently: true });
+context.drawImage(bitmap, 0, 0); bitmap.close();
+const output = context.getImageData(0, 0, width, height).data;
+let squared = 0;
+let alphaError = 0;
+const colors = new Set();
+for (let i = 0; i < pixels.length; i += 4) {
+  colors.add(`${output[i]},${output[i + 1]},${output[i + 2]},${output[i + 3]}`);
+  for (let c = 0; c < 4; c += 1) { const delta = pixels[i + c] - output[i + c]; squared += delta * delta; }
+  alphaError = Math.max(alphaError, Math.abs(pixels[i + 3] - output[i + 3]));
+}
+const mse = squared / pixels.length;
+result.textContent = JSON.stringify({
+  status: analysis.preset === "balanced" && colors.size <= 256 && alphaError === 0 && mse < 32 ? "PASS" : "FAIL",
+  detected: analysis.preset,
+  exactColors: analysis.metrics.exactColors,
+  bytes: blob.size,
+  colors: colors.size,
+  psnr: 10 * Math.log10(255 * 255 / mse),
+  maxAlphaError: alphaError,
+  milliseconds: Math.round(performance.now() - started)
+});
+</script>
