@@ -1,4 +1,5 @@
 import { installOutputNaming } from "./output-name.js";
+import { installOutputSaving } from "./output-save.js";
 
 const CATALOG_URL = "/ai/tools.json";
 const currentPath = location.pathname.replace(/^\/ja(?=\/)/, "");
@@ -13,7 +14,11 @@ const ready = fetch(CATALOG_URL, { credentials: "same-origin" })
   .then(catalog => {
     const tool = catalog.tools.find(item => Object.values(item.paths).includes(currentPath)) || null;
     currentTool = tool;
-    if (tool) installOutputNaming();
+    if (tool) {
+      installOutputNaming();
+      installOutputSaving();
+      notifyOutputOptionsIfReady(tool);
+    }
     installStableHooks(tool);
     installStructuredData(tool);
     document.dispatchEvent(new CustomEvent("shiagent:ready", { detail: { tool, catalogVersion: catalog.version } }));
@@ -29,9 +34,16 @@ function selectorElements(selector) {
 }
 
 function isVisible(element) {
-  if (!element || element.hidden) return false;
+  if (!element || element.hidden || element.closest("[hidden]")) return false;
   const style = getComputedStyle(element);
   return style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0";
+}
+
+function notifyOutputOptionsIfReady(tool = currentTool) {
+  const download = selectorElement(tool?.automation?.download);
+  if (download && !download.disabled && isVisible(download)) {
+    document.dispatchEvent(new CustomEvent("shiagent:output-options-ready"));
+  }
 }
 
 function installStableHooks(tool) {
@@ -200,6 +212,7 @@ new MutationObserver(() => {
     }
     if (!message) lastObservedError = "";
     installStableHooks(currentTool);
+    notifyOutputOptionsIfReady();
     document.dispatchEvent(new CustomEvent("shiagent:statechange", { detail: await getState() }));
   }, 60);
 }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ["hidden", "disabled", "class"] });

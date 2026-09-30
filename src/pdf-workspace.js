@@ -237,6 +237,7 @@ async function addFiles(fileList, fromTray = false) {
     elements.input.value = "";
     setBusy(false);
     render();
+    if (pages.length) document.dispatchEvent(new CustomEvent("shiagent:output-options-ready"));
   }
 }
 

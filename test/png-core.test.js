@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyzePixels, createZip, crc32, detectRasterFormat, formatBytes, jpegQuality, outputName, processPixels, savedPercent } from "../assets/js/png-core.js";
+import { readFile } from "node:fs/promises";
+import { analyzePixels, createZip, crc32, detectRasterFormat, formatBytes, jpegQuality, outputName, pngOptimizationLevel, processPixels, savedPercent } from "../assets/js/png-core.js";
 
 test("PNG and JPEG are detected from file signatures", () => {
   assert.equal(detectRasterFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), "png");
@@ -15,6 +16,14 @@ test("output names and JPEG quality preserve the detected format", () => {
   assert.equal(outputName("photo.webp", "webp"), "photo-compressed.webp");
   assert.equal(jpegQuality("smallest"), 0.68);
   assert.equal(jpegQuality("auto", "careful", "lineart"), 0.96);
+});
+
+test("standard effort uses the fast OxiPNG level and careful spends more time", async () => {
+  assert.equal(pngOptimizationLevel(), 2);
+  assert.equal(pngOptimizationLevel("standard"), 2);
+  assert.equal(pngOptimizationLevel("careful"), 4);
+  const script = await readFile(new URL("../assets/js/png-compressor.js", import.meta.url), "utf8");
+  assert.match(script, /const effortLevel = pngOptimizationLevel\(elements\.effort\.value\);/);
 });
 
 test("line art images are detected from white backgrounds and dark edges", () => {

@@ -1,7 +1,7 @@
 import { formatBytes } from "./png-core.js";
 import { FILL_PRESETS, WHITE_FILL_ID, closedRegionMask, countMaskRegions, excludeMaskRegions, hasWhiteFillPixels, insertWhiteFill, maskToPath, newlyClosedRegionMask, viewBoxOfSvg } from "./svg-white-fill-core.js";
 import { cleanSvg } from "./svg-cleaner-core.js";
-import { chooseOutputDirectory, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
+import { createZipBlob } from "./browser-runtime.js";
 import { pick } from "./i18n.js";
 import common from "./i18n/common.js";
 import vectorText from "./i18n/vector-tools.js";
@@ -16,14 +16,14 @@ const elements = {
   input: $("#fileInput"), select: $("#selectButton"), status: $("#fileStatus"), previous: $("#previousButton"),
   next: $("#nextButton"), zoomOut: $("#zoomOutButton"), resetZoom: $("#resetZoomButton"),
   zoomIn: $("#zoomInButton"), preset: $("#presetInput"), undo: $("#undoButton"), clear: $("#clearEditsButton"),
-  download: $("#downloadButton"), downloadAll: $("#downloadAllButton"), folder: $("#folderButton"), editedSuffix: $("#editedSuffixInput"),
+  download: $("#downloadButton"), downloadAll: $("#downloadAllButton"), editedSuffix: $("#editedSuffixInput"),
   originalSize: $("#originalSize"), outputSize: $("#outputSize"), regions: $("#regionCount"),
   lines: $("#lineCount"), excludes: $("#excludeCount"), workspace: $("#editorDropZone"), canvas: $("#editorCanvas"),
   empty: $("#emptyMessage"), toast: $("#toast"), closeMethods: $("#closeMethodOptions"),
   closeMethodButtons: [...document.querySelectorAll("[data-close-method]")]
 };
 const context = elements.canvas.getContext("2d");
-const state = { sessions: [], index: 0, display: null, zoom: 1, panX: 0, panY: 0, panning: null, dragLine: null, closeMethod: "segment", outputDirectory: null };
+const state = { sessions: [], index: 0, display: null, zoom: 1, panX: 0, panY: 0, panning: null, dragLine: null, closeMethod: "segment" };
 const touchPointers = new Map();
 let touchGesture = null, touchMoved = false, suppressClickUntil = 0;
 const isSvg = file => file.type === "image/svg+xml" || /\.svg$/i.test(file.name);
@@ -87,7 +87,6 @@ async function addFiles(fileEntries) {
   if (!entries.length) return showToast(shared.selectSvg);
   try {
     state.sessions = [];
-    state.outputDirectory = null;
     for (const entry of entries) state.sessions.push(await createSession(entry.file, entry.sourceHandle));
     state.index = 0;
     resetViewport();
@@ -561,42 +560,16 @@ function exportResult(session, result = session.result) {
   return { ...result, name };
 }
 
-async function chooseFolder() {
-  const session = current();
-  try {
-    state.outputDirectory = await chooseOutputDirectory(window, session?.sourceHandle || "downloads");
-    showToast(copy.folderSelected(state.outputDirectory.name));
-    return state.outputDirectory;
-  } catch (error) {
-    if (error?.name !== "AbortError") { console.error(error); showToast(copy.folderFailed); }
-    return null;
-  }
-}
-
 async function download() {
   const session = current();
   if (!session?.result || session.stale) return;
-  const usesFolder = supportsFolderDownload(window);
-  const directory = usesFolder ? state.outputDirectory || await chooseFolder() : null;
-  if (usesFolder && !directory) return;
   const finalResult = await ensureFinalResult(session);
   if (!finalResult) return;
-  const result = exportResult(session, finalResult);
-  if (!usesFolder) return browserDownload(result);
-  try {
-    await writeFilesToDirectory(directory, [result]);
-    showToast(copy.folderSaved(result.name, directory.name));
-  } catch (error) {
-    console.error(error);
-    showToast(copy.folderFailed);
-  }
+  browserDownload(exportResult(session, finalResult));
 }
 
 async function downloadAll() {
   if (!state.sessions.length) return;
-  const usesFolder = supportsFolderDownload(window);
-  const directory = usesFolder ? state.outputDirectory || await chooseFolder() : null;
-  if (usesFolder && !directory) return;
   const previews = await Promise.all(state.sessions.map(requestPreview));
   if (previews.some(result => !result)) return;
   const results = [];
@@ -605,17 +578,8 @@ async function downloadAll() {
     if (!finalResult) return;
     results.push(exportResult(session, finalResult));
   }
-  if (!usesFolder) {
-    for (const result of results) browserDownload(result);
-    return;
-  }
-  try {
-    const count = await writeFilesToDirectory(directory, results);
-    showToast(copy.folderSavedAll(count, directory.name));
-  } catch (error) {
-    console.error(error);
-    showToast(copy.folderFailed);
-  }
+  const entries = await Promise.all(results.map(async result => ({ name: result.name, data: new Uint8Array(await result.blob.arrayBuffer()) })));
+  browserDownload({ name: "shiagent-svg-edited.zip", blob: createZipBlob(entries, undefined, { applySuffix: false }) });
 }
 
 async function moveNext() {
@@ -699,7 +663,6 @@ elements.undo.addEventListener("click", undo);
 elements.clear.addEventListener("click", clearEdits);
 elements.download.addEventListener("click", download);
 elements.downloadAll.addEventListener("click", downloadAll);
-elements.folder.addEventListener("click", chooseFolder);
 elements.editedSuffix.addEventListener("change", publishResults);
 function resetPendingLine() {
   const session = current();
@@ -736,10 +699,4 @@ window.addEventListener("keydown", event => {
   else if (event.key === "Delete") undo();
 });
 
-if (supportsFolderDownload(window)) {
-  elements.folder.hidden = false;
-  elements.download.firstChild.textContent = `${copy.folderSave} `;
-  elements.downloadAll.firstChild.textContent = `${copy.folderSaveAll} `;
-  elements.folder.textContent = copy.changeFolder;
-}
 render();

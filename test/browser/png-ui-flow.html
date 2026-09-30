@@ -84,10 +84,14 @@ try {
   const resultStatus = document.querySelector("#resultStatus").textContent;
   const badges = [...document.querySelectorAll(".result-badges span")].map(node => node.textContent);
   const comparisons = document.querySelectorAll(".file-row.has-result .file-compare img").length;
+  const largeComparisons = document.querySelectorAll(".compression-comparison-grid img").length;
+  const comparisonPanes = document.querySelectorAll(".compression-comparison-grid figure > div").length;
+  const comparisonTabs = document.querySelectorAll("#comparisonTabs [role=tab]").length;
   const autoPass = modes.includes("Line Art") && modes.includes("Illustration") && modes.includes("Balanced") &&
     detection.includes("線画 1") && detection.includes("イラスト 1") && detection.includes("写真 1") &&
     resultStatus.includes("3 / 3") && badges.includes("細線保護") &&
-    badges.includes("最大256色") && badges.includes("透明度維持") && comparisons === 6;
+    badges.includes("最大256色") && badges.includes("透明度維持") && comparisons === 6 &&
+    largeComparisons === 2 && comparisonPanes === 2 && comparisonTabs === 3;
 
   document.querySelector('input[name="mode"][value="exact"]').click();
   document.querySelector("#compressButton").click();
@@ -101,6 +105,9 @@ try {
     badges,
     exactBadges: [...new Set(exactBadges)],
     comparisons,
+    largeComparisons,
+    comparisonPanes,
+    comparisonTabs,
     detection,
     resultStatus
   });

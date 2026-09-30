@@ -32,6 +32,14 @@ export function jpegQuality(mode, effort = "standard", kind = "photo") {
   return effort === "careful" ? Math.min(0.96, quality + 0.06) : quality;
 }
 
+// OxiPNG optimization level. Level 3 took 4-5x as long as level 2 and produced
+// the same file size in our benchmarks (line art, illustration and photo-like
+// images), so level 2 is the standard. "careful" spends the extra time for
+// the few percent that level 4 can still save.
+export function pngOptimizationLevel(effort = "standard") {
+  return effort === "careful" ? 4 : 2;
+}
+
 const clamp = value => Math.max(0, Math.min(255, value));
 const quantize = (value, step) => step <= 1 ? value : clamp(Math.round(value / step) * step);
 

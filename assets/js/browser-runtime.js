@@ -4,7 +4,11 @@ import { applyConfiguredOutputSuffix } from "./output-name.js";
 
 export function createZipBlob(entries, modified = new Date(), options = {}) {
   const prepared = options.applySuffix === false ? entries : entries.map(entry => ({ ...entry, name: applyConfiguredOutputSuffix(entry.name) }));
-  return new Blob([createZip(prepared, modified)], { type: "application/zip" });
+  const blob = new Blob([createZip(prepared, modified)], { type: "application/zip" });
+  Object.defineProperty(blob, Symbol.for("shiagent.outputFiles"), {
+    value: prepared.map(entry => ({ name: entry.name, blob: entry.data instanceof Blob ? entry.data : new Blob([entry.data]) }))
+  });
+  return blob;
 }
 
 export function createRenamedFiles(files, options) {

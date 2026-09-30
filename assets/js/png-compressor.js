@@ -1,4 +1,4 @@
-import { analyzePixels, detectRasterFormat, formatBytes, jpegQuality, outputName, savedPercent } from "./png-core.js";
+import { analyzePixels, detectRasterFormat, formatBytes, jpegQuality, outputName, pngOptimizationLevel, savedPercent } from "./png-core.js";
 import { createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import "./queue-drop.js";
 
@@ -24,6 +24,7 @@ const copy = lang === "ja" ? {
   detection: counts => `Auto判定: 線画 ${counts.lineart} / イラスト ${counts.illustration} / 写真 ${counts.photo}`,
   before: "圧縮前",
   after: "圧縮後",
+  comparisonTabs: "比較する画像",
   badges: {
     unchanged: "画素変更なし", lossless: "ロスレス", lines: "細線保護", alpha: "透明度維持",
     transparency: "透明度対応", palette256: "最大256色", palette64: "最大64色",
@@ -51,6 +52,7 @@ const copy = lang === "ja" ? {
   detection: counts => `Auto detected: ${counts.lineart} Line Art / ${counts.illustration} Illustration / ${counts.photo} Photo`,
   before: "Before",
   after: "After",
+  comparisonTabs: "Images to compare",
   badges: {
     unchanged: "Pixels unchanged", lossless: "Lossless", lines: "Fine lines protected", alpha: "Alpha preserved",
     transparency: "Transparency supported", palette256: "Up to 256 colors", palette64: "Up to 64 colors",
@@ -68,12 +70,14 @@ const elements = {
   count: $("#fileCount"), detect: $("#detectionSummary"), compress: $("#compressButton"), cancel: $("#cancelButton"),
   results: $("#resultsPanel"), resultStatus: $("#resultStatus"), before: $("#beforeTotal"), after: $("#afterTotal"),
   saved: $("#savedTotal"), savedRate: $("#savedRate"), downloadAll: $("#downloadAllButton"), toast: $("#toast"),
-  modeGrid: $("#modeGrid"), effort: $("#effort")
+  modeGrid: $("#modeGrid"), effort: $("#effort"), comparisonTabs: $("#comparisonTabs"),
+  comparisonView: $("#comparisonView"), comparisonFileName: $("#comparisonFileName")
 };
 
 let entries = [];
 let running = false;
 let cancelRequested = false;
+let comparisonEntryId = null;
 let toastTimer;
 let optimizerWorker;
 let optimizerRequestId = 0;
@@ -167,6 +171,7 @@ function disposeEntry(entry) {
 
 function resetResults() {
   elements.results.hidden = true;
+  comparisonEntryId = null;
   for (const entry of entries) {
     if (entry.resultUrl) URL.revokeObjectURL(entry.resultUrl);
     entry.resultUrl = null;
@@ -218,6 +223,7 @@ function clearEntries() {
   if (running) return;
   entries.forEach(disposeEntry);
   entries = [];
+  comparisonEntryId = null;
   elements.results.hidden = true;
   render();
 }
@@ -308,7 +314,7 @@ async function compressEntry(entry, requestedMode) {
   let mode = requestedMode;
   let blob = entry.file;
   entry.autoSelected = requestedMode === "auto";
-  const effortLevel = elements.effort.value === "careful" ? 4 : elements.effort.value === "fast" ? 2 : 3;
+  const effortLevel = pngOptimizationLevel(elements.effort.value);
 
   if (entry.format === "jpeg" || entry.format === "webp") {
     if (requestedMode === "exact") {
@@ -420,6 +426,38 @@ function updateSummary(completed) {
   elements.after.textContent = formatBytes(after, locale);
   elements.saved.textContent = formatBytes(Math.max(0, saved), locale);
   elements.savedRate.textContent = rate >= 0 ? copy.saved(rate) : copy.larger(rate);
+  renderLargeComparison(completed);
+}
+
+function renderLargeComparison(completed) {
+  if (!completed.length) return;
+  if (!completed.some(entry => entry.id === comparisonEntryId)) comparisonEntryId = completed[0].id;
+  const selected = completed.find(entry => entry.id === comparisonEntryId) || completed[0];
+  elements.comparisonFileName.textContent = selected.file.name;
+  elements.comparisonTabs.hidden = completed.length < 2;
+  elements.comparisonTabs.setAttribute("aria-label", copy.comparisonTabs);
+  elements.comparisonTabs.innerHTML = completed.map((entry, index) => `<button type="button" role="tab" aria-selected="${entry.id === selected.id}" tabindex="${entry.id === selected.id ? "0" : "-1"}" data-comparison-id="${entry.id}"><span>${String(index + 1).padStart(2, "0")}</span>${escapeHtml(entry.file.name)}</button>`).join("");
+  elements.comparisonView.innerHTML = `<div class="compression-comparison-grid" role="tabpanel"><figure><figcaption>${copy.before}<small>${formatBytes(selected.file.size, locale)}</small></figcaption><div><img src="${selected.previewUrl}" alt="${escapeHtml(selected.file.name)} ${copy.before}"></div></figure><figure><figcaption>${copy.after}<small>${formatBytes(selected.after, locale)}</small></figcaption><div><img src="${selected.resultUrl}" alt="${escapeHtml(selected.file.name)} ${copy.after}"></div></figure></div>`;
+  bindComparisonScroll();
+}
+
+function bindComparisonScroll() {
+  const panes = [...elements.comparisonView.querySelectorAll(".compression-comparison-grid figure > div")];
+  if (panes.length !== 2) return;
+  let syncing = false;
+  const mirror = (source, target) => {
+    if (syncing) return;
+    syncing = true;
+    const sourceX = Math.max(0, source.scrollWidth - source.clientWidth);
+    const sourceY = Math.max(0, source.scrollHeight - source.clientHeight);
+    const targetX = Math.max(0, target.scrollWidth - target.clientWidth);
+    const targetY = Math.max(0, target.scrollHeight - target.clientHeight);
+    target.scrollLeft = sourceX ? source.scrollLeft / sourceX * targetX : 0;
+    target.scrollTop = sourceY ? source.scrollTop / sourceY * targetY : 0;
+    requestAnimationFrame(() => { syncing = false; });
+  };
+  panes[0].addEventListener("scroll", () => mirror(panes[0], panes[1]), { passive: true });
+  panes[1].addEventListener("scroll", () => mirror(panes[1], panes[0]), { passive: true });
 }
 
 function downloadBlob(blob, name) {
@@ -467,6 +505,22 @@ elements.cancel.addEventListener("click", () => {
   stopOptimizerWorker();
 });
 elements.downloadAll.addEventListener("click", downloadAll);
+elements.comparisonTabs.addEventListener("click", event => {
+  const tab = event.target.closest("[data-comparison-id]");
+  if (!tab) return;
+  comparisonEntryId = tab.dataset.comparisonId;
+  renderLargeComparison(entries.filter(entry => entry.status === "done"));
+});
+elements.comparisonTabs.addEventListener("keydown", event => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const tabs = [...elements.comparisonTabs.querySelectorAll('[role="tab"]')];
+  if (!tabs.length) return;
+  const current = Math.max(0, tabs.indexOf(document.activeElement));
+  const index = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+  event.preventDefault();
+  tabs[index].click();
+  elements.comparisonTabs.querySelector(`[data-comparison-id="${comparisonEntryId}"]`)?.focus();
+});
 elements.modeGrid.addEventListener("change", () => { resetResults(); updateDetection(); render(); });
 elements.list.addEventListener("click", event => {
   const remove = event.target.closest("[data-remove]");

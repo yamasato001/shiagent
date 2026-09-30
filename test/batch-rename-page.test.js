@@ -205,18 +205,16 @@ test("manual white-fill editor auto-updates close, exclude and erase operations"
   assert.match(whiteFillEditorJs, /async function moveNext\(\)[\s\S]*await ensureFinalResult\(session\)/);
 });
 
-test("manual white-fill editor saves directly to a chosen folder", () => {
-  assert.match(whiteFillEditorHtml, /id="folderButton"/);
+test("manual white-fill editor offers ZIP or shared direct-folder saving", () => {
   assert.match(whiteFillEditorHtml, /id="downloadAllButton"/);
   assert.match(whiteFillEditorHtml, /id="editedSuffixInput"[^>]*checked/);
-  assert.match(whiteFillEditorHtml, /ファイル名に _edited を付ける/);
+  assert.match(whiteFillEditorHtml, /id="downloadAllButton"[\s\S]*id="editedSuffixInput"/);
   assert.match(whiteFillEditorJs, /showOpenFilePicker/);
   assert.match(whiteFillEditorJs, /sourceHandle/);
-  assert.match(whiteFillEditorJs, /chooseOutputDirectory\(window, session\?\.sourceHandle \|\| "downloads"\)/);
   assert.match(whiteFillEditorJs, /applyConfiguredOutputSuffix\(`\$\{stem\}\.svg`\)/);
   assert.match(whiteFillEditorJs, /async function downloadAll\(\)/);
-  assert.match(whiteFillEditorJs, /writeFilesToDirectory\(directory, results\)/);
-  assert.match(whiteFillEditorHtml, /class="editor-topbar"[\s\S]*id="editedSuffixInput"[\s\S]*id="downloadAllButton"[\s\S]*class="editor-nav"/);
+  assert.match(whiteFillEditorJs, /createZipBlob\(entries, undefined, \{ applySuffix: false \}\)/);
+  assert.match(whiteFillEditorHtml, /class="editor-topbar"[\s\S]*id="downloadAllButton"[\s\S]*id="editedSuffixInput"[\s\S]*class="editor-nav"/);
   assert.doesNotMatch(whiteFillEditorHtml, /class="editor-sidebar"[\s\S]*id="downloadAllButton"/);
   assert.match(whiteFillEditorHtml, /class="editor-workspace"[^>]*>[\s\S]*class="editor-zoom"/);
   assert.doesNotMatch(whiteFillEditorHtml, /class="editor-topbar"[\s\S]*class="editor-zoom"[\s\S]*class="editor-layout"/);

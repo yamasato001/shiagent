@@ -186,6 +186,7 @@ async function runWorkflow() {
   setStatus(failed ? copy.failed : copy.complete, failed > 0);
   setBusy(false); render();
   elements.results.hidden = !sources.some(source => source.status === "done");
+  if (!elements.results.hidden) document.dispatchEvent(new CustomEvent("shiagent:output-options-ready"));
   if (!elements.results.hidden) elements.results.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
