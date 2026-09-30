@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { convertedName, detectImageFormat, formatLabel, outputQuality, requiresSoftwareDecoder } from "../assets/js/image-converter-core.js";
+import { convertedName, detectImageFormat, formatLabel, outputQuality, requiresSoftwareDecoder, sameFormatNotice } from "../assets/js/image-converter-core.js";
 
 const bytes = text => new TextEncoder().encode(text);
 
@@ -26,4 +26,19 @@ test("converter creates stable output names and quality settings", () => {
   assert.equal(outputQuality("webp", "compact"), 0.68);
   assert.equal(formatLabel("heic"), "HEIC / HEIF");
   assert.equal(requiresSoftwareDecoder("tiff"), true);
+});
+
+test("converting to the same format is flagged as a re-encode", async () => {
+  assert.equal(sameFormatNotice(["png", "heic", "webp"], "jpeg"), null);
+  assert.equal(sameFormatNotice([], "jpeg"), null);
+  assert.deepEqual(sameFormatNotice(["jpeg", "png", "jpeg"], "jpeg"), { count: 2, lossless: false });
+  assert.deepEqual(sameFormatNotice(["webp"], "webp"), { count: 1, lossless: false });
+  assert.deepEqual(sameFormatNotice(["png", "jpeg"], "png"), { count: 1, lossless: true });
+
+  const { default: text } = await import("../assets/js/i18n/image-converter.js");
+  assert.match(text.ja.sameFormat.lossy("JPEG", 2), /JPEGの画像が2枚.*再圧縮/);
+  assert.match(text.ja.sameFormat.lossless("PNG", 1), /書き出し直し/);
+  assert.equal(text.ja.sameFormat.link, "画像圧縮");
+  assert.match(text.en.sameFormat.lossy("JPEG", 1), /1 of your images is already JPEG.*re-compresses it/);
+  assert.match(text.en.sameFormat.lossy("JPEG", 3), /3 of your images are already JPEG.*re-compresses them/);
 });

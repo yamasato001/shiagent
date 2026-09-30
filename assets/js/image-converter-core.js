@@ -59,3 +59,10 @@ export function outputQuality(format, preset = "standard") {
 export function requiresSoftwareDecoder(format) {
   return format === "heic" || format === "tiff";
 }
+
+// Converting a file to the format it already has only re-encodes it. JPEG and
+// WebP lose a little quality; PNG is rewritten losslessly at about the same size.
+export function sameFormatNotice(inputFormats, outputFormat) {
+  const count = inputFormats.filter(format => format === outputFormat).length;
+  return count ? { count, lossless: outputFormat === "png" } : null;
+}

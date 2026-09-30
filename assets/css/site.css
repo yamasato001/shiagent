@@ -135,6 +135,8 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 .converter-output-grid { grid-template-columns: repeat(3, 1fr); }
 .converter-quality { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 11px; }
 .converter-quality select { padding: 7px 30px 7px 10px; border: 1px solid var(--line); background: var(--surface); }
+.converter-same-format { margin-top: 16px; padding: 10px 12px; border-left: 2px solid var(--ink); background: var(--surface-2); color: var(--ink); font-size: 11px; line-height: 1.7; }
+.converter-same-format a { font-weight: 700; text-underline-offset: 3px; }
 .converter-format-placeholder { width: 58px; height: 58px; display: grid; place-items: center; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font: 8px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace; text-align: center; }
 .converter-error { display: block; margin-top: 4px; color: var(--danger); font-size: 9px; }
 .converter-file-row .file-result strong { white-space: nowrap; color: var(--muted); font-size: 10px; }

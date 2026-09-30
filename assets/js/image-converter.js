@@ -1,7 +1,7 @@
 import { formatBytes } from "./png-core.js";
 import { canvasFromRgba, createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
-import { convertedName, detectImageFormat, formatLabel, OUTPUT_FORMATS, outputQuality, requiresSoftwareDecoder } from "./image-converter-core.js";
-import { lang, locale, pick } from "./i18n.js";
+import { convertedName, detectImageFormat, formatLabel, OUTPUT_FORMATS, outputQuality, requiresSoftwareDecoder, sameFormatNotice } from "./image-converter-core.js";
+import { lang, locale, localPath, pick } from "./i18n.js";
 import converterText from "./i18n/image-converter.js";
 
 const copy = pick(converterText);
@@ -37,6 +37,26 @@ function escapeHtml(value) {
 
 function selectedOutput() {
   return document.querySelector('input[name="outputFormat"]:checked')?.value || "jpeg";
+}
+
+// Shown when some files already have the chosen output format: that is a
+// re-encode, not a conversion, and the compressor is the better tool for size.
+const sameFormatNote = document.createElement("p");
+sameFormatNote.className = "setting-note converter-same-format";
+sameFormatNote.setAttribute("role", "status");
+sameFormatNote.hidden = true;
+elements.qualityWrap.after(sameFormatNote);
+
+function renderSameFormatNote() {
+  const output = selectedOutput();
+  const notice = sameFormatNotice(entries.map(entry => entry.format), output);
+  sameFormatNote.hidden = !notice;
+  if (!notice) return;
+  const link = document.createElement("a");
+  link.href = localPath("/image-compressor/");
+  link.textContent = copy.sameFormat.link;
+  const text = (notice.lossless ? copy.sameFormat.lossless : copy.sameFormat.lossy)(OUTPUT_FORMATS[output].label, notice.count);
+  sameFormatNote.replaceChildren(text, link, copy.sameFormat.after);
 }
 
 function ensureDecoderWorker() {
@@ -166,6 +186,7 @@ function render() {
   elements.cancel.hidden = !running;
   elements.convert.hidden = running;
   elements.qualityWrap.hidden = selectedOutput() === "png";
+  renderSameFormatNote();
 
   elements.list.innerHTML = entries.map(entry => {
     const statusText = copy.status[entry.status] || copy.status.ready;

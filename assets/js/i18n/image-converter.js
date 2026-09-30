@@ -16,7 +16,13 @@ export default {
     progress: (done, total) => `${done} / ${total} 完了`,
     completed: (done, total) => `${done} / ${total} ファイル変換完了`,
     tiffEmpty: "TIFFに画像が見つかりませんでした",
-    decoderUnsupported: format => `未対応のデコーダー形式です: ${format}`
+    decoderUnsupported: format => `未対応のデコーダー形式です: ${format}`,
+    sameFormat: {
+      lossy: (label, count) => `${label}の画像が${count}枚あります。同じ形式への変換は再圧縮になり、画質が少し変わります。サイズを小さくしたい場合は`,
+      lossless: (label, count) => `${label}の画像が${count}枚あります。同じ形式への変換は書き出し直しになり、サイズはほとんど変わりません。サイズを小さくしたい場合は`,
+      link: "画像圧縮",
+      after: "を使ってください。"
+    }
   },
   en: {
     decoderError: "The image decoder failed",
@@ -34,6 +40,12 @@ export default {
     progress: (done, total) => `${done} of ${total} complete`,
     completed: (done, total) => `${done} of ${total} files converted`,
     tiffEmpty: "No image was found in the TIFF",
-    decoderUnsupported: format => `Unsupported decoder format: ${format}`
+    decoderUnsupported: format => `Unsupported decoder format: ${format}`,
+    sameFormat: {
+      lossy: (label, count) => `${count} of your images ${count === 1 ? "is" : "are"} already ${label}. Converting to the same format re-compresses ${count === 1 ? "it" : "them"} and changes the quality slightly. To make files smaller, use `,
+      lossless: (label, count) => `${count} of your images ${count === 1 ? "is" : "are"} already ${label}. Converting to the same format only rewrites ${count === 1 ? "it" : "them"} at about the same size. To make files smaller, use `,
+      link: "Image Compressor",
+      after: "."
+    }
   }
 };
