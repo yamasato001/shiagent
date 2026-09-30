@@ -23,6 +23,7 @@ test(".htaccess hides repository and development paths", () => {
     assert.ok(blocked.includes(path), `${path} is not blocked`);
   }
   assert.match(htaccess, /ErrorDocument 404 \/404\.html/);
+  assert.match(htaccess, /RewriteCond %\{HTTP_HOST\} \^www\\\.\(\.\+\)\$ \[NC\]\n\s*RewriteRule \^ https:\/\/%1%\{REQUEST_URI\} \[R=301,L\]/);
   assert.match(htaccess, /AddType application\/wasm \.wasm/);
 });
 
