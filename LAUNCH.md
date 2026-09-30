@@ -15,14 +15,19 @@
 初回だけ必要な設定：
 
 1. Xserver のサーバーパネルで `shiagent.com` を追加し、SSL と SSH を有効にする。公開フォルダは通常 `/home/<サーバーID>/shiagent.com/public_html`。
-2. SSH で接続し、公開フォルダをこのリポジトリの `main` ブランチのクローンにする。先に Xserver が置いた初期ファイルを `public_html` の外へ移動し、`public_html` の中で `git clone -b main https://github.com/yamasato001/shiagent.git .` を実行する。リポジトリが非公開の場合は、サーバー上で読み取り専用のデプロイキーを作成し、GitHub のリポジトリの Settings → Deploy keys に登録したうえで、SSH 経由でクローンする。
-3. GitHub Actions から SSH 接続できるようにする。サーバーパネルで公開鍵を登録し、対応する秘密鍵を次の手順で使う。同じサーバーアカウントなら、まとプリのデプロイで使っている鍵をそのまま使える。
+2. SSH で接続し、公開フォルダをこのリポジトリの `main` ブランチのクローンにする。Xserver の git は HTTPS での取得に対応していない（`remote-https` がない）ため、リポジトリが公開でも SSH 経由でクローンする。
+   - サーバー上で読み取り専用の鍵を作り（`~/.ssh/shiagent_deploy_key`）、公開鍵を GitHub のリポジトリの Settings → Deploy keys に登録する（設定済み。登録名は `xserver-readonly`）。
+   - サーバーの `~/.ssh/config` に、その鍵を使う接続名 `github.com-shiagent` を追加する（設定済み。まとプリの `github.com-matopuri` と同じ方式）。
+   - Xserver が置いた初期ファイルを `public_html` の外へ移動し、`public_html` の中で `git clone -b main git@github.com-shiagent:yamasato001/shiagent.git .` を実行する。
+3. GitHub Actions から SSH 接続できるようにする。デプロイ専用の鍵のペアを作り、公開鍵をサーバーの `~/.ssh/authorized_keys` に追加し、秘密鍵を次の手順の `XSERVER_SSH_KEY` に登録する（設定済み。鍵の名前は `github-actions-shiagent-deploy`）。
 4. shiagent リポジトリの Settings → Secrets and variables → Actions で、次の5つを登録する。
-   - `XSERVER_HOST`：SSH のホスト名（例：`svXXXX.xserver.jp`）
-   - `XSERVER_USER`：サーバーID
+   - `XSERVER_HOST`：SSH のホスト名（`sv3099.xserver.jp`）
+   - `XSERVER_USER`：サーバーID（`yamanosato`）
    - `XSERVER_SSH_KEY`：手順3の秘密鍵
    - `XSERVER_PORT`：`10022`
-   - `XSERVER_DEPLOY_PATH`：手順1の公開フォルダのパス
+   - `XSERVER_DEPLOY_PATH`：手順1の公開フォルダのパス（`/home/yamanosato/shiagent.com/public_html`）
+
+   5つとも登録済み。
 5. Actions タブから「Deploy to Xserver」ワークフローを一度手動で実行する（Run workflow）。または `main` に push する。
 6. `https://shiagent.com/` が表示されること、`https://shiagent.com/src/` と `https://shiagent.com/.git/HEAD` が404になること、レスポンスヘッダーに `Content-Security-Policy` が含まれることを確認する。
 
