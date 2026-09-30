@@ -27,12 +27,29 @@ footer a:hover { text-decoration: underline; text-underline-offset: 5px; }
 footer p { margin: 7px 0 0; color: #666; font-size: 12px; line-height: 1.4; }
 footer > small { grid-column: 1 / -1; margin-top: 50px; color: #666; font-size: 9px; line-height: 1.4; letter-spacing: .08em; }
 
+/* Analytics consent (assets/js/analytics.js). Bottom-left so it never covers the work tray. */
+.analytics-consent { position: fixed; left: 18px; bottom: 18px; z-index: 45; width: min(400px, calc(100vw - 36px)); padding: 16px 18px; border: 1px solid #141414; background: #fff; color: #141414; font-family: Inter, "Helvetica Neue", Arial, "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; letter-spacing: normal; box-shadow: 7px 7px 0 rgba(0, 0, 0, .12); }
+.analytics-consent p { margin: 0 0 12px; font-size: 12px; line-height: 1.6; }
+.analytics-consent a { color: inherit; text-underline-offset: 3px; }
+.analytics-consent > div { display: flex; justify-content: flex-end; gap: 8px; }
+.analytics-consent button { min-height: 36px; padding: 6px 16px; border: 1px solid #141414; border-radius: 0; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+.analytics-consent-decline { background: #fff; color: #141414; border-color: #dedede; }
+.analytics-consent-accept { background: #141414; color: #fff; }
+.analytics-consent button:hover { background: #333; color: #fff; border-color: #333; }
+.analytics-consent button:focus-visible { outline: 2px solid #141414; outline-offset: 2px; }
+.analytics-preference { margin-top: 14px; padding: 14px 16px; border: 1px solid #dedede; }
+.analytics-preference p { margin: 0 0 10px; }
+.analytics-preference button { min-height: 36px; padding: 6px 16px; border: 1px solid #141414; border-radius: 0; background: #fff; color: #141414; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+.analytics-preference button:hover { background: #141414; color: #fff; }
+
 @media (max-width: 760px) {
   .site-header .header-inner { grid-template-columns: minmax(0, 1fr) 112px; }
   .site-header nav { grid-column: 1 / -1; grid-row: 2; width: 100%; padding-top: 12px; border-top: 1px solid #dedede; }
   .site-header .language { grid-column: 2; grid-row: 1; }
   footer { width: auto; margin: 0 18px; padding-left: 0; padding-right: 0; grid-template-columns: 1fr; }
   footer > div:nth-child(2) { margin-top: 25px; justify-content: flex-start; }
+  /* Sit above the work tray toggle on narrow screens. */
+  .analytics-consent { left: 10px; bottom: 84px; width: calc(100vw - 20px); }
 }
 
 @media (max-width: 430px) {

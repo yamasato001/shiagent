@@ -381,6 +381,7 @@ for (const file of await htmlFiles(root)) {
   source = source.replace(/<link rel="stylesheet" href="\/assets\/css\/information\.css">\s*/g, "");
   source = source.replace(/<script type="module" src="\/assets\/js\/agent-bridge\.js"[^>]*><\/script>\s*/g, "");
   source = source.replace(/<script type="module" src="\/assets\/js\/site-observability\.js"[^>]*><\/script>\s*/g, "");
+  source = source.replace(/<script type="module" src="\/assets\/js\/analytics\.js"[^>]*><\/script>\s*/g, "");
   source = source.replace(/<meta name="(?:google-site-verification|msvalidate\.01)"[^>]*>\s*/g, "");
   source = source.replace(/<link [^>]*data-brand-icon[^>]*>\s*/g, "");
   const machineLinks = [
@@ -394,6 +395,7 @@ for (const file of await htmlFiles(root)) {
     '<link rel="help" href="/llms.txt">',
     '<link rel="stylesheet" href="/assets/css/information.css">',
     '<script type="module" src="/assets/js/site-observability.js"></script>',
+    '<script type="module" src="/assets/js/analytics.js"></script>',
     '<script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script>',
   ].join("");
   source = source.replace("</head>", `${machineLinks}</head>`);
