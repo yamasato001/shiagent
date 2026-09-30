@@ -6,10 +6,12 @@ const root = new URL("../", import.meta.url);
 
 async function toolPages(directory, prefix = "") {
   const pages = [];
-  for (const name of await readdir(new URL(directory, root))) {
-    if ([".agents", ".codex", ".git", ".vscode", "assets", "design", "dist", "node_modules", "pages", "public", "scripts", "src", "test", "tmp"].includes(name)) continue;
+  // withFileTypes: a trailing-slash stat on a file throws ENOTDIR on Linux (CI).
+  for (const entry of await readdir(new URL(directory, root), { withFileTypes: true })) {
+    const name = entry.name;
+    if (!entry.isDirectory()) continue;
+    if ([".agents", ".codex", ".git", ".github", ".vscode", "assets", "design", "dist", "node_modules", "pages", "public", "scripts", "src", "test", "tmp"].includes(name)) continue;
     const path = `${directory}${name}/`;
-    if (!(await stat(new URL(path, root))).isDirectory()) continue;
     try {
       await stat(new URL(`${path}index.html`, root));
       pages.push(`${prefix}${path}index.html`);
