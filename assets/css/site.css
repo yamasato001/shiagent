@@ -236,6 +236,7 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 .crop-result-card span, .crop-result-card small { color: var(--muted); font-size: 9px; }
 .crop-result-card strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
 .crop-result-card small { grid-column: 2; }
+.crop-result-card .crop-result-note { grid-column: 2; color: var(--muted); font-size: 10px; font-style: normal; }
 .crop-result-card button { grid-column: 1 / -1; margin-top: 6px; }
 
 /* PNG to SVG */

@@ -20,10 +20,11 @@ test("contact forms deliver through the declared processor without file attachme
 });
 
 test("privacy policy discloses contact delivery, retention and opt-in diagnostics", async () => {
-  const privacy = await read("ja/privacy/index.html");
+  const pages = [await read("ja/privacy/index.html"), await read("privacy/index.html")];
   for (const term of ["FormSubmit", "Yahoo! JAPAN", "原則1年以内", "sessionStorage", "明示的に選択"]) {
-    assert.ok(privacy.includes(term), `privacy policy should mention ${term}`);
+    assert.ok(pages[0].includes(term), `privacy policy should mention ${term}`);
   }
+  for (const privacy of pages) assert.doesNotMatch(privacy, /mailto:|yamamotoshiki@yahoo\.co\.jp/);
 });
 
 test("production hosting policy includes the minimum launch security headers", async () => {

@@ -2,9 +2,16 @@ import { estimateBackground, hexToRgb } from "./background-remover-core.js";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
+// With the "auto" background, a real margin is one color that covers much of the
+// border. When the most common border color covers less than this (a photo, or
+// artwork that runs off the edges), the image is treated as having no margin and
+// is kept whole, so a sky or colored band along one edge is not trimmed away.
+export const MIN_MARGIN_COVERAGE = 0.5;
+
 export function contentBounds(data, width, height, options = {}) {
   const mode = options.background || "auto";
   const detected = mode === "auto" ? estimateBackground(data, width, height) : null;
+  if (detected && !detected.transparent && detected.coverage < MIN_MARGIN_COVERAGE) return { x: 0, y: 0, width, height };
   const color = mode === "white" ? [255, 255, 255] : mode === "custom" ? hexToRgb(options.color) : detected?.color;
   const tolerance = clamp(Number(options.tolerance) || 0, 0, 255);
   let left = width, top = height, right = -1, bottom = -1;
@@ -34,6 +41,10 @@ export function paddedBounds(bounds, imageWidth, imageHeight, options = {}) {
   const right = clamp(bounds.x + bounds.width + amount, 0, imageWidth);
   const bottom = clamp(bounds.y + bounds.height + amount, 0, imageHeight);
   return { x, y, width: Math.max(1, right - x), height: Math.max(1, bottom - y) };
+}
+
+export function isFullImage(bounds, imageWidth, imageHeight) {
+  return bounds.x === 0 && bounds.y === 0 && bounds.width === imageWidth && bounds.height === imageHeight;
 }
 
 export function normalizePlacement(contentWidth, contentHeight, canvasWidth, canvasHeight, occupancy = 80) {
