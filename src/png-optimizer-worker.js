@@ -1,6 +1,6 @@
 import { applyPaletteSync, buildPaletteSync, utils } from "image-q";
 import initOxiPng, { optimise, optimise_raw as optimiseRaw } from "@jsquash/oxipng/codec/pkg/squoosh_oxipng.js";
-import { processPixels } from "../assets/js/png-core.js";
+import { COLOR_GUARD_LIMIT, PALETTE_REDUCTION_LIMIT, PALETTE_STEPS, processPixels, visibleColorChange } from "../assets/js/png-core.js";
 import createImagequantModule from "../node_modules/@squoosh-kit/imagequant/dist/wasm/imagequant/imagequant.js";
 
 // Fetch the module explicitly before initialising it. This avoids browsers
@@ -24,6 +24,22 @@ function getImagequantModule() {
     })
     .then(wasmBinary => createImagequantModule({ noInitialRun: true, wasmBinary }));
   return imagequantReady;
+}
+
+// Smallest palette that keeps colors (Auto and Balanced). Returns null when even
+// 256 colors visibly change the image (photos, smooth gradients): the caller
+// then keeps every color losslessly.
+async function colorSafePalette(pixels, width, height) {
+  const module = await getImagequantModule();
+  // A fresh copy each time so a quantizer can never see altered input.
+  const quantizeTo = colors => new Uint8ClampedArray(module.quantize(new Uint8Array(pixels), width, height, colors, 0));
+  const full = quantizeTo(256);
+  if (visibleColorChange(pixels, full) > COLOR_GUARD_LIMIT) return null;
+  for (const colors of PALETTE_STEPS) {
+    const candidate = quantizeTo(colors);
+    if (visibleColorChange(pixels, candidate) <= PALETTE_REDUCTION_LIMIT) return { pixels: candidate, colors };
+  }
+  return { pixels: full, colors: 256 };
 }
 
 function quantizeWithPalette(pixels, width, height, {
@@ -177,59 +193,66 @@ function quantizeLineArtCompact(pixels) {
 }
 
 self.addEventListener("message", async event => {
-  const { id, type = "optimise", buffer, width, height, mode, level = 3, optimiseAlpha = false } = event.data || {};
+  const { id, type = "optimise", buffer, width, height, mode, level = 3, optimiseAlpha = false, colorGuard = false } = event.data || {};
   try {
     await ready;
     let output;
-    if (type === "quantize") {
+    // false, or how the color guard changed the result: "palette" / "lossless".
+    let colorGuarded = false;
+    // Number of palette colors chosen by the color-safe search, when it ran.
+    let paletteColors = null;
+    const fullPaletteMode = type === "quantize" && (mode === "balanced" || mode === "illustration");
+    if (type === "optimise") {
+      output = optimise(new Uint8Array(buffer), level, false, optimiseAlpha);
+    } else if (colorGuard && fullPaletteMode) {
+      // Auto (illustration / photo) and Balanced: the smallest palette that keeps colors.
       const pixels = new Uint8ClampedArray(buffer);
-      if (mode === "balanced" || mode === "illustration") {
+      const safe = await colorSafePalette(pixels, width, height);
+      if (!safe) colorGuarded = "lossless";
+      paletteColors = safe?.colors ?? null;
+      output = optimiseRaw(safe ? safe.pixels : pixels, width, height, level, false, optimiseAlpha);
+    } else {
+      const pixels = new Uint8ClampedArray(buffer);
+      let processed;
+      if (fullPaletteMode) {
         const module = await getImagequantModule();
-        const quantized = new Uint8ClampedArray(module.quantize(
-          new Uint8Array(buffer),
-          width,
-          height,
-          256,
-          0
-        ));
-        output = optimiseRaw(quantized, width, height, level, false, optimiseAlpha);
-      } else if (width * height > MAX_PALETTE_PIXELS) {
+        processed = new Uint8ClampedArray(module.quantize(new Uint8Array(buffer), width, height, 256, 0));
+      } else if (type === "quantize" && width * height > MAX_PALETTE_PIXELS) {
         const profile = {
           colors: mode === "smallest" ? 64 : 256,
           colorDistanceFormula: "pngquant",
           paletteQuantization: "wuquant"
         };
-        output = optimiseRaw(quantizeLargeWithPalette(pixels, width, height, profile), width, height, level, false, optimiseAlpha);
-      } else {
-        const quantized = quantizeWithPalette(pixels, width, height, {
+        processed = quantizeLargeWithPalette(pixels, width, height, profile);
+      } else if (type === "quantize") {
+        processed = quantizeWithPalette(pixels, width, height, {
           colors: mode === "smallest" ? 64 : 256,
           colorDistanceFormula: "pngquant",
           paletteQuantization: "wuquant",
           imageQuantization: "nearest"
         });
-        output = optimiseRaw(
-          quantized,
-          width,
-          height,
-          level,
-          false,
-          optimiseAlpha
-        );
+      } else if (type === "lineart-compact") {
+        processed = quantizeLineArtCompact(pixels);
+      } else {
+        // Copy: the original pixels are still needed for the color guard.
+        processed = processPixels(new Uint8ClampedArray(pixels), "lineart");
       }
-    } else if (type === "lineart-compact") {
-      const pixels = new Uint8ClampedArray(buffer);
-      const quantized = quantizeLineArtCompact(pixels);
-      output = optimiseRaw(quantized, width, height, level, false, optimiseAlpha);
-    } else if (type === "lineart") {
-      const processed = processPixels(new Uint8ClampedArray(buffer), "lineart");
+      // Auto line art: the Line Art palette grays out pale colors (e.g. the
+      // pastel boxes of a draw.io diagram). When that is visible, use the
+      // smallest color-safe palette instead (86% smaller on such a diagram),
+      // or keep every color if no palette can hold them.
+      if (colorGuard && visibleColorChange(pixels, processed) > COLOR_GUARD_LIMIT) {
+        const safe = await colorSafePalette(pixels, width, height);
+        processed = safe ? safe.pixels : pixels;
+        paletteColors = safe?.colors ?? null;
+        colorGuarded = safe ? "palette" : "lossless";
+      }
       output = optimiseRaw(processed, width, height, level, false, optimiseAlpha);
-    } else {
-      output = optimise(new Uint8Array(buffer), level, false, optimiseAlpha);
     }
     const result = output.byteOffset === 0 && output.byteLength === output.buffer.byteLength
       ? output.buffer
       : output.slice().buffer;
-    self.postMessage({ id, result }, [result]);
+    self.postMessage({ id, result, colorGuarded, paletteColors }, [result]);
   } catch (error) {
     self.postMessage({ id, error: error instanceof Error ? error.message : String(error) });
   }

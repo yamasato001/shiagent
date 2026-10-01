@@ -12,15 +12,16 @@
   <link rel="stylesheet" href="/assets/css/home.css"><link rel="stylesheet" href="/assets/css/header.css">
   <script type="module" src="/assets/js/home-tabs.js"></script>
   <script type="module" src="/assets/js/workflow-handoff.js"></script>
-<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" data-brand-icon><link rel="icon" href="/assets/brand/favicon-32.png" sizes="32x32" type="image/png" data-brand-icon><link rel="icon" href="/assets/brand/favicon-16.png" sizes="16x16" type="image/png" data-brand-icon><link rel="shortcut icon" href="/assets/brand/favicon.ico" data-brand-icon><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png" sizes="180x180" data-brand-icon><link rel="manifest" href="/site.webmanifest"><link rel="alternate" type="application/json" href="/ai/tools.json" title="SHIAGENT tool catalog"><link rel="help" href="/llms.txt"><link rel="stylesheet" href="/assets/css/information.css"><script type="module" src="/assets/js/site-observability.js"></script><script type="module" src="/assets/js/analytics.js"></script><script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script><script type="application/ld+json" data-seo="website">{"@context":"https://schema.org","@type":"WebSite","name":"SHIAGENT","alternateName":["シアゲント","shiagent.com"],"url":"https://shiagent.com/"}</script></head>
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" data-brand-icon><link rel="icon" href="/assets/brand/favicon-32.png" sizes="32x32" type="image/png" data-brand-icon><link rel="icon" href="/assets/brand/favicon-16.png" sizes="16x16" type="image/png" data-brand-icon><link rel="shortcut icon" href="/assets/brand/favicon.ico" data-brand-icon><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png" sizes="180x180" data-brand-icon><link rel="manifest" href="/site.webmanifest"><link rel="alternate" type="application/json" href="/ai/tools.json" title="SHIAGENT tool catalog"><link rel="help" href="/llms.txt"><link rel="stylesheet" href="/assets/css/information.css"><script type="module" src="/assets/js/site-observability.js"></script><script type="module" src="/assets/js/analytics.js"></script><script type="module" src="/assets/js/site-search.js"></script><script type="module" src="/assets/js/mobile-nav.js"></script><script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script><script type="application/ld+json" data-seo="website">{"@context":"https://schema.org","@type":"WebSite","name":"SHIAGENT","alternateName":["シアゲント","shiagent.com"],"url":"https://shiagent.com/"}</script></head>
 <body>
-  <a class="skip-link" href="#tools">Skip to tools</a>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><nav aria-label="Main navigation"><a href="/#tools">Tools</a><a href="/?tab=workflows#tools">Workflows</a></nav><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/" hreflang="ja" lang="ja">日本語</a></div></div></header>
+  <a class="skip-link" href="#popular-tools">Skip to popular tools</a>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="SHIAGENT home"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><strong>SHIAGENT</strong><span>SHIAGENT</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNavigation" aria-label="Open menu"><span></span><span></span><span></span></button><nav id="siteNavigation" aria-label="Main navigation"><a href="/tools/#tools">Tools</a><a href="/tools/?tab=workflows#tools">Workflows</a></nav><form class="site-search" role="search" action="/" data-site-search><label class="site-search-label" for="siteSearchInput">Search the site</label><input class="site-search-input" id="siteSearchInput" type="search" name="q" placeholder="Search tools or tasks" autocomplete="off" spellcheck="false" enterkeyhint="search"></form><div class="language" aria-label="Display language"><span aria-current="page">EN</span><a href="/ja/" hreflang="ja" lang="ja">日本語</a></div></div></header>
 
   <main id="main-content">
     <section class="hero" aria-labelledby="hero-title">
       <p class="eyebrow">LOCAL-FIRST CREATIVE TOOLKIT</p>
       <h1 id="hero-title"><span>Generate.</span> <span>Refine.</span> <span>Finish.</span></h1>
+      <p class="hero-benefit">Free. Unlimited batches. Process files in your browser without uploading them.</p>
       <p class="hero-lead">Creative tools that run in your browser. A simple toolbox for taking images and SVGs all the way to ready-to-use files.</p>
       <div class="local-signal">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
@@ -28,140 +29,27 @@
       </div>
     </section>
 
-    <section class="tools-section" id="tools" aria-labelledby="tools-title">
-      <div class="section-heading"><div><p class="eyebrow" id="catalogEyebrow">TOOLS</p><h2 id="tools-title">All tools</h2></div></div>
-      <div class="catalog-tabs" role="tablist" aria-labelledby="tools-title">
-        <button type="button" role="tab" id="tab-tools" aria-controls="panel-tools" aria-selected="true" data-tab="tools" data-eyebrow="TOOLS" data-heading="All tools">Tools<span>18</span></button>
-        <button type="button" role="tab" id="tab-workflows" aria-controls="panel-workflows" aria-selected="false" tabindex="-1" data-tab="workflows" data-eyebrow="WORKFLOWS" data-heading="All workflows">Workflows<span>6</span></button>
+    <section class="tools-section home-section" id="popular-tools" aria-labelledby="popular-tools-title">
+      <div class="section-heading"><div><p class="eyebrow">POPULAR TOOLS</p><h2 id="popular-tools-title">Frequently used tools</h2></div></div>
+      <div class="tool-grid home-tool-grid">
+        <a class="tool-card" href="/image-compressor/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg><span class="badge">ON DEVICE</span></div><div class="card-copy"><p class="card-type">IMAGE</p><h2>Image Compressor</h2><p>Shrink PNG, JPEG and WebP files while comparing quality and size.</p></div></a>
+        <a class="tool-card" href="/image-converter/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3"/><path d="m18 7-3 3"/><path d="M17 17H6l3 3"/><path d="m6 17 3-3"/></svg><span class="badge">BATCH</span></div><div class="card-copy"><p class="card-type">IMAGE</p><h2>Format Converter</h2><p>Convert HEIC and common image formats to PNG, JPEG or WebP.</p></div></a>
+        <a class="tool-card" href="/image-resizer/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/><path d="m3 8 6-6M21 8l-6-6M3 16l6 6M21 16l-6 6"/></svg><span class="badge">ON DEVICE</span></div><div class="card-copy"><p class="card-type">IMAGE</p><h2>Resize</h2><p>Resize multiple images by pixels or percentage.</p></div></a>
+        <a class="tool-card" href="/image-cropper/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/></svg><span class="badge">BATCH</span></div><div class="card-copy"><p class="card-type">IMAGE</p><h2>Crop</h2><p>Crop manually, auto-trim, or normalize images in batches.</p></div></a>
+        <a class="tool-card" href="/image-to-svg/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 21.3a1 1 0 0 1-1.4 0l-1.6-1.6a1 1 0 0 1 0-1.4l5.6-5.6a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4z"/><path d="m18 13-1.4-6.9a1 1 0 0 0-.7-.8L3.2 2a1 1 0 0 0-1.2 1.2l3.3 12.7a1 1 0 0 0 .8.7L13 18"/></svg><span class="badge">ON DEVICE</span></div><div class="card-copy"><p class="card-type">VECTOR</p><h2>PNG → SVG</h2><p>Turn PNG, JPEG and WebP line art into editable SVGs.</p></div></a>
+        <a class="tool-card" href="/pdf/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg><span class="badge">ON DEVICE</span></div><div class="card-copy"><p class="card-type">DOCUMENT</p><h2>PDF</h2><p>Merge, split, reorder, rotate and remove PDF pages.</p></div></a>
       </div>
-      <div class="tool-filters" id="toolFilters" role="group" aria-label="Tool category"><button type="button" class="is-active" data-category="all">All</button><button type="button" data-category="image">Image</button><button type="button" data-category="vector">Vector</button><button type="button" data-category="pdf">PDF</button><button type="button" data-category="file">File</button></div>
-      <div class="tool-grid" id="panel-tools" role="tabpanel" aria-labelledby="tab-tools">
-        <a class="tool-card" href="/image-compressor/">
-          <div class="card-top">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
-            <span class="badge">LOCAL</span>
-          </div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Compressor</h3><p>Shrink PNG, JPEG and WebP files and compare quality and size before you save.</p></div>
-        </a>
-        <a class="tool-card" href="/image-converter/">
-          <div class="card-top">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3"/><path d="m18 7-3 3"/><path d="M17 17H6l3 3"/><path d="m6 17 3-3"/></svg>
-            <span class="badge">HEIC</span>
-          </div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Converter</h3><p>Batch-convert HEIC and other common formats to PNG, JPEG or WebP.</p></div>
-        </a>
-        <a class="tool-card" href="/image-resizer/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/><path d="m3 8 6-6M21 8l-6-6M3 16l6 6M21 16l-6 6"/></svg><span class="badge">LOCAL</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Resizer</h3><p>Resize multiple images by pixel dimensions or a percentage of each original.</p></div>
-        </a>
-        <a class="tool-card" href="/image-cropper/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/></svg><span class="badge">BATCH</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Cropper</h3><p>Crop manually, auto-trim empty space, or normalize canvas size and object occupancy in batches.</p></div>
-        </a>
-        <a class="tool-card" href="/canvas-padding/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="1" stroke-dasharray="3 2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg><span class="badge">BATCH</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Canvas Padding</h3><p>Add percentage or pixel margins, or center images on a fixed canvas in one batch.</p></div>
-        </a>
-        <a class="tool-card" href="/image-joiner/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="8" height="14" rx="1"/><rect x="14" y="5" width="8" height="14" rx="1"/><path d="M10 12h4"/></svg><span class="badge">GRID</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Joiner</h3><p>Arrange images horizontally, vertically, or in a grid, then export them as one image.</p></div>
-        </a>
-        <a class="tool-card" href="/metadata-cleaner/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.8 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.7 7.5-9.5V6L12 3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg><span class="badge">PRIVACY</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>EXIF Cleaner</h3><p>Batch-remove GPS, capture dates, camera details, and other metadata from PNG, JPEG and WebP without quality loss.</p></div>
-        </a>
-        <a class="tool-card" href="/image-to-svg/">
-          <div class="card-top">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 21.3a1 1 0 0 1-1.4 0l-1.6-1.6a1 1 0 0 1 0-1.4l5.6-5.6a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4z"/><path d="m18 13-1.4-6.9a1 1 0 0 0-.7-.8L3.2 2a1 1 0 0 0-1.2 1.2l3.3 12.7a1 1 0 0 0 .8.7L13 18"/><path d="m2.3 2.3 7.3 7.3"/><circle cx="11" cy="11" r="2"/></svg>
-            <span class="badge">LOCAL</span>
-          </div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Image to SVG</h3><p>Vectorize PNG, JPEG and WebP line art into editable SVGs, with automatic splitting.</p></div>
-        </a>
-        <a class="tool-card" href="/svg-to-image/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="m4 16 4-4 3 3 3-3 6 6"/><circle cx="15.5" cy="8.5" r="1.5"/></svg><span class="badge">BATCH</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>SVG to Image</h3><p>Batch-rasterize SVGs with scale, pixel dimensions, DPI equivalent and background controls.</p></div>
-        </a>
-        <a class="tool-card" href="/color-tool/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 11l9 9 7-7-8-10Z"/><path d="m4 11 9 9M15 6l3 3"/><circle cx="7.5" cy="10.5" r="1.5"/></svg><span class="badge">COLOR</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE / SVG</p><h3>Replace Color &amp; Transparency</h3><p>Replace or remove selected colors with tolerance, or convert a batch to grayscale or monochrome.</p></div>
-        </a>
-        <a class="tool-card" href="/favicon-generator/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 16V8h6M9 12h5"/></svg><span class="badge">WEB</span></div>
-          <div class="card-copy"><p class="card-type">WEB ASSET</p><h3>Favicon &amp; App Icon Generator</h3><p>Create ICO, Apple Touch Icon, standard and maskable PWA icon packages from one image.</p></div>
-        </a>
-        <a class="tool-card" href="/image-splitter/">
-          <div class="card-top">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 12h18"/></svg>
-            <span class="badge">LOCAL</span>
-          </div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Image Splitter</h3><p>Detect illustrations separated by white space and cut them into individual PNGs.</p></div>
-        </a>
-        <a class="tool-card" href="/background-remover/">
-          <div class="card-top">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 2.4"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19a5.5 5.5 0 0 1 11 0"/></svg>
-            <span class="badge">LOCAL</span>
-          </div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Background Remover</h3><p>Make solid backgrounds transparent, or swap them for white, black or any color.</p></div>
-        </a>
-        <a class="tool-card" href="/batch-rename/">
-          <div class="card-top">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M4 12h8M4 17h6"/><path d="m15 15 4-4 2 2-4 4-3 1z"/></svg>
-            <span class="badge">LOCAL</span>
-          </div>
-          <div class="card-copy"><p class="card-type">FILE</p><h3>Batch Rename</h3><p>Rename images, PDFs, documents, media, archives and other files with sequential numbers.</p></div>
-        </a>
-        <a class="tool-card" href="/svg-white-fill/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg><span class="badge">LOCAL</span></div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Automatic SVG White Fill</h3><p>Find areas closed by lines and add white vector fills behind the original line art.</p></div>
-        </a>
-        <a class="tool-card" href="/svg-cleaner/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 21H8a2 2 0 0 1-1.4-.6l-4-4a2 2 0 0 1 0-2.8l10-10a2 2 0 0 1 2.8 0l6 6a2 2 0 0 1 0 2.8L12.8 21"/><path d="m5 11 9 9"/></svg><span class="badge">LOCAL</span></div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>SVG Cleaner</h3><p>Strip metadata and editor-specific data from SVGs without changing how they look.</p></div>
-        </a>
-        <a class="tool-card" href="/svg-white-fill/editor/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16l8-8 4 4-8 8H6z"/><path d="m13 9 4 4M5 4v5M2.5 6.5h5"/></svg><span class="badge">LOCAL</span></div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Manual SVG White Fill</h3><p>Draw guide lines and exclusions on a canvas to fine-tune SVG white fills by hand.</p></div>
-        </a>
-        <a class="tool-card" href="/pdf/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg><span class="badge">7 TOOLS</span></div>
-          <div class="card-copy"><p class="card-type">PDF</p><h3>PDF Tools</h3><p>Merge, split, reorder, interleave, rotate and remove pages in a dedicated PDF workspace.</p></div>
-        </a>
+      <a class="more-link" href="/tools/#tools">View all tools <span aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="tools-section home-section" id="recommended-workflows" aria-labelledby="recommended-workflows-title">
+      <div class="section-heading"><div><p class="eyebrow">RECOMMENDED</p><h2 id="recommended-workflows-title">Recommended workflows</h2></div></div>
+      <div class="tool-grid home-workflow-grid">
+        <a class="tool-card" href="/workflows/web-image-optimizer/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/><path d="m9 9 2 2 4-4"/></svg><span class="badge">WORKFLOW</span></div><div class="card-copy"><p class="card-type">IMAGE</p><h3>Web Image Optimizer</h3><p>Crop, resize, convert and compress images for the web in one flow.</p></div><p class="card-steps">Crop → Resize → Convert → Compress</p></a>
+        <a class="tool-card" href="/workflows/line-art-to-svg/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h8l3 3h5v13H4z"/><path d="m8 15 3-7 2 5 3-2"/></svg><span class="badge">WORKFLOW</span></div><div class="card-copy"><p class="card-type">VECTOR</p><h3>Line Art to SVG</h3><p>Trim line art, vectorize it, add white fills and clean the SVG.</p></div><p class="card-steps">Trim → SVG → White Fill → Clean</p></a>
+        <a class="tool-card" href="/workflows/ai-asset-prep/"><div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1" stroke-dasharray="3 2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg><span class="badge">WORKFLOW</span></div><div class="card-copy"><p class="card-type">IMAGE ASSETS</p><h3>AI Asset Prep</h3><p>Give AI-generated images consistent padding, size, names and compression.</p></div><p class="card-steps">Trim → Normalize → Resize → Rename</p></a>
       </div>
-      <div class="tool-grid" id="panel-workflows" role="tabpanel" aria-labelledby="tab-workflows" hidden>
-        <a class="tool-card" href="/workflows/web-image-optimizer/">
-          <div class="card-top">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/><path d="m9 9 2 2 4-4"/></svg>
-            <span class="badge">WORKFLOW</span>
-          </div>
-          <div class="card-copy"><p class="card-type">IMAGE</p><h3>Web Image Optimizer</h3><p>Choose Blog, Thumbnail or Original size, then convert, compress, remove metadata and optionally rename.</p></div>
-          <p class="card-steps">Crop → Resize → Convert → Compress → Metadata → Rename</p>
-        </a>
-        <a class="tool-card" href="/workflows/line-art-to-svg/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h8l3 3h5v13H4z"/><path d="m8 15 3-7 2 5 3-2"/></svg><span class="badge">WORKFLOW</span></div>
-          <div class="card-copy"><p class="card-type">VECTOR</p><h3>Turn line art into SVG assets</h3><p>Trim, remove the background, vectorize, add optional white fills and clean the SVG in one flow.</p></div>
-          <p class="card-steps">Trim → SVG → White Fill → Clean</p>
-        </a>
-        <a class="tool-card" href="/workflows/ai-asset-prep/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1" stroke-dasharray="3 2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg><span class="badge">6 STEPS</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE ASSETS</p><h3>AI Asset Prep</h3><p>Turn AI-generated images into ready-to-use assets with consistent padding, size, names and compression.</p></div>
-          <p class="card-steps">Auto Trim → Normalize → Resize → Rename → Compress</p>
-        </a>
-        <a class="tool-card" href="/workflows/asset-normalizer/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 3v18M16 3v18M3 8h18M3 16h18"/><circle cx="12" cy="12" r="3"/></svg><span class="badge">WORKFLOW</span></div>
-          <div class="card-copy"><p class="card-type">IMAGE ASSETS</p><h3>Asset Normalizer</h3><p>Standardize a mixed batch to one canvas, object scale, padding, background, format and filename pattern.</p></div>
-          <p class="card-steps">Detect → Normalize → Background → Convert → Rename</p>
-        </a>
-        <a class="tool-card" href="/pdf/sort-by-page-number/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h4"/><path d="m17 14 2 2 3-4"/></svg><span class="badge">OCR</span></div>
-          <div class="card-copy"><p class="card-type">PDF</p><h3>Restore PDF page order</h3><p>Correct orientation, detect page numbers around the edges, and sort multiple PDFs automatically.</p></div>
-          <p class="card-steps">Orient → Edge OCR → Sort</p>
-        </a>
-        <a class="tool-card" href="/workflows/custom/">
-          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><path d="M8 6h3c4 0 3 6 7 6M8 18h3c4 0 3-6 7-6"/></svg><span class="badge">BETA</span></div>
-          <div class="card-copy"><p class="card-type">ORIGINAL</p><h3>Original</h3><p>Connect compatible image, SVG, PDF and file tools, then save your personal workflow locally.</p></div>
-          <p class="card-steps">Choose → Arrange → Save locally</p>
-        </a>
-      </div>
+      <a class="more-link" href="/tools/?tab=workflows#tools">View all workflows <span aria-hidden="true">→</span></a>
     </section>
 
     <section class="workflow" id="workflow" aria-labelledby="workflow-title">
@@ -174,32 +62,23 @@
           <li><span>04</span><div><h3>Remove or replace a background</h3><p>Choose images → detect the background → save transparent or on a solid color</p></div><a href="/background-remover/">Open Background Remover <b>→</b></a></li>
           <li><span>05</span><div><h3>Tidy up file names</h3><p>Add any files → set a naming rule → save as a ZIP</p></div><a href="/batch-rename/">Open Batch Rename <b>→</b></a></li>
           <li><span>06</span><div><h3>Fill closed SVG areas with white</h3><p>Choose SVGs → detect closed areas → add white fill paths</p></div><a href="/svg-white-fill/">Open Automatic SVG White Fill <b>→</b></a></li>
-          <li><span>07</span><div><h3>Clean up SVG code</h3><p>Choose SVGs → remove unneeded data → compare → save</p></div><a href="/svg-cleaner/">Open SVG Cleaner <b>→</b></a></li>
-          <li><span>08</span><div><h3>Adjust SVG white fills by hand</h3><p>Choose SVGs → add guide lines or exclusions → preview → save</p></div><a href="/svg-white-fill/editor/">Open Manual SVG White Fill <b>→</b></a></li>
-          <li><span>09</span><div><h3>Resize a batch of images</h3><p>Add images → set pixels or percentage → download separately or as a ZIP</p></div><a href="/image-resizer/">Open Image Resizer <b>→</b></a></li>
-          <li><span>10</span><div><h3>Normalize image margins and canvases</h3><p>Add images → Auto Trim or Normalize → download as a ZIP</p></div><a href="/image-cropper/">Open Image Cropper <b>→</b></a></li>
-          <li><span>11</span><div><h3>Remove private image metadata</h3><p>Add PNG, JPEG or WebP → remove EXIF, GPS and more → download as a ZIP</p></div><a href="/metadata-cleaner/">Open EXIF Cleaner <b>→</b></a></li>
-          <li><span>12</span><div><h3>Combine multiple images into one</h3><p>Add images → choose horizontal, vertical or grid → save one image</p></div><a href="/image-joiner/">Open Image Joiner <b>→</b></a></li>
-          <li><span>13</span><div><h3>Turn SVGs into images</h3><p>Add SVGs → set size and background → download images or a ZIP</p></div><a href="/svg-to-image/">Open SVG to Image <b>→</b></a></li>
-          <li><span>14</span><div><h3>Add space around images</h3><p>Add images → choose percentage, pixels or a fixed canvas → download a ZIP</p></div><a href="/canvas-padding/">Open Canvas Padding <b>→</b></a></li>
-          <li><span>15</span><div><h3>Change asset colors in a batch</h3><p>Add images or SVGs → choose a color and tolerance → replace or make transparent</p></div><a href="/color-tool/">Open Replace Color <b>→</b></a></li>
-          <li><span>16</span><div><h3>Create favicons and PWA icons</h3><p>Add one image → set fit and background → download ICO, PNGs and manifest in a ZIP</p></div><a href="/favicon-generator/">Open Favicon Generator <b>→</b></a></li>
         </ol>
+        <a class="more-link workflow-more" href="/use-cases/">View all use cases <span aria-hidden="true">→</span></a>
       </div>
     </section>
 
     <section class="local-first" id="local-first" aria-labelledby="local-title">
       <div class="local-box">
-        <div><p class="eyebrow">LOCAL-FIRST</p><h2 id="local-title">Runs on your device.</h2><p>Processing happens inside your browser whenever possible. Your images are never uploaded to a server; they are converted and saved right where they are.</p></div>
+        <div><p class="eyebrow">LOCAL-FIRST</p><h2 id="local-title">Runs on your device.</h2></div>
         <dl>
-          <div><dt><span>01</span>Nothing to install</dt><dd>Open a page and start working.</dd></div>
-          <div><dt><span>02</span>No uploads</dt><dd>Files are read and written on your device.</dd></div>
-          <div><dt><span>03</span>Check before you save</dt><dd>Compare before and after, including file size.</dd></div>
+          <div><dt><span>01</span>Nothing to install</dt></div>
+          <div><dt><span>02</span>No uploads</dt></div>
+          <div><dt><span>03</span>No batch limits</dt></div>
         </dl>
       </div>
     </section>
   </main>
 
-  <footer><div><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/faq/">FAQ</a><a href="/changelog/">Changelog</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div><small>© 2026 SHIAGENT</small></footer>
+  <footer><div class="footer-intro"><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true"><span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div class="footer-groups"><details class="footer-group"><summary>About SHIAGENT</summary><div class="footer-links"><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/changelog/">Changelog</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a></div></details><details class="footer-group"><summary>Support</summary><div class="footer-links"><a href="/faq/">FAQ</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/contact/">Contact</a></div></details><details class="footer-group"><summary>Legal</summary><div class="footer-links"><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a></div></details></div><small>© 2026 SHIAGENT</small></footer>
 </body>
 </html>

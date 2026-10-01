@@ -68,10 +68,12 @@ test("published static control selectors resolve on every configurable tool page
       const selector = tool.automation[key];
       if (selector?.startsWith("#")) assert.match(html, new RegExp(`\\bid="${selector.slice(1)}"`), `${tool.id}: ${key} ${selector}`);
     }
+    // The shared site header (search box) is not a tool setting.
+    const toolHtml = html.replace(/<header class="site-header">[\s\S]*?<\/header>/, "");
     const actualSelectors = [
-      ...html.matchAll(/<input\b[^>]*>/gi),
-      ...html.matchAll(/<select\b[^>]*>[\s\S]*?<\/select>/gi),
-      ...html.matchAll(/<textarea\b[^>]*>[\s\S]*?<\/textarea>/gi),
+      ...toolHtml.matchAll(/<input\b[^>]*>/gi),
+      ...toolHtml.matchAll(/<select\b[^>]*>[\s\S]*?<\/select>/gi),
+      ...toolHtml.matchAll(/<textarea\b[^>]*>[\s\S]*?<\/textarea>/gi),
     ].map(match => {
       const tag = match[0];
       const element = tag.match(/^<(input|select|textarea)\b/i)?.[1].toLowerCase();

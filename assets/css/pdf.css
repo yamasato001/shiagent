@@ -86,6 +86,7 @@
 .pdf-tray-note { display: block; padding: 10px 15px 14px; color: #666; font-size: 8px; line-height: 1.5; }
 
 @media (max-width: 800px) {
+  .pdf-hero h1, .pdf-category h1 { font-size: 30px; line-height: 1.18; letter-spacing: -.025em; }
   .pdf-body { grid-template-columns: 1fr; }
   .pdf-options { border-right: 0; border-bottom: 1px solid #aaa; }
   .pdf-options #pdfExport { position: sticky; z-index: 8; bottom: max(0px, env(safe-area-inset-bottom)); box-shadow: 0 -8px 0 #fff, 0 5px 0 #fff; }

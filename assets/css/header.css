@@ -1,15 +1,19 @@
 /* Shared site chrome for the home page and every tool page.
    Values are literal so it renders identically under home.css and site.css. */
 html { scrollbar-gutter: stable; }
-.site-header { border-bottom: 1px solid #dedede; background: #fff; color: #141414; font-family: Inter, "Helvetica Neue", Arial, "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; line-height: 1.2; letter-spacing: normal; }
-.site-header .header-inner { width: min(100%, 1160px); min-height: 68px; margin: auto; padding: 12px clamp(20px, 4vw, 48px); display: grid; grid-template-columns: minmax(190px, 1fr) 210px 112px; align-items: center; gap: 28px; }
+/* The header stays at the top while scrolling. site-search.js keeps
+   --site-header-height current so anchors and other sticky bars sit below it. */
+html { scroll-padding-top: calc(var(--site-header-height, 69px) + 8px); }
+.site-header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #dedede; background: #fff; color: #141414; font-family: Inter, "Helvetica Neue", Arial, "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; line-height: 1.2; letter-spacing: normal; }
+.site-header .header-inner { width: min(100%, 1160px); min-height: 68px; margin: auto; padding: 12px clamp(20px, 4vw, 48px); display: grid; grid-template-columns: minmax(190px, 1fr) auto minmax(180px, 250px) 112px; align-items: center; gap: 28px; }
 .site-header .brand { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
 .site-header .brand-mark { display: block; width: 28px; height: 28px; flex: 0 0 28px; }
 .site-header .brand strong { font-size: 20px; font-weight: 800; letter-spacing: .12em; line-height: 1; }
 .site-header .brand span { color: #666; font-size: 10px; font-weight: 400; letter-spacing: .18em; line-height: 1; }
-.site-header nav { width: 210px; display: flex; justify-content: center; gap: 28px; }
+.site-header nav { display: flex; justify-content: center; gap: 28px; }
 .site-header nav a { color: inherit; font-size: 11px; font-weight: 600; letter-spacing: .06em; line-height: 1.2; text-decoration: none; }
 .site-header nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.site-header .menu-toggle { display: none; }
 .site-header .language { width: 112px; min-height: 34px; padding: 3px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; border: 1px solid #dedede; font-size: 11px; }
 .site-header .language > a, .site-header .language > span, .site-header span.language { min-width: 0; padding: 0 4px; display: flex; align-items: center; justify-content: center; color: inherit; font-size: 11px; line-height: 1; text-align: center; text-decoration: none; }
 .site-header span.language { display: block; }
@@ -17,11 +21,37 @@ html { scrollbar-gutter: stable; }
 .site-header .language > a:hover { color: #141414; }
 .site-header .language > [aria-current="page"] { border: 1px solid #141414; background: #fff; font-weight: 700; }
 
-footer { width: min(100%, 1160px); margin: 20px auto 0; padding: 55px clamp(20px, 4vw, 48px) 35px; display: grid; grid-template-columns: 1fr auto; border-top: 1px solid #141414; color: #141414; font-family: Inter, "Helvetica Neue", Arial, "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: normal; }
+/* Header search (assets/js/site-search.js). */
+/* Explicit column so pages without a nav (404) keep the same position. */
+.site-search { position: relative; grid-column: 3; min-width: 0; margin: 0; }
+.site-search-label, .site-search-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.site-search-input { width: 100%; min-height: 34px; padding: 6px 10px 6px 30px; border: 1px solid #dedede; border-radius: 0; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 9px 50% / 14px; color: #141414; font: inherit; font-size: 12px; line-height: 1.2; -webkit-appearance: none; appearance: none; }
+.site-search-input::placeholder { color: #8a8a8a; }
+.site-search-input:focus { outline: 2px solid #141414; outline-offset: -1px; border-color: #141414; }
+.site-search-input::-webkit-search-cancel-button { cursor: pointer; }
+.site-search-results { position: absolute; top: calc(100% + 6px); right: 0; z-index: 60; width: min(420px, calc(100vw - 32px)); max-height: min(70vh, 460px); overflow: auto; border: 1px solid #141414; background: #fff; box-shadow: 7px 7px 0 rgba(0, 0, 0, .12); }
+.site-search-results[hidden] { display: none; }
+.site-search-option { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; padding: 11px 14px; border-bottom: 1px solid #ececea; color: #141414; text-decoration: none; }
+.site-search-option:last-child { border-bottom: 0; }
+.site-search-option span { grid-row: 1 / span 2; align-self: start; min-width: 64px; padding: 2px 6px; border: 1px solid #dedede; color: #666; font-size: 9px; letter-spacing: .06em; text-align: center; }
+.site-search-option strong { font-size: 13px; }
+.site-search-option small { grid-column: 2; overflow: hidden; color: #666; font-size: 11px; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
+.site-search-option.is-active, .site-search-option:hover { background: #f2f2f0; }
+.site-search-option.is-active strong { text-decoration: underline; text-underline-offset: 3px; }
+.site-search-empty { margin: 0; padding: 14px; color: #666; font-size: 12px; line-height: 1.6; }
+.site-search-empty a { color: #141414; font-weight: 600; }
+
+footer { width: min(100%, 1160px); margin: 20px auto 0; padding: 55px clamp(20px, 4vw, 48px) 35px; display: grid; grid-template-columns: minmax(210px, .7fr) minmax(0, 1.6fr); gap: 48px; border-top: 1px solid #141414; color: #141414; font-family: Inter, "Helvetica Neue", Arial, "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: normal; }
 footer .footer-brand { display: inline-flex; width: max-content; align-items: center; gap: 9px; color: inherit; text-decoration: none; }
 footer .footer-brand .brand-mark { display: block; width: 22px; height: 22px; flex: 0 0 22px; }
 footer .footer-brand span { font-size: 18px; font-weight: 800; letter-spacing: .12em; line-height: 1; }
-footer > div:nth-child(2) { max-width: 720px; display: flex; justify-content: flex-end; align-items: flex-start; flex-wrap: wrap; gap: 12px 26px; }
+footer .footer-groups { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+footer .footer-group { min-width: 0; border-top: 1px solid #dedede; border-bottom: 1px solid #dedede; }
+footer .footer-group summary { position: relative; margin: 0; padding: 14px 30px 14px 0; font-size: 12px; font-weight: 700; list-style: none; cursor: pointer; }
+footer .footer-group summary::-webkit-details-marker { display: none; }
+footer .footer-group summary::after { content: "+"; position: absolute; top: 50%; right: 2px; font: 16px/1 monospace; transform: translateY(-50%); }
+footer .footer-group[open] summary::after { content: "−"; }
+footer .footer-links { padding-bottom: 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 9px; }
 footer a { color: inherit; font-size: 11px; line-height: 1.4; text-decoration: none; }
 footer a:hover { text-decoration: underline; text-underline-offset: 5px; }
 footer p { margin: 7px 0 0; color: #666; font-size: 12px; line-height: 1.4; }
@@ -42,17 +72,44 @@ footer > small { grid-column: 1 / -1; margin-top: 50px; color: #666; font-size: 
 .analytics-preference button { min-height: 36px; padding: 6px 16px; border: 1px solid #141414; border-radius: 0; background: #fff; color: #141414; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
 .analytics-preference button:hover { background: #141414; color: #fff; }
 
+/* Brand, navigation, search and language still share one row; tighten the gaps. */
+@media (max-width: 960px) {
+  .site-header .header-inner { gap: 16px; }
+  .site-header nav { gap: 18px; }
+}
+
 @media (max-width: 760px) {
-  .site-header .header-inner { grid-template-columns: minmax(0, 1fr) 112px; }
-  .site-header nav { grid-column: 1 / -1; grid-row: 2; width: 100%; padding-top: 12px; border-top: 1px solid #dedede; }
-  .site-header .language { grid-column: 2; grid-row: 1; }
-  footer { width: auto; margin: 0 18px; padding-left: 0; padding-right: 0; grid-template-columns: 1fr; }
-  footer > div:nth-child(2) { margin-top: 25px; justify-content: flex-start; }
+  .site-header .header-inner { position: relative; min-height: 54px; grid-template-columns: minmax(0, 1fr) 36px 40px; row-gap: 0; column-gap: 10px; padding-top: 8px; padding-bottom: 8px; }
+  .site-header .menu-toggle { grid-column: 3; grid-row: 1; width: 40px; height: 36px; padding: 8px; display: grid; align-content: center; gap: 5px; border: 1px solid #141414; background: #fff; color: #141414; cursor: pointer; }
+  .site-header .menu-toggle span { width: 100%; height: 1px; display: block; background: currentColor; transition: transform .16s ease, opacity .16s ease; }
+  .site-header.is-menu-open .menu-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .site-header.is-menu-open .menu-toggle span:nth-child(2) { opacity: 0; }
+  .site-header.is-menu-open .menu-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .site-header .site-search { grid-column: 2; grid-row: 1; width: 36px; display: block; z-index: 4; }
+  .site-header .site-search-input { width: 36px; min-height: 36px; padding: 0; border-color: transparent; background-position: 50% 50%; background-size: 17px; color: transparent; caret-color: transparent; cursor: pointer; }
+  .site-header .site-search-input::placeholder { color: transparent; }
+  .site-header .site-search:focus-within { position: absolute; top: 8px; right: 70px; left: clamp(20px, 4vw, 48px); width: auto; }
+  .site-header .site-search:focus-within .site-search-input { width: 100%; padding: 6px 34px 6px 34px; border-color: #141414; background-position: 11px 50%; color: #141414; caret-color: auto; cursor: text; }
+  .site-header .site-search:focus-within .site-search-input::placeholder { color: #8a8a8a; }
+  .site-header nav { grid-column: 1 / -1; grid-row: 2; margin-top: 8px; padding-top: 8px; display: none; flex-direction: column; align-items: stretch; gap: 0; border-top: 1px solid #dedede; }
+  .site-header nav a { padding: 11px 2px; font-size: 13px; }
+  .site-header .language { grid-column: 1 / -1; grid-row: 3; width: 100%; margin-top: 5px; display: none; }
+  .site-header.is-menu-open nav { display: flex; }
+  .site-header.is-menu-open .language { display: grid; }
+  .site-search-results { top: calc(100% + 6px); right: 0; }
+  footer { width: auto; margin: 0 18px; padding-left: 0; padding-right: 0; grid-template-columns: 1fr; gap: 0; }
+  footer .footer-groups { width: 100%; margin-top: 25px; display: block; }
+  footer .footer-group { border-bottom: 0; }
+  footer .footer-group:last-child { border-bottom: 1px solid #dedede; }
+  footer .footer-group summary { padding: 15px 32px 15px 0; }
+  footer .footer-group:not([open]) > .footer-links { display: none; }
+  footer .footer-links { padding: 0 0 16px; gap: 0; }
+  footer .footer-links a { width: 100%; padding: 7px 0; }
+  footer > small { margin-top: 30px; }
   /* Sit above the work tray toggle on narrow screens. */
   .analytics-consent { left: 10px; bottom: 84px; width: calc(100vw - 20px); }
 }
 
 @media (max-width: 430px) {
   .site-header .brand span { display: none; }
-  .site-header nav { gap: 18px; }
 }

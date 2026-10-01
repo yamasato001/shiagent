@@ -44,6 +44,22 @@ const pageCopy = {
     title: "Free Image, SVG & PDF Tools — Private Batch Processing | SHIAGENT",
     description: "Compress, convert, resize and crop images; edit SVGs; and merge or split PDFs for free. Files stay on your device with private, in-browser batch processing.",
   },
+  "ja/tools/index.html": {
+    title: "ツール・ワークフロー一覧 | シアゲント",
+    description: "シアゲントで使える画像・SVG・PDF・ファイルツールと、ブラウザで完結するワークフローを一覧から探せます。",
+  },
+  "tools/index.html": {
+    title: "All Tools & Workflows | SHIAGENT",
+    description: "Browse every SHIAGENT image, SVG, PDF and file tool, plus complete browser-based workflows in one catalog.",
+  },
+  "ja/use-cases/index.html": {
+    title: "目的から選ぶツール一覧 | シアゲント",
+    description: "画像を軽くする、SVGに変換する、背景を透明にするなど、目的からシアゲントのツールを選べる用途別一覧です。",
+  },
+  "use-cases/index.html": {
+    title: "Find a Tool by Use Case | SHIAGENT",
+    description: "Find the right SHIAGENT tool for compressing images, creating SVGs, removing backgrounds and other common creative tasks.",
+  },
   "ja/image-compressor/index.html": {
     description: "PNG・JPEG（JPG）・WebP画像を自動判別し、画質を保ちながら容量を一括圧縮。無料・アップロード不要・枚数制限なしでブラウザ内処理できます。",
     lead: "PNG・JPEG（JPG）・WebPを自動判別し、画質を保ちながら画像容量を削減。<br>複数画像もアップロードせず、ブラウザ内でまとめて圧縮します。",
@@ -166,8 +182,8 @@ function replaceElement(source, pattern, replacement, file) {
 function legalFooter(file) {
   const ja = file.startsWith("ja/");
   return ja
-    ? `<footer><div><a class="brand footer-brand" href="/ja/">${brandMark}<span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div><a href="/ja/about/">このサイトについて</a><a href="/ja/specifications/">対応環境</a><a href="/ja/local-processing/">ローカル処理</a><a href="/ja/faq/">FAQ</a><a href="/ja/changelog/">更新履歴</a><a href="/ja/status/">障害・既知の問題</a><a href="/ja/feedback/">フィードバック</a><a href="/ja/examples/">事例</a><a href="/ja/accessibility/">アクセシビリティ</a><a href="/ja/terms/">利用規約</a><a href="/ja/privacy/">プライバシーポリシー</a><a href="/ja/contact/">お問い合わせ</a></div><small>© 2026 SHIAGENT</small></footer>`
-    : `<footer><div><a class="brand footer-brand" href="/">${brandMark}<span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/faq/">FAQ</a><a href="/changelog/">Changelog</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></div><small>© 2026 SHIAGENT</small></footer>`;
+    ? `<footer><div class="footer-intro"><a class="brand footer-brand" href="/ja/">${brandMark}<span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div class="footer-groups"><details class="footer-group"><summary>SHIAGENTについて</summary><div class="footer-links"><a href="/ja/about/">このサイトについて</a><a href="/ja/specifications/">対応環境</a><a href="/ja/local-processing/">ローカル処理</a><a href="/ja/changelog/">更新履歴</a><a href="/ja/examples/">事例</a><a href="/ja/accessibility/">アクセシビリティ</a></div></details><details class="footer-group"><summary>サポート</summary><div class="footer-links"><a href="/ja/faq/">FAQ</a><a href="/ja/status/">障害・既知の問題</a><a href="/ja/feedback/">フィードバック</a><a href="/ja/contact/">お問い合わせ</a></div></details><details class="footer-group"><summary>リーガル</summary><div class="footer-links"><a href="/ja/terms/">利用規約</a><a href="/ja/privacy/">プライバシーポリシー</a></div></details></div><small>© 2026 SHIAGENT</small></footer>`
+    : `<footer><div class="footer-intro"><a class="brand footer-brand" href="/">${brandMark}<span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div class="footer-groups"><details class="footer-group"><summary>About SHIAGENT</summary><div class="footer-links"><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/changelog/">Changelog</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a></div></details><details class="footer-group"><summary>Support</summary><div class="footer-links"><a href="/faq/">FAQ</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/contact/">Contact</a></div></details><details class="footer-group"><summary>Legal</summary><div class="footer-links"><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a></div></details></div><small>© 2026 SHIAGENT</small></footer>`;
 }
 
 const toolExamples = {
@@ -241,7 +257,9 @@ function selectorForId(source, ids) {
   return ids.find(id => new RegExp(`\\bid="${id}"`).test(source)) ? `#${ids.find(id => new RegExp(`\\bid="${id}"`).test(source))}` : null;
 }
 
-function discoverControls(source) {
+function discoverControls(page) {
+  // The shared site header (search box) is not a tool setting.
+  const source = page.replace(/<header class="site-header">[\s\S]*?<\/header>/, "");
   const tags = [
     ...source.matchAll(/<input\b[^>]*>/gi),
     ...source.matchAll(/<select\b[^>]*>[\s\S]*?<\/select>/gi),
@@ -382,6 +400,8 @@ for (const file of await htmlFiles(root)) {
   source = source.replace(/<script type="module" src="\/assets\/js\/agent-bridge\.js"[^>]*><\/script>\s*/g, "");
   source = source.replace(/<script type="module" src="\/assets\/js\/site-observability\.js"[^>]*><\/script>\s*/g, "");
   source = source.replace(/<script type="module" src="\/assets\/js\/analytics\.js"[^>]*><\/script>\s*/g, "");
+  source = source.replace(/<script type="module" src="\/assets\/js\/site-search\.js"[^>]*><\/script>\s*/g, "");
+  source = source.replace(/<script type="module" src="\/assets\/js\/mobile-nav\.js"[^>]*><\/script>\s*/g, "");
   source = source.replace(/<meta name="(?:google-site-verification|msvalidate\.01)"[^>]*>\s*/g, "");
   source = source.replace(/<link [^>]*data-brand-icon[^>]*>\s*/g, "");
   const machineLinks = [
@@ -396,12 +416,22 @@ for (const file of await htmlFiles(root)) {
     '<link rel="stylesheet" href="/assets/css/information.css">',
     '<script type="module" src="/assets/js/site-observability.js"></script>',
     '<script type="module" src="/assets/js/analytics.js"></script>',
+    '<script type="module" src="/assets/js/site-search.js"></script>',
+    '<script type="module" src="/assets/js/mobile-nav.js"></script>',
     '<script type="module" src="/assets/js/agent-bridge.js" data-agent-bridge></script>',
   ].join("");
   source = source.replace("</head>", `${machineLinks}</head>`);
   source = source.replace(
     /(<header class="site-header">[\s\S]*?<a class="brand"[^>]*>)(?!<img class="brand-mark")/,
     `$1${brandMark}`,
+  );
+  source = source.replace(/<button class="menu-toggle"[\s\S]*?<\/button>/, "");
+  source = source.replace(/<nav id="siteNavigation"/, "<nav");
+  const menuLabel = file.startsWith("ja/") ? "メニューを開く" : "Open menu";
+  const menuButton = `<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNavigation" aria-label="${menuLabel}"><span></span><span></span><span></span></button>`;
+  source = source.replace(
+    /(<header class="site-header">[\s\S]*?<a class="brand"[\s\S]*?<\/a>)(<nav\s)/,
+    `$1${menuButton}$2id="siteNavigation" `,
   );
 
   if (["index.html", "ja/index.html"].includes(file)) {

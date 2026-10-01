@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { analyzePixels, createZip, crc32, detectRasterFormat, formatBytes, jpegQuality, outputName, pngOptimizationLevel, processPixels, savedPercent } from "../assets/js/png-core.js";
+import { analyzePixels, COLOR_GUARD_LIMIT, createZip, crc32, detectRasterFormat, formatBytes, jpegQuality, outputName, PALETTE_REDUCTION_LIMIT, PALETTE_STEPS, pngOptimizationLevel, processPixels, savedPercent, usesColorGuard, visibleColorChange } from "../assets/js/png-core.js";
 
 test("PNG and JPEG are detected from file signatures", () => {
   assert.equal(detectRasterFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), "png");
@@ -132,4 +133,83 @@ test("ZIP output contains valid local, central and end signatures", async () => 
   assert.equal(view.getUint32(0, true), 0x04034b50);
   assert.equal(view.getUint32(bytes.length - 22, true), 0x06054b50);
   assert.ok(bytes.includes(0x50));
+});
+
+test("the color guard spots visible color shifts and protects only Auto and Balanced", () => {
+  const width = 200, height = 100;
+  const gradient = new Uint8ClampedArray(width * height * 4);
+  for (let y = 0; y < height; y += 1) for (let x = 0; x < width; x += 1) {
+    const i = (y * width + x) * 4;
+    gradient[i] = x; gradient[i + 1] = 60 + y; gradient[i + 2] = 200 - x / 2; gradient[i + 3] = 255;
+  }
+  // A coarse palette (steps of 32) bands a smooth gradient: clearly visible.
+  const banded = gradient.map((value, index) => index % 4 === 3 ? value : Math.round(value / 32) * 32);
+  assert.ok(visibleColorChange(gradient, banded) > 0.5);
+  // A one-step rounding difference is invisible.
+  const nudged = gradient.map((value, index) => index % 4 === 3 ? value : Math.min(255, value + 1));
+  assert.equal(visibleColorChange(gradient, nudged), 0);
+  assert.equal(visibleColorChange(gradient, gradient), 0);
+  // Fully transparent pixels do not count; alpha changes do.
+  const clear = new Uint8ClampedArray(8);
+  assert.equal(visibleColorChange(clear, new Uint8ClampedArray([255, 0, 0, 0, 0, 255, 0, 0])), 0);
+  assert.equal(visibleColorChange(new Uint8ClampedArray([10, 10, 10, 255]), new Uint8ClampedArray([10, 10, 10, 120])), 1);
+  assert.ok(COLOR_GUARD_LIMIT > 0 && COLOR_GUARD_LIMIT < 0.1);
+
+  assert.equal(usesColorGuard("auto"), true);
+  assert.equal(usesColorGuard("balanced"), true);
+  assert.equal(usesColorGuard("smallest"), false);
+  assert.equal(usesColorGuard("lineart"), false);
+  assert.equal(usesColorGuard("exact"), false);
+});
+
+// colorSafePalette lives in the worker bundle source; run it with the real
+// imagequant WASM (the browser build, given a worker-like global scope).
+async function loadColorSafePalette() {
+  const worker = await readFile(new URL("../src/png-optimizer-worker.js", import.meta.url), "utf8");
+  const start = worker.indexOf("async function colorSafePalette");
+  const source = worker.slice(start, worker.indexOf("\nfunction quantizeWithPalette", start));
+  globalThis.self ??= globalThis;
+  globalThis.location ??= { href: "file:///test/" };
+  const { default: createImagequant } = await import("../node_modules/@squoosh-kit/imagequant/dist/wasm/imagequant/imagequant.js");
+  const wasmBinary = await readFile(new URL("../node_modules/@squoosh-kit/imagequant/dist/wasm/imagequant/imagequant.wasm", import.meta.url));
+  const module = await createImagequant({ noInitialRun: true, wasmBinary });
+  return new Function("getImagequantModule", "visibleColorChange", "COLOR_GUARD_LIMIT", "PALETTE_STEPS", "PALETTE_REDUCTION_LIMIT", `${source}; return colorSafePalette;`)(
+    async () => module, visibleColorChange, COLOR_GUARD_LIMIT, PALETTE_STEPS, PALETTE_REDUCTION_LIMIT);
+}
+
+// CI runs without node_modules (no install step), so this one runs locally only.
+const hasImagequant = existsSync(new URL("../node_modules/@squoosh-kit/imagequant/dist/wasm/imagequant/imagequant.wasm", import.meta.url));
+test("the color-safe palette picks the fewest colors that keep the image intact", { skip: !hasImagequant && "node_modules not installed" }, async () => {
+  const colorSafePalette = await loadColorSafePalette();
+  const width = 240, height = 160;
+  const image = paint => {
+    const data = new Uint8ClampedArray(width * height * 4);
+    for (let y = 0; y < height; y += 1) for (let x = 0; x < width; x += 1) data.set([...paint(x, y), 255], (y * width + x) * 4);
+    return data;
+  };
+  // A diagram: white page, pastel boxes, dark text-like strokes.
+  const boxes = [[218, 232, 252], [248, 206, 204], [225, 213, 231], [255, 242, 204], [213, 232, 212]];
+  const diagram = image((x, y) => (y % 40 === 20 && x % 7 < 4) ? [20, 20, 20] : (x > 20 && x < 220 && y > 10 && y < 150) ? boxes[(x >> 5) % 5] : [255, 255, 255]);
+  const reduced = await colorSafePalette(diagram, width, height);
+  assert.equal(reduced.colors, 32);
+  assert.ok(visibleColorChange(diagram, reduced.pixels) <= PALETTE_REDUCTION_LIMIT);
+  // A photo-like image: no palette keeps it, so the caller keeps every color.
+  let seed = 7;
+  const noise = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  const photo = image((x, y) => [120 + 90 * Math.sin(x / 9) + noise() * 20, 130 + 80 * Math.cos(y / 11) + noise() * 20, 110 + 70 * Math.sin((x + y) / 13)]);
+  assert.equal(await colorSafePalette(photo, width, height), null);
+  assert.deepEqual([...PALETTE_STEPS], [32, 64, 128]);
+  assert.ok(PALETTE_REDUCTION_LIMIT < COLOR_GUARD_LIMIT);
+});
+
+test("the PNG worker and page use the color-safe palette for Auto and Balanced", async () => {
+  const worker = await readFile(new URL("../src/png-optimizer-worker.js", import.meta.url), "utf8");
+  assert.match(worker, /\} else if \(colorGuard && fullPaletteMode\) \{[\s\S]*?await colorSafePalette\(pixels, width, height\)/);
+  assert.match(worker, /if \(colorGuard && visibleColorChange\(pixels, processed\) > COLOR_GUARD_LIMIT\) \{\s*const safe = await colorSafePalette\(pixels, width, height\);/);
+  assert.match(worker, /self\.postMessage\(\{ id, result, colorGuarded, paletteColors \}, \[result\]\)/);
+  const script = await readFile(new URL("../assets/js/png-compressor.js", import.meta.url), "utf8");
+  assert.match(script, /usesColorGuard\(requestedMode\)/);
+  assert.match(script, /entry\.colorGuarded === "lossless"/);
+  assert.match(script, /entry\.colorGuarded === "palette"/);
+  assert.match(script, /copy\.badges\.paletteN\(entry\.paletteColors\)/);
 });

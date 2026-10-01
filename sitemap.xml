@@ -355,6 +355,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/terms/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/tools/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/tools/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/tools/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/tools/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/use-cases/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/use-cases/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/use-cases/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/use-cases/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/workflows/ai-asset-prep/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/ai-asset-prep/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/ai-asset-prep/" />
@@ -497,6 +509,18 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/terms/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/terms/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/terms/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/tools/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/tools/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/tools/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/tools/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/use-cases/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/use-cases/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/use-cases/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/use-cases/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/ai-asset-prep/</loc>

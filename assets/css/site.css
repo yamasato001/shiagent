@@ -110,8 +110,24 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 .file-result strong { color: var(--ok); font-size: 12px; }
 .icon-button { width: 34px; height: 34px; border: 0; background: transparent; cursor: pointer; color: var(--muted); }
 .icon-button:hover { color: var(--ink); }
-.progress-track { height: 2px; background: var(--surface-2); margin-top: 6px; }
+.progress-track { height: 2px; background: var(--surface-2); margin-top: 6px; overflow: hidden; }
 .progress-bar { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+/* Rows only show the bar while a file is processing; there is no real percentage, so it sweeps. */
+.file-row .progress-bar { width: 40% !important; animation: busy-sweep 1.2s ease-in-out infinite; }
+
+/* Busy spinner (assets/js/busy-indicator.js) and processing rows. */
+@keyframes busy-spin { to { transform: rotate(360deg); } }
+@keyframes busy-sweep { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+.busy-indicator { display: inline-flex; align-items: center; gap: 8px; align-self: center; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.busy-indicator::before, .file-status.processing::before { content: ""; flex: 0 0 auto; width: 14px; height: 14px; box-sizing: border-box; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: busy-spin .8s linear infinite; }
+.busy-indicator-labelled { margin-right: auto; color: var(--ink); font-weight: 600; }
+.file-status.processing { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--ink); }
+.file-status.processing::before { width: 12px; height: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  /* Still turning so progress stays visible, just slower. */
+  .busy-indicator::before, .file-status.processing::before { animation-duration: 2.4s; }
+  .file-row .progress-bar { animation-duration: 3s; }
+}
 .run-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 26px; }
 
 .results-panel { background: var(--surface-2); }
@@ -507,6 +523,7 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 .blue-mark { color: #2070ff; font-size: 16px; font-weight: 700; line-height: 1; }
 
 @media (max-width: 760px) {
+  .tool-hero h1 { font-size: 28px; line-height: 1.18; letter-spacing: -.025em; }
   .compression-comparison-heading { align-items: flex-start; flex-direction: column; gap: 7px; }
   .compression-comparison-heading p { max-width: 100%; }
   .compression-comparison-grid { grid-template-columns: 1fr; }
@@ -532,6 +549,7 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
   .converter-format-placeholder { width: 44px; height: 44px; }
   .file-compare { gap: 6px; }
   .file-status { grid-column: 2; min-width: 0; text-align: left; }
+  .file-status.processing { justify-content: flex-start; }
   .file-result { grid-column: 2 / -1; justify-content: flex-start; }
   .run-actions { justify-content: stretch; }
   .run-actions .button { flex: 1; }
@@ -564,14 +582,12 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
   .resize-output { align-items: stretch; flex-direction: column; }
   .resize-output label { align-items: stretch; flex-direction: column; gap: 5px; }
   .splitter-result-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .workflow-pipeline { grid-template-columns: 1fr 1fr; }
-  .workflow-pipeline li:nth-child(3) { border-left: 0; }
-  .workflow-pipeline li:nth-child(n + 3) { border-top: 1px solid var(--line); }
-  .workflow-pipeline li:nth-child(3)::before { display: none; }
-  .workflow-pipeline-five, .workflow-pipeline-six, .workflow-pipeline-seven { grid-template-columns: 1fr; }
-  .workflow-pipeline-five li:nth-child(n), .workflow-pipeline-six li:nth-child(n), .workflow-pipeline-seven li:nth-child(n) { border-left: 0; border-top: 1px solid var(--line); }
-  .workflow-pipeline-five li:first-child, .workflow-pipeline-six li:first-child, .workflow-pipeline-seven li:first-child { border-top: 0; }
-  .workflow-pipeline-five li + li::before, .workflow-pipeline-six li + li::before, .workflow-pipeline-seven li + li::before { display: none; }
+  .workflow-pipeline, .workflow-pipeline-five, .workflow-pipeline-six, .workflow-pipeline-seven { display: flex; grid-template-columns: none; overflow-x: auto; scrollbar-width: thin; white-space: nowrap; }
+  .workflow-pipeline li, .workflow-pipeline-five li:nth-child(n), .workflow-pipeline-six li:nth-child(n), .workflow-pipeline-seven li:nth-child(n) { flex: 0 0 auto; padding: 10px 13px; flex-direction: row; align-items: center; border-top: 0; }
+  .workflow-pipeline li + li, .workflow-pipeline li:nth-child(3) { border-left: 1px solid var(--line); }
+  .workflow-pipeline li + li::before, .workflow-pipeline li:nth-child(3)::before, .workflow-pipeline-five li + li::before, .workflow-pipeline-six li + li::before, .workflow-pipeline-seven li + li::before { display: block; }
+  .workflow-pipeline span, .workflow-pipeline small { display: none; }
+  .workflow-pipeline b { font-size: 12px; }
   .workflow-fields { grid-template-columns: 1fr; }
   .web-preset-grid { grid-template-columns: 1fr; }
   .web-rename-controls { grid-template-columns: 1fr; }

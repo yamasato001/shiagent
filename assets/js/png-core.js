@@ -40,6 +40,59 @@ export function pngOptimizationLevel(effort = "standard") {
   return effort === "careful" ? 4 : 2;
 }
 
+// Color guard for the palette modes. Reducing to 256 colors is invisible on
+// illustrations but visibly shifts photos and smooth gradients (in our
+// measurements 82% and 45% of pixels changed noticeably, 0% for illustrations).
+// When more than COLOR_GUARD_LIMIT of the pixels change visibly, the
+// compressor keeps every color and optimizes losslessly instead.
+export const COLOR_GUARD_LIMIT = 0.02;
+// Below 256 colors the bar is stricter, because a smaller palette first eats
+// into anti-aliased edges (text on a white diagram). On a 6304x5484 draw.io
+// diagram: 32 colors changed 0.25% of pixels (86% smaller), 16 colors 0.64%.
+export const PALETTE_REDUCTION_LIMIT = 0.003;
+// Tried fewest first; the first one within PALETTE_REDUCTION_LIMIT is used.
+export const PALETTE_STEPS = Object.freeze([32, 64, 128]);
+const VISIBLE_DELTA_E = 2.3; // CIE76 "just noticeable difference"
+
+const linear = new Float32Array(256).map((_, value) => {
+  const c = value / 255;
+  return c > 0.04045 ? ((c + 0.055) / 1.055) ** 2.4 : c / 12.92;
+});
+const labF = value => (value > 0.008856 ? Math.cbrt(value) : 7.787 * value + 16 / 116);
+
+function toLab(r, g, b, out) {
+  const R = linear[r], G = linear[g], B = linear[b];
+  const x = labF((R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047);
+  const y = labF(R * 0.2126 + G * 0.7152 + B * 0.0722);
+  const z = labF((R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883);
+  out[0] = 116 * y - 16; out[1] = 500 * (x - y); out[2] = 200 * (y - z);
+}
+
+// Share (0-1) of sampled pixels whose color visibly changed. Fully transparent
+// pixels are ignored; an alpha change larger than 8 counts as visible.
+export function visibleColorChange(original, processed, sampleLimit = 200_000) {
+  const pixels = Math.floor(original.length / 4);
+  const stride = Math.max(1, Math.floor(pixels / sampleLimit));
+  const a = new Float32Array(3), b = new Float32Array(3);
+  let sampled = 0, changed = 0;
+  for (let pixel = 0; pixel < pixels; pixel += stride) {
+    const i = pixel * 4;
+    if (original[i + 3] === 0 && processed[i + 3] === 0) continue;
+    sampled += 1;
+    if (Math.abs(original[i + 3] - processed[i + 3]) > 8) { changed += 1; continue; }
+    toLab(original[i], original[i + 1], original[i + 2], a);
+    toLab(processed[i], processed[i + 1], processed[i + 2], b);
+    if (Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) > VISIBLE_DELTA_E) changed += 1;
+  }
+  return sampled ? changed / sampled : 0;
+}
+
+// The guard protects the modes where the visitor did not ask for the smallest
+// file: Auto and Balanced. Smallest and Line Art keep their trade-off.
+export function usesColorGuard(requestedMode) {
+  return requestedMode === "auto" || requestedMode === "balanced";
+}
+
 const clamp = value => Math.max(0, Math.min(255, value));
 const quantize = (value, step) => step <= 1 ? value : clamp(Math.round(value / step) * step);
 

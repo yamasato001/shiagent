@@ -1,5 +1,6 @@
 import { clearTray, readTray, replaceTray } from "./work-tray.js";
 import "./queue-drop.js";
+import "./busy-indicator.js";
 import { localPath, pick } from "./i18n.js";
 import common from "./i18n/common.js";
 import { chooseOutputDirectory, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
@@ -66,7 +67,11 @@ function createDock() {
   document.body.append(dock);
   const toggle = dock.querySelector(".work-tray-toggle");
   const panel = dock.querySelector(".work-tray-panel");
-  const setOpen = open => { panel.hidden = !open; toggle.setAttribute("aria-expanded", String(open)); };
+  const setOpen = open => {
+    panel.hidden = !open;
+    dock.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+  };
   toggle.addEventListener("click", () => setOpen(panel.hidden));
   dock.querySelector("#workTrayClose").addEventListener("click", () => setOpen(false));
   document.addEventListener("pointerdown", event => {
@@ -93,6 +98,9 @@ function createDock() {
 const dock = createDock();
 
 function renderDock() {
+  const isEmpty = trayFiles.length === 0;
+  dock.classList.toggle("is-empty", isEmpty);
+  dock.querySelector(".work-tray-toggle").setAttribute("aria-label", `${copy.title}: ${isEmpty ? copy.empty : copy.holding(trayFiles.length)}`);
   dock.querySelector("#workTrayCount").textContent = String(trayFiles.length);
   dock.querySelector("#workTraySummary").textContent = trayFiles.length ? copy.holding(trayFiles.length) : copy.empty;
   dock.querySelector("#workTrayClear").disabled = trayFiles.length === 0;

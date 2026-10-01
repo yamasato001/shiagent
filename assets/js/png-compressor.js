@@ -1,4 +1,4 @@
-import { analyzePixels, detectRasterFormat, formatBytes, jpegQuality, outputName, pngOptimizationLevel, savedPercent } from "./png-core.js";
+import { analyzePixels, detectRasterFormat, formatBytes, jpegQuality, outputName, pngOptimizationLevel, savedPercent, usesColorGuard } from "./png-core.js";
 import { createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import "./queue-drop.js";
 
@@ -28,7 +28,7 @@ const copy = lang === "ja" ? {
   badges: {
     unchanged: "画素変更なし", lossless: "ロスレス", lines: "細線保護", alpha: "透明度維持",
     transparency: "透明度対応", palette256: "最大256色", palette64: "最大64色",
-    bounded: "省メモリ処理", original: "元画像を採用", jpeg: "JPEG再圧縮", webp: "WebP再圧縮",
+    bounded: "省メモリ処理", original: "元画像を採用", jpeg: "JPEG再圧縮", webp: "WebP再圧縮", colorKept: "色を保つためロスレス", colorPalette: "色を保てる色数に調整", paletteN: n => `最大${n}色`,
     auto: { lineart: "Auto: 線画", illustration: "Auto: イラスト", photo: "Auto: 写真" }
   },
   download: "保存",
@@ -56,7 +56,7 @@ const copy = lang === "ja" ? {
   badges: {
     unchanged: "Pixels unchanged", lossless: "Lossless", lines: "Fine lines protected", alpha: "Alpha preserved",
     transparency: "Transparency supported", palette256: "Up to 256 colors", palette64: "Up to 64 colors",
-    bounded: "Memory-safe path", original: "Original retained", jpeg: "JPEG recompressed", webp: "WebP recompressed",
+    bounded: "Memory-safe path", original: "Original retained", jpeg: "JPEG recompressed", webp: "WebP recompressed", colorKept: "Lossless to keep colors", colorPalette: "Color-safe palette", paletteN: n => `Up to ${n} colors`,
     auto: { lineart: "Auto: Line Art", illustration: "Auto: Illustration", photo: "Auto: Photo" }
   },
   download: "Download",
@@ -91,7 +91,7 @@ function ensureOptimizerWorker() {
       if (!request) return;
       optimizerRequests.delete(event.data.id);
       if (event.data.error) request.reject(new Error(event.data.error));
-      else request.resolve(event.data.result);
+      else request.resolve(event.data);
     });
     optimizerWorker.addEventListener("error", event => {
       const error = new Error(event.message || "PNG optimizer worker failed");
@@ -113,10 +113,10 @@ function optimisePng(blob, level) {
     const id = ++optimizerRequestId;
     optimizerRequests.set(id, { resolve, reject });
     ensureOptimizerWorker().postMessage({ id, buffer, level, optimiseAlpha: false }, [buffer]);
-  })).then(buffer => new Blob([buffer], { type: "image/png" }));
+  })).then(({ result }) => new Blob([result], { type: "image/png" }));
 }
 
-function quantizePng(imageData, width, height, mode, level) {
+function quantizePng(imageData, width, height, mode, level, colorGuard = false) {
   const buffer = imageData.data.buffer;
   return new Promise((resolve, reject) => {
     const id = ++optimizerRequestId;
@@ -129,12 +129,13 @@ function quantizePng(imageData, width, height, mode, level) {
       height,
       mode,
       level,
-      optimiseAlpha: false
+      optimiseAlpha: false,
+      colorGuard
     }, [buffer]);
-  }).then(result => new Blob([result], { type: "image/png" }));
+  }).then(({ result, colorGuarded, paletteColors }) => ({ blob: new Blob([result], { type: "image/png" }), colorGuarded, paletteColors }));
 }
 
-function processLineArtPng(imageData, width, height, level, compact = false) {
+function processLineArtPng(imageData, width, height, level, compact = false, colorGuard = false) {
   const buffer = imageData.data.buffer;
   return new Promise((resolve, reject) => {
     const id = ++optimizerRequestId;
@@ -146,9 +147,10 @@ function processLineArtPng(imageData, width, height, level, compact = false) {
       width,
       height,
       level,
-      optimiseAlpha: false
+      optimiseAlpha: false,
+      colorGuard
     }, [buffer]);
-  }).then(result => new Blob([result], { type: "image/png" }));
+  }).then(({ result, colorGuarded, paletteColors }) => ({ blob: new Blob([result], { type: "image/png" }), colorGuarded, paletteColors }));
 }
 
 function showToast(message) {
@@ -184,6 +186,8 @@ function resetResults() {
     entry.autoSelected = false;
     entry.processingStrategy = null;
     entry.keptOriginal = false;
+    entry.colorGuarded = false;
+    entry.paletteColors = null;
   }
 }
 
@@ -200,7 +204,7 @@ async function addFiles(fileList) {
       id: crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`,
       key, file, format, previewUrl: URL.createObjectURL(file), resultUrl: null, resultBlob: null,
       status: "ready", after: null, error: null, kind: null, usedMode: null,
-      autoSelected: false, processingStrategy: null, keptOriginal: false
+      autoSelected: false, processingStrategy: null, keptOriginal: false, colorGuarded: false, paletteColors: null
     });
   }
   if (rejected) showToast(copy.unsupported);
@@ -245,10 +249,17 @@ function resultBadges(entry) {
     badges.push(copy.badges[entry.format]);
   } else if (entry.usedMode === "exact") {
     badges.push(copy.badges.unchanged, copy.badges.lossless, copy.badges.alpha);
+  } else if (entry.colorGuarded === "lossless") {
+    // Too many colors for a palette (photo, gradient): kept losslessly.
+    badges.push(copy.badges.colorKept, copy.badges.unchanged, copy.badges.lossless, copy.badges.alpha);
+  } else if (entry.colorGuarded === "palette") {
+    // The preset palette shifted colors; a color-safe palette kept them.
+    badges.push(copy.badges.colorPalette, copy.badges.paletteN(entry.paletteColors || 256), copy.badges.transparency);
   } else if (entry.usedMode === "lineart") {
     badges.push(copy.badges.lines, copy.badges.alpha);
   } else {
     if (entry.processingStrategy === "bounded") badges.push(copy.badges.bounded);
+    else if (entry.paletteColors) badges.push(copy.badges.paletteN(entry.paletteColors));
     else badges.push(entry.usedMode === "smallest" ? copy.badges.palette64 : copy.badges.palette256);
     badges.push(copy.badges.transparency);
   }
@@ -275,7 +286,7 @@ function render() {
   elements.compress.hidden = running;
 
   elements.list.innerHTML = entries.map(entry => {
-    const statusClass = entry.status === "done" ? "done" : entry.status === "error" ? "error" : "";
+    const statusClass = entry.status === "done" ? "done" : entry.status === "error" ? "error" : entry.status === "processing" ? "processing" : "";
     const statusText = entry.status === "processing" ? copy.processing : entry.status === "done" ? (entry.keptOriginal ? copy.kept : copy.done) : entry.status === "error" ? copy.failed : copy.ready;
     const modeText = entry.usedMode ? ` · ${entry.usedMode === "lineart" ? "Line Art" : entry.usedMode[0].toUpperCase() + entry.usedMode.slice(1)}` : "";
     return `<article class="file-row ${entry.status === "done" ? "has-result" : ""}" data-id="${entry.id}">
@@ -351,16 +362,17 @@ async function compressEntry(entry, requestedMode) {
     if (elements.effort.value === "careful" && mode === "smallest") mode = "balanced";
     if (mode === "balanced" || mode === "smallest" || mode === "illustration") {
       entry.processingStrategy = decoded.canvas.width * decoded.canvas.height > MAX_PALETTE_PIXELS ? "bounded" : "palette";
-      blob = await quantizePng(decoded.imageData, decoded.canvas.width, decoded.canvas.height, mode, effortLevel);
+      ({ blob, colorGuarded: entry.colorGuarded, paletteColors: entry.paletteColors } = await quantizePng(decoded.imageData, decoded.canvas.width, decoded.canvas.height, mode, effortLevel, usesColorGuard(requestedMode)));
     } else {
       entry.processingStrategy = "lineart";
-      blob = await processLineArtPng(
+      ({ blob, colorGuarded: entry.colorGuarded, paletteColors: entry.paletteColors } = await processLineArtPng(
         decoded.imageData,
         decoded.canvas.width,
         decoded.canvas.height,
         effortLevel,
-        entry.autoSelected
-      );
+        entry.autoSelected,
+        usesColorGuard(requestedMode)
+      ));
     }
   }
   entry.usedMode = mode;

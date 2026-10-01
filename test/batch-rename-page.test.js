@@ -71,6 +71,12 @@ test("work tray stays inside small viewports", () => {
   assert.match(workTrayCss, /@media \(max-height: 520px\) \{[\s\S]*?max-height: calc\(100dvh - 78px\)/);
 });
 
+test("mobile work tray stays compact and minimizes when empty", () => {
+  assert.match(workflowHandoffJs, /dock\.classList\.toggle\("is-empty", isEmpty\)/);
+  assert.doesNotMatch(workTrayCss, /@media \(max-width: 760px\) \{[\s\S]*?\n  \.work-tray-toggle \{/);
+  assert.match(workTrayCss, /\.work-tray\.is-empty:not\(\.is-open\) \{[^}]*width: 40px/);
+});
+
 test("work tray shows only compatible next tools", () => {
   assert.match(workflowHandoffJs, /\.filter\(\(\{ tool, count \}\) => tool !== currentTool && count > 0\)/);
   assert.match(workflowHandoffJs, /toolList\.hidden = availableTools\.length === 0/);

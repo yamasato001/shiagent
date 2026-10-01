@@ -10,8 +10,8 @@ const headerOf = html => html.match(/<header class="site-header">[\s\S]*?<\/head
   .replace(/<div class="language"[\s\S]*?<\/div>(?=\s*<\/div>\s*<\/header>)/, "LANGUAGE");
 
 for (const [language, prefix, other, otherPrefix, nav] of [
-  ["Japanese", "ja/", "en", "", /href="\/ja\/#tools">ツール<\/a><a href="\/ja\/\?tab=workflows#tools">ワークフロー<\/a>/],
-  ["English", "", "ja", "ja/", /href="\/#tools">Tools<\/a><a href="\/\?tab=workflows#tools">Workflows<\/a>/]
+  ["Japanese", "ja/", "en", "", /href="\/ja\/tools\/#tools">ツール<\/a><a href="\/ja\/tools\/\?tab=workflows#tools">ワークフロー<\/a>/],
+  ["English", "", "ja", "ja/", /href="\/tools\/#tools">Tools<\/a><a href="\/tools\/\?tab=workflows#tools">Workflows<\/a>/]
 ]) {
   test(`every ${language} page shares the ${language} home page header`, async () => {
     const home = await read(prefix);

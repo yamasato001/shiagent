@@ -56,9 +56,9 @@
 .pdf-order-shell .faq-section details p { margin: 0 0 22px; color: #555; line-height: 1.8; }
 
 @media (max-width: 720px) {
-  .pdf-order-shell .workflow-pipeline { grid-template-columns: 1fr 1fr; }
-  .pdf-order-shell .workflow-pipeline li:nth-child(2) { border-right: 0; }
-  .pdf-order-shell .workflow-pipeline li:nth-child(-n+2) { border-bottom: 1px solid #ccc; }
+  .pdf-order-shell h1 { font-size: 30px; line-height: 1.18; letter-spacing: -.025em; }
+  .pdf-order-shell .workflow-pipeline { display: flex; grid-template-columns: none; overflow-x: auto; white-space: nowrap; }
+  .pdf-order-shell .workflow-pipeline li:nth-child(n) { flex: 0 0 auto; padding: 10px 13px; flex-direction: row; align-items: center; border-right: 0; border-bottom: 0; }
   .pdf-order-shell .steps { grid-template-columns: 1fr; }
   .pdf-order-result-head, .pdf-order-document > header, .pdf-order-run, .pdf-order-toolbar { align-items: flex-start; flex-direction: column; }
   .pdf-order-run .button, .pdf-order-result-head .button, .pdf-order-result-actions { width: 100%; }
