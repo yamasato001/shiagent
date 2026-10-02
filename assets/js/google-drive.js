@@ -90,18 +90,19 @@ async function authorise() {
   return requestToken();
 }
 
-function showPicker(accessToken, view, { multiselect = false, title = "" } = {}) {
+// Tabs appear in the order given; the first one is shown when the Picker opens.
+function showPicker(accessToken, views, { multiselect = false, title = "" } = {}) {
   const { picker } = window.google;
   return new Promise(resolve => {
     const builder = new picker.PickerBuilder()
       .setOAuthToken(accessToken)
       .setDeveloperKey(GOOGLE_DRIVE.apiKey)
       .setLocale(document.documentElement.lang === "ja" ? "ja" : "en")
-      .addView(view)
       .setCallback(data => {
         if (data[picker.Response.ACTION] === picker.Action.PICKED) resolve(data[picker.Response.DOCUMENTS] || []);
         else if (data[picker.Response.ACTION] === picker.Action.CANCEL) resolve([]);
       });
+    [views].flat().forEach(view => builder.addView(view));
     if (GOOGLE_DRIVE.appId) builder.setAppId(GOOGLE_DRIVE.appId);
     if (title) builder.setTitle(title);
     if (multiselect) builder.enableFeature(picker.Feature.MULTISELECT_ENABLED);
@@ -123,13 +124,27 @@ async function driveFetch(url, accessToken, options = {}) {
 }
 
 // Opens the Picker and downloads the chosen files into File objects.
+// Remembers (per browser) that Drive files were picked here before, so the
+// "Recently selected" tab is only put first once it has something to show.
+const PICKED_KEY = "shiagent-drive-picked";
+function pickedBefore() {
+  try { return localStorage.getItem(PICKED_KEY) === "1"; } catch { return false; }
+}
+function rememberPicked() {
+  try { localStorage.setItem(PICKED_KEY, "1"); } catch { /* storage unavailable */ }
+}
+
 export async function pickDriveFiles({ accept = "", multiple = true, title = "", onProgress = () => {} } = {}) {
   const accessToken = await authorise();
   const { picker } = window.google;
   const view = new picker.DocsView(picker.ViewId.DOCS).setIncludeFolders(true).setSelectFolderEnabled(false);
   const mimeTypes = pickerMimeTypes(accept);
-  if (mimeTypes.length) view.setMimeTypes(mimeTypes.join(","));
-  const docs = (await showPicker(accessToken, view, { multiselect: multiple, title }))
+  const recent = new picker.View(picker.ViewId.RECENTLY_PICKED);
+  if (mimeTypes.length) {
+    view.setMimeTypes(mimeTypes.join(","));
+    recent.setMimeTypes(mimeTypes.join(","));
+  }
+  const docs = (await showPicker(accessToken, pickedBefore() ? [recent, view] : [view, recent], { multiselect: multiple, title }))
     .filter(doc => doc.mimeType !== FOLDER_MIME && !String(doc.mimeType).startsWith("application/vnd.google-apps."));
   const files = [];
   for (const doc of docs) {
@@ -139,6 +154,7 @@ export async function pickDriveFiles({ accept = "", multiple = true, title = "",
     files.push(new File([blob], doc.name, { type: doc.mimeType || blob.type, lastModified: Number(doc.lastEditedUtc) || Date.now() }));
   }
   onProgress(files.length, docs.length, "");
+  if (files.length) rememberPicked();
   return files;
 }
 

@@ -50,6 +50,13 @@ test("the Google Picker dialog is positioned before it takes focus", async () =>
   assert.match(css, /body > \.picker\[role="dialog"\] \{ position: absolute;/);
 });
 
+test("the recently selected tab opens first once Drive files were picked", async () => {
+  const drive = await readFile(new URL("../assets/js/google-drive.js", import.meta.url), "utf8");
+  assert.match(drive, /new picker\.View\(picker\.ViewId\.RECENTLY_PICKED\)/);
+  assert.match(drive, /pickedBefore\(\) \? \[recent, view\] : \[view, recent\]/);
+  assert.match(drive, /if \(files\.length\) rememberPicked\(\)/);
+});
+
 test("Picker MIME filters keep only exact types from accept", async () => {
   const { pickerMimeTypes } = await import("../assets/js/google-drive.js");
   assert.deepEqual(pickerMimeTypes("image/png, image/jpeg,.png,image/*,IMAGE/PNG"), ["image/png", "image/jpeg"]);
