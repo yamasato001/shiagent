@@ -688,6 +688,9 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
   justify-content: space-between;
   gap: 12px;
 }
+/* Google Picker focuses its dialog before adding the class that positions it,
+   so the browser scrolled to the end of the page and left the dialog off-screen. */
+body > .picker[role="dialog"] { position: absolute; top: 0; left: 0; }
 .drop-zone .drive-input-button { margin-top: 8px; background: var(--surface, #fff); }
 .drive-input-button:not(.drop-zone *) { margin-left: 8px; }
 .output-save-setting small,

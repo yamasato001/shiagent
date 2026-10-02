@@ -45,6 +45,11 @@ test("Google Drive is offered next to the file chooser and the folder save", asy
   assert.equal(typeof GOOGLE_DRIVE.clientId, "string");
 });
 
+test("the Google Picker dialog is positioned before it takes focus", async () => {
+  const css = await readFile(new URL("../assets/css/site.css", import.meta.url), "utf8");
+  assert.match(css, /body > \.picker\[role="dialog"\] \{ position: absolute;/);
+});
+
 test("Picker MIME filters keep only exact types from accept", async () => {
   const { pickerMimeTypes } = await import("../assets/js/google-drive.js");
   assert.deepEqual(pickerMimeTypes("image/png, image/jpeg,.png,image/*,IMAGE/PNG"), ["image/png", "image/jpeg"]);
