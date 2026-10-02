@@ -46,6 +46,7 @@ export default {
         splitter: "画像分割",
         background: "背景削除",
         fillEditor: "SVG手動白塗り",
+          styleEditor: "SVGスタイル編集",
         whiteFill: "SVG自動白塗り",
         cleaner: "SVGクリーナー",
         rename: "一括リネーム"
@@ -98,6 +99,7 @@ export default {
         splitter: "Image Splitter",
         background: "Background Remover",
         fillEditor: "Manual SVG White Fill",
+          styleEditor: "SVG Style Editor",
         whiteFill: "Automatic SVG White Fill",
         cleaner: "SVG Cleaner",
         rename: "Batch Rename"

@@ -103,6 +103,16 @@ export const SEARCH_ENTRIES = [
     convert: { from: ["svg"], to: ["png", "jpg", "jpeg", "webp", "画像", "image"] }
   },
   {
+    path: "/svg-style-editor/", kind: "tool",
+    name: { ja: "SVGスタイルエディター", en: "SVG Style Editor" },
+    description: { ja: "SVGのパーツを選択し、塗り色・線色・線の太さ・不透明度を変更します。", en: "Click SVG parts to change fills, stroke colors, line widths and opacity." },
+    keywords: {
+      ja: ["svg 色変更", "svgの色", "塗り色", "線色", "線の太さ", "ストローク", "パーツの色", "svg編集"],
+      en: ["svg editor", "svg color", "change svg color", "fill", "stroke", "stroke width", "line width", "recolor svg"]
+    },
+    combos: [{ ja: [["svg", "パーツ", "線"], ["色", "太さ", "変更", "編集", "変え"]] }]
+  },
+  {
     path: "/color-tool/", kind: "tool",
     name: { ja: "色置換・白黒化・透明化", en: "Replace Color & Transparency" },
     description: { ja: "指定色の置換・透明化、Tolerance、グレースケール、2値化をまとめて処理します。", en: "Replace or remove selected colors with tolerance, or convert a batch to grayscale or black and white." },

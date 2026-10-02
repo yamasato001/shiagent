@@ -1,6 +1,6 @@
 import { formatBytes } from "./png-core.js";
 import { createZipBlob } from "./browser-runtime.js";
-import { FILL_PRESETS, closedRegionMask, insertWhiteFill, maskToPath, viewBoxOfSvg } from "./svg-white-fill-core.js";
+import { FILL_PRESETS, closedRegionMask, insertWhiteFill, maskToPath, normalizeSvgRasterViewport, viewBoxOfSvg } from "./svg-white-fill-core.js";
 import { replaceTray } from "./work-tray.js";
 import { localPath, pick } from "./i18n.js";
 import common from "./i18n/common.js";
@@ -28,10 +28,12 @@ async function processFile(file) {
   const cleanForDetection = insertWhiteFill(original, "");
   const parsed = new DOMParser().parseFromString(cleanForDetection, "image/svg+xml");
   const viewBox = viewBoxOfSvg(parsed.documentElement);
+  normalizeSvgRasterViewport(parsed.documentElement, viewBox);
+  const rasterSource = new XMLSerializer().serializeToString(parsed.documentElement);
   const selected = preset();
   const width = viewBox[2] >= viewBox[3] ? selected.longSide : Math.max(1, Math.round(selected.longSide * viewBox[2] / viewBox[3]));
   const height = viewBox[3] >= viewBox[2] ? selected.longSide : Math.max(1, Math.round(selected.longSide * viewBox[3] / viewBox[2]));
-  const image = await loadImage(new Blob([cleanForDetection], { type: "image/svg+xml" }));
+  const image = await loadImage(new Blob([rasterSource], { type: "image/svg+xml" }));
   const canvas = document.createElement("canvas"); canvas.width = width; canvas.height = height;
   const context = canvas.getContext("2d", { willReadFrequently: true }); context.clearRect(0, 0, width, height); context.drawImage(image, 0, 0, width, height);
   const rgba = context.getImageData(0, 0, width, height).data; const alpha = new Uint8ClampedArray(width * height); for (let i = 0; i < alpha.length; i += 1) alpha[i] = rgba[i * 4 + 3];

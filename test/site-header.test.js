@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const slugs = ["background-remover/", "batch-rename/", "canvas-padding/", "color-tool/", "favicon-generator/", "image-compressor/", "image-converter/", "image-cropper/", "image-joiner/", "image-resizer/", "metadata-cleaner/", "image-splitter/", "image-to-svg/", "svg-to-image/", "line-art-generator/", "svg-cleaner/", "svg-white-fill/", "svg-white-fill/editor/", "pdf/", "pdf/merge/", "pdf/split/", "pdf/reorder/", "pdf/interleave/", "pdf/rotate/", "pdf/delete-pages/", "pdf/images-to-pdf/", "pdf/sort-by-page-number/", "workflows/web-image-optimizer/", "workflows/line-art-to-svg/", "workflows/ai-asset-prep/", "workflows/asset-normalizer/", "workflows/custom/"];
+const slugs = ["background-remover/", "batch-rename/", "canvas-padding/", "color-tool/", "favicon-generator/", "image-compressor/", "image-converter/", "image-cropper/", "image-joiner/", "image-resizer/", "metadata-cleaner/", "image-splitter/", "image-to-svg/", "svg-to-image/", "line-art-generator/", "svg-cleaner/", "svg-white-fill/", "svg-white-fill/editor/", "svg-style-editor/", "pdf/", "pdf/merge/", "pdf/split/", "pdf/reorder/", "pdf/interleave/", "pdf/rotate/", "pdf/delete-pages/", "pdf/images-to-pdf/", "pdf/sort-by-page-number/", "workflows/web-image-optimizer/", "workflows/line-art-to-svg/", "workflows/ai-asset-prep/", "workflows/asset-normalizer/", "workflows/custom/"];
 const read = path => readFile(new URL(`../${path}index.html`, import.meta.url), "utf8");
 
 // The language switch links to the page's own counterpart, so it is compared separately.

@@ -1,5 +1,69 @@
 import { applyConfiguredOutputSuffix } from "./output-name.js";
 
+let preferredStartIn = null;
+let sourcePickerInstalled = false;
+
+const MIME_BY_EXTENSION = {
+  ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".jfif": "image/jpeg",
+  ".webp": "image/webp", ".gif": "image/gif", ".bmp": "image/bmp", ".avif": "image/avif",
+  ".heic": "image/heic", ".heif": "image/heif", ".tif": "image/tiff", ".tiff": "image/tiff",
+  ".svg": "image/svg+xml", ".pdf": "application/pdf"
+};
+
+export function rememberSourceFileHandle(handle) {
+  if (handle?.kind === "file") preferredStartIn = handle;
+}
+
+export function preferredOutputStartIn() {
+  return preferredStartIn;
+}
+
+export function clearPreferredOutputStartIn() {
+  preferredStartIn = null;
+}
+
+export function pickerTypesFromAccept(accept = "") {
+  const grouped = new Map();
+  for (const token of String(accept).split(",").map(value => value.trim().toLowerCase()).filter(value => value.startsWith("."))) {
+    const mime = MIME_BY_EXTENSION[token] || "application/octet-stream";
+    if (!grouped.has(mime)) grouped.set(mime, []);
+    if (!grouped.get(mime).includes(token)) grouped.get(mime).push(token);
+  }
+  if (!grouped.size) return undefined;
+  return [{ description: "Supported files", accept: Object.fromEntries(grouped) }];
+}
+
+export function installSourceFileTracking(scope = globalThis, documentNode = document) {
+  if (sourcePickerInstalled) return;
+  sourcePickerInstalled = true;
+  const input = documentNode.querySelector("#fileInput[type=file]");
+  if (input && typeof scope.showOpenFilePicker === "function" && typeof scope.DataTransfer === "function") {
+    const nativeClick = input.click.bind(input);
+    input.click = async () => {
+      try {
+        const options = { id: "shiagent-input-files", multiple: input.multiple };
+        const types = pickerTypesFromAccept(input.accept);
+        if (types) { options.types = types; options.excludeAcceptAllOption = true; }
+        const handles = await scope.showOpenFilePicker(options);
+        if (!handles.length) return;
+        rememberSourceFileHandle(handles[0]);
+        const transfer = new scope.DataTransfer();
+        for (const handle of handles) transfer.items.add(await handle.getFile());
+        input.files = transfer.files;
+        input.dispatchEvent(new scope.Event("change", { bubbles: true }));
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+        console.warn("File handle picker unavailable; using the browser file input.", error);
+        nativeClick();
+      }
+    };
+  }
+  documentNode.addEventListener("drop", event => {
+    const item = [...(event.dataTransfer?.items || [])].find(entry => entry.kind === "file" && typeof entry.getAsFileSystemHandle === "function");
+    if (item) item.getAsFileSystemHandle().then(rememberSourceFileHandle).catch(() => {});
+  }, true);
+}
+
 export function supportsFolderDownload(scope = globalThis) {
   return typeof scope?.showDirectoryPicker === "function";
 }
@@ -11,7 +75,9 @@ export function safeFolderFileName(value, fallbackIndex = 0) {
 
 export async function chooseOutputDirectory(scope = globalThis, startIn = "downloads") {
   if (!supportsFolderDownload(scope)) throw new Error("Folder download is not supported");
-  return scope.showDirectoryPicker({ id: "shiagent-exports", mode: "readwrite", startIn });
+  const options = { mode: "readwrite", startIn };
+  if (typeof startIn === "string") options.id = "shiagent-exports";
+  return scope.showDirectoryPicker(options);
 }
 
 export async function writeFilesToDirectory(directory, files, onProgress = () => {}) {

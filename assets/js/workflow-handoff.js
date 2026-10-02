@@ -1,9 +1,9 @@
-import { clearTray, readTray, replaceTray } from "./work-tray.js";
+import { clearTray, readTray, readTraySourceHandle, replaceTray } from "./work-tray.js";
 import "./queue-drop.js";
 import "./busy-indicator.js";
 import { localPath, pick } from "./i18n.js";
 import common from "./i18n/common.js";
-import { chooseOutputDirectory, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
+import { chooseOutputDirectory, clearPreferredOutputStartIn, preferredOutputStartIn, rememberSourceFileHandle, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
 import { applyConfiguredOutputSuffix } from "./output-name.js";
 
 const copy = pick(common).tray;
@@ -29,6 +29,7 @@ const tools = [
   { name: copy.tools.splitter, path: localPath("/image-splitter/"), accepts: file => isPng(file) || isJpeg(file) },
   { name: copy.tools.background, path: localPath("/background-remover/"), accepts: file => isRaster(file) },
   { name: copy.tools.fillEditor, path: localPath("/svg-white-fill/editor/"), accepts: file => isSvg(file) },
+  { name: copy.tools.styleEditor, path: localPath("/svg-style-editor/"), accepts: file => isSvg(file) },
   { name: copy.tools.whiteFill, path: localPath("/svg-white-fill/"), accepts: file => isSvg(file) },
   { name: copy.tools.cleaner, path: localPath("/svg-cleaner/"), accepts: file => isSvg(file) },
   { name: copy.tools.rename, path: localPath("/batch-rename/"), accepts: () => true }
@@ -181,7 +182,8 @@ function installFolderButtons() {
     button.addEventListener("click", async () => {
       const original = button.textContent;
       try {
-        const directory = await chooseOutputDirectory(window);
+        const directory = await chooseOutputDirectory(window, preferredOutputStartIn() || "downloads");
+        clearPreferredOutputStartIn();
         const visible = normalizeOutputs(await collectVisibleResults());
         const files = visible.length ? visible : latestOutputs;
         if (!files.length) return;
@@ -200,7 +202,9 @@ function installFolderButtons() {
 
 async function importTray() {
   if (new URLSearchParams(location.search).get("tray") !== "1") return;
-  const files = (await readTray()).filter(currentTool?.accepts || supported);
+  const [tray, sourceHandle] = await Promise.all([readTray(), readTraySourceHandle()]);
+  rememberSourceFileHandle(sourceHandle);
+  const files = tray.filter(currentTool?.accepts || supported);
   const input = document.querySelector("#fileInput");
   if (input && files.length) {
     const transfer = new DataTransfer();

@@ -25,6 +25,29 @@ test("only brand images are cached without revalidation", () => {
   assert.match(htaccess, /Header set Cache-Control "public, max-age=0, must-revalidate"/);
 });
 
+test("only the PNG optimizer worker allows eval", () => {
+  // imagequant's Emscripten embind glue calls new Function() while it
+  // initialises, so Balanced/Auto PNG compression fails under the site CSP.
+  const siteCsp = headers.match(/^\s*Content-Security-Policy: (.+)$/m)[1];
+  assert.doesNotMatch(siteCsp, /'unsafe-eval'/);
+  const workerCsp = siteCsp.replace("'wasm-unsafe-eval'", "'wasm-unsafe-eval' 'unsafe-eval'");
+  assert.ok(headers.includes(`/assets/dist/png-optimizer-worker.js\n  ! Content-Security-Policy\n  Content-Security-Policy: ${workerCsp}\n`));
+  assert.ok(htaccess.includes(`<If "%{REQUEST_URI} == '/assets/dist/png-optimizer-worker.js'">\n    Header always set Content-Security-Policy "${workerCsp}"\n  </If>`));
+  assert.equal(htaccess.match(/'unsafe-eval'/g).length, 1);
+});
+
+test("Google Drive sign-in, Picker and API are allowed", () => {
+  const siteCsp = headers.match(/^\s*Content-Security-Policy: (.+)$/m)[1];
+  const directive = name => siteCsp.match(new RegExp(`(?:^|; )${name} ([^;]*)`))?.[1].split(" ") || [];
+  for (const source of ["https://accounts.google.com", "https://apis.google.com"]) assert.ok(directive("script-src").includes(source), source);
+  assert.ok(directive("connect-src").includes("https://www.googleapis.com"));
+  for (const source of ["https://accounts.google.com", "https://docs.google.com"]) assert.ok(directive("frame-src").includes(source), source);
+  // The OAuth popup reports back to its opener, which same-origin would cut off.
+  assert.match(headers, /Cross-Origin-Opener-Policy: same-origin-allow-popups\n/);
+  assert.match(htaccess, /Cross-Origin-Opener-Policy "same-origin-allow-popups"/);
+  assert.doesNotMatch(directive("script-src").join(" "), /'unsafe-inline'|'unsafe-eval'/);
+});
+
 test(".htaccess hides repository and development paths", () => {
   const blocked = htaccess.match(/RedirectMatch 404 \^\/\(([^)]*)\)\(\/\|\$\)/)[1].split("|").map(entry => entry.replace(/\\/g, ""));
   for (const path of [".git", ".github", "node_modules", ...robots.matchAll(/^Disallow: \/([^/\s]+)\//gm)].map(entry => Array.isArray(entry) ? entry[1] : entry)) {

@@ -37,6 +37,8 @@ test("phrases describing a task find the right tool", () => {
   assert.equal(top("SVGをPNGにしたい"), "/svg-to-image/");
   assert.equal(top("svg to png"), "/svg-to-image/");
   assert.equal(top("svgを軽くしたい"), "/svg-cleaner/");
+  assert.equal(top("SVGの線の太さを変えたい"), "/svg-style-editor/");
+  assert.equal(top("change svg color"), "/svg-style-editor/");
   assert.equal(top("背景を透明にしたい"), "/background-remover/");
   assert.equal(top("HEICをJPGに"), "/image-converter/");
   assert.equal(top("PDFを結合"), "/pdf/merge/");

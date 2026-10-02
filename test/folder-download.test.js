@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { chooseOutputDirectory, safeFolderFileName, supportsFolderDownload, writeFilesToDirectory } from "../assets/js/folder-download.js";
+import { chooseOutputDirectory, clearPreferredOutputStartIn, pickerTypesFromAccept, preferredOutputStartIn, rememberSourceFileHandle, safeFolderFileName, supportsFolderDownload, writeFilesToDirectory } from "../assets/js/folder-download.js";
 
 test("folder saving is shown only when the directory picker is available", () => {
   assert.equal(supportsFolderDownload({ showDirectoryPicker() {} }), true);
@@ -19,6 +19,23 @@ test("folder picker can start in the source file's parent directory", async () =
   await chooseOutputDirectory(scope, sourceHandle);
   assert.equal(received.startIn, sourceHandle);
   assert.equal(received.mode, "readwrite");
+  assert.equal(received.id, undefined);
+});
+
+test("source file handles are retained only as an opaque starting location", () => {
+  const sourceHandle = { kind: "file", name: "source.png" };
+  rememberSourceFileHandle(sourceHandle);
+  assert.equal(preferredOutputStartIn(), sourceHandle);
+  clearPreferredOutputStartIn();
+  assert.equal(preferredOutputStartIn(), null);
+});
+
+test("file picker filters are derived from accepted extensions", () => {
+  assert.deepEqual(pickerTypesFromAccept("image/png,image/jpeg,.png,.jpg,.jpeg"), [{
+    description: "Supported files",
+    accept: { "image/png": [".png"], "image/jpeg": [".jpg", ".jpeg"] }
+  }]);
+  assert.equal(pickerTypesFromAccept(""), undefined);
 });
 
 test("one directory permission writes every output and avoids duplicate overwrites", async () => {

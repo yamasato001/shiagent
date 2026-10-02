@@ -1,10 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { compactNumericText } from "../assets/js/svg-cleaner-core.js";
-import { closedRegionMask, excludeMaskRegions, hasWhiteFillPixels, maskToPath, newlyClosedRegionMask } from "../assets/js/svg-white-fill-core.js";
+import { closedRegionMask, excludeMaskRegions, hasWhiteFillPixels, maskToPath, newlyClosedRegionMask, normalizeSvgRasterViewport } from "../assets/js/svg-white-fill-core.js";
 
 test("SVG cleaner compacts decimal precision without rewriting integer tokens", () => {
   assert.equal(compactNumericText("M 0.00000, 1.23456 L 10 20.5000"), "M 0,1.235 L 10 20.5");
+});
+
+test("SVG raster previews use the viewBox aspect ratio without changing the saved source", () => {
+  const attributes = new Map([["width", "1000"], ["height", "1000"]]);
+  const root = { setAttribute(name, value) { attributes.set(name, value); } };
+  normalizeSvgRasterViewport(root, [0, 0, 2000, 1000]);
+  assert.equal(attributes.get("width"), "2000");
+  assert.equal(attributes.get("height"), "1000");
 });
 
 test("white fill detects only regions enclosed by an alpha barrier", () => {

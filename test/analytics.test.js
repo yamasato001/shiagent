@@ -89,7 +89,7 @@ test("every public page loads the analytics script exactly once", async () => {
 
 test("CSP allows Google Analytics and the privacy policy discloses it", async () => {
   const headers = await read("_headers");
-  assert.match(headers, /script-src 'self' 'wasm-unsafe-eval' https:\/\/www\.googletagmanager\.com;/);
+  assert.match(headers, /script-src 'self' 'wasm-unsafe-eval' [^;]*https:\/\/www\.googletagmanager\.com[ ;]/);
   assert.match(headers, /connect-src [^;]*https:\/\/\*\.google-analytics\.com/);
   for (const [page, name] of [["ja/privacy/index.html", "Google アナリティクス"], ["privacy/index.html", "Google Analytics"]]) {
     const html = await read(page);

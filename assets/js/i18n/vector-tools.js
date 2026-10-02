@@ -31,7 +31,9 @@ export default {
       folderSaved: (name, folder) => `${name} を「${folder}」に保存しました。`,
       folderSavedAll: (count, folder) => `${count}件のSVGを「${folder}」に保存しました。`,
       folderFailed: "フォルダへの保存に失敗しました。",
-      allDone: "すべてのSVGを確定しました。結果は作業トレイに入っています。"
+      allDone: "すべてのSVGを確定しました。結果は作業トレイに入っています。",
+      complete: "完了",
+      completeHint: "「次へ」で1件目に戻ります"
     }
   },
   en: {
@@ -65,7 +67,9 @@ export default {
       folderSaved: (name, folder) => `Saved ${name} to “${folder}”.`,
       folderSavedAll: (count, folder) => `Saved ${count} SVG file${count === 1 ? "" : "s"} to “${folder}”.`,
       folderFailed: "Could not save to the selected folder.",
-      allDone: "All SVG files are finalized. The results are in the work tray."
+      allDone: "All SVG files are finalized. The results are in the work tray.",
+      complete: "Complete",
+      completeHint: "Select Next to return to the first SVG"
     }
   }
 };

@@ -18,12 +18,12 @@ const mime = {
   ".wasm": "application/wasm"
 };
 const securityHeaders = {
-  "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' data:; connect-src 'self' blob: https://formsubmit.co; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'",
+  "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; img-src 'self' blob: data: https://*.googleusercontent.com https://ssl.gstatic.com https://www.gstatic.com; font-src 'self' data:; connect-src 'self' blob: https://formsubmit.co https://www.googleapis.com https://accounts.google.com; frame-src https://accounts.google.com https://docs.google.com https://drive.google.com https://content.googleapis.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()",
-  "Cross-Origin-Opener-Policy": "same-origin",
+  "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
   "Cross-Origin-Resource-Policy": "same-origin",
 };
 
@@ -44,8 +44,13 @@ createServer((request, response) => {
     createReadStream(notFound).pipe(response);
     return;
   }
+  // Same exception as .htaccess: imagequant's embind glue needs new Function().
+  const csp = urlPath === "/assets/dist/png-optimizer-worker.js"
+    ? { "Content-Security-Policy": securityHeaders["Content-Security-Policy"].replace("'wasm-unsafe-eval'", "'wasm-unsafe-eval' 'unsafe-eval'") }
+    : {};
   response.writeHead(200, {
     ...securityHeaders,
+    ...csp,
     "Content-Type": mime[extname(file)] || "application/octet-stream",
     "Cache-Control": "no-store"
   });

@@ -28,8 +28,11 @@ export function jpegQuality(mode, effort = "standard", kind = "photo") {
   if (mode === "lineart") quality = 0.92;
   else if (mode === "smallest") quality = 0.68;
   else if (mode === "balanced") quality = 0.82;
+  else if (mode === "recommended") quality = kind === "lineart" ? 0.95 : kind === "illustration" ? 0.93 : 0.9;
   else quality = kind === "lineart" ? 0.92 : kind === "illustration" ? 0.86 : 0.82;
-  return effort === "careful" ? Math.min(0.96, quality + 0.06) : quality;
+  const boost = mode === "recommended" ? 0.02 : 0.06;
+  const maximum = mode === "recommended" ? 0.97 : 0.96;
+  return effort === "careful" ? Math.min(maximum, quality + boost) : quality;
 }
 
 // OxiPNG optimization level. Level 3 took 4-5x as long as level 2 and produced
@@ -87,10 +90,81 @@ export function visibleColorChange(original, processed, sampleLimit = 200_000) {
   return sampled ? changed / sampled : 0;
 }
 
-// The guard protects the modes where the visitor did not ask for the smallest
-// file: Auto and Balanced. Smallest and Line Art keep their trade-off.
+// Sampled structural similarity for adaptive JPEG/WebP encoding. Luminance
+// SSIM protects edges and texture; the chroma score prevents visually obvious
+// color shifts from passing on otherwise smooth images.
+export function perceptualSimilarity(original, processed, width, height, sampleLimit = 200_000) {
+  if (original.length !== processed.length || original.length !== width * height * 4) return 0;
+  const totalPixels = width * height;
+  const stride = Math.max(1, Math.floor(totalPixels / sampleLimit));
+  let count = 0;
+  let sumX = 0, sumY = 0, sumXX = 0, sumYY = 0, sumXY = 0, chromaError = 0, alphaError = 0;
+  for (let pixel = 0; pixel < totalPixels; pixel += stride) {
+    const i = pixel * 4;
+    const x = original[i] * 0.2126 + original[i + 1] * 0.7152 + original[i + 2] * 0.0722;
+    const y = processed[i] * 0.2126 + processed[i + 1] * 0.7152 + processed[i + 2] * 0.0722;
+    const xCb = original[i + 2] - x, yCb = processed[i + 2] - y;
+    const xCr = original[i] - x, yCr = processed[i] - y;
+    sumX += x; sumY += y; sumXX += x * x; sumYY += y * y; sumXY += x * y;
+    chromaError += (xCb - yCb) ** 2 + (xCr - yCr) ** 2;
+    alphaError += (original[i + 3] - processed[i + 3]) ** 2;
+    count += 1;
+  }
+  if (!count) return 1;
+  const meanX = sumX / count, meanY = sumY / count;
+  const varianceX = Math.max(0, sumXX / count - meanX * meanX);
+  const varianceY = Math.max(0, sumYY / count - meanY * meanY);
+  const covariance = sumXY / count - meanX * meanY;
+  const c1 = (0.01 * 255) ** 2, c2 = (0.03 * 255) ** 2;
+  const ssim = ((2 * meanX * meanY + c1) * (2 * covariance + c2)) /
+    ((meanX * meanX + meanY * meanY + c1) * (varianceX + varianceY + c2));
+  const chromaRmse = Math.sqrt(chromaError / (count * 2));
+  const alphaRmse = Math.sqrt(alphaError / count);
+  const chromaScore = 1 - Math.min(1, chromaRmse / 64);
+  const alphaScore = 1 - Math.min(1, alphaRmse / 32);
+  return Math.max(0, Math.min(1, ssim * 0.82 + chromaScore * 0.14 + alphaScore * 0.04));
+}
+
+// Compares only strong luminance edges. A high threshold intentionally ignores
+// paper grain, soft shading, and compression texture so a compact palette can
+// remove them without being mistaken for damaged text or silhouettes.
+export function edgeSimilarity(original, processed, width, height, sampleLimit = 200_000) {
+  if (original.length !== processed.length || original.length !== width * height * 4) return 0;
+  const totalPixels = width * height;
+  const stride = Math.max(1, Math.floor(totalPixels / sampleLimit));
+  const luma = (data, index) => data[index] * 0.2126 + data[index + 1] * 0.7152 + data[index + 2] * 0.0722;
+  let edges = 0, error = 0;
+  for (let pixel = 0; pixel < totalPixels; pixel += stride) {
+    const x = pixel % width;
+    const i = pixel * 4;
+    const source = luma(original, i);
+    const candidate = luma(processed, i);
+    if (x + 1 < width) {
+      const j = i + 4;
+      const sourceGradient = Math.abs(source - luma(original, j));
+      if (sourceGradient > 64) {
+        const candidateGradient = Math.abs(candidate - luma(processed, j));
+        error += Math.min(1, Math.abs(sourceGradient - candidateGradient) / Math.max(16, sourceGradient));
+        edges += 1;
+      }
+    }
+    if (pixel + width < totalPixels) {
+      const j = i + width * 4;
+      const sourceGradient = Math.abs(source - luma(original, j));
+      if (sourceGradient > 64) {
+        const candidateGradient = Math.abs(candidate - luma(processed, j));
+        error += Math.min(1, Math.abs(sourceGradient - candidateGradient) / Math.max(16, sourceGradient));
+        edges += 1;
+      }
+    }
+  }
+  return edges ? 1 - error / edges : 1;
+}
+
+// The guard protects modes where the visitor did not explicitly ask for the
+// smallest file. Recommended applies a stricter profile in the worker.
 export function usesColorGuard(requestedMode) {
-  return requestedMode === "auto" || requestedMode === "balanced";
+  return requestedMode === "auto" || requestedMode === "recommended" || requestedMode === "balanced";
 }
 
 const clamp = value => Math.max(0, Math.min(255, value));

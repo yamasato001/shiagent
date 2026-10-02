@@ -59,6 +59,10 @@ test("work tray exposes a clear control backed by IndexedDB cleanup", () => {
   assert.match(workflowHandoffJs, /id="workTrayClear"/);
   assert.match(workflowHandoffJs, /await clearTray\(\)/);
   assert.match(workTrayJs, /export async function clearTray\(\)/);
+  assert.match(workTrayJs, /SOURCE_HANDLE_ID/);
+  assert.match(workTrayJs, /preferredOutputStartIn\(\)/);
+  assert.match(workTrayJs, /export async function readTraySourceHandle\(\)/);
+  assert.match(workflowHandoffJs, /rememberSourceFileHandle\(sourceHandle\)/);
   assert.match(workflowHandoffJs, /assets\/css\/work-tray\.css/);
   assert.match(workTrayCss, /\.work-tray-heading > \.work-tray-heading-actions \{[^}]*flex-direction: row/);
   assert.match(workTrayCss, /\.work-tray \.work-tray-clear \{[^}]*width: auto[^}]*white-space: nowrap/);
@@ -93,7 +97,8 @@ test("work tray closes when the user clicks outside it", () => {
 
 test("supported browsers can save a completed batch directly into one folder", () => {
   assert.match(workflowHandoffJs, /supportsFolderDownload\(window\)/);
-  assert.match(workflowHandoffJs, /chooseOutputDirectory\(window\)/);
+  assert.match(workflowHandoffJs, /chooseOutputDirectory\(window, preferredOutputStartIn\(\) \|\| "downloads"\)/);
+  assert.match(workflowHandoffJs, /clearPreferredOutputStartIn\(\)/);
   assert.match(workflowHandoffJs, /writeFilesToDirectory\(directory, files/);
   assert.match(workflowHandoffJs, /folder-download-button/);
 });
@@ -207,8 +212,13 @@ test("manual white-fill editor auto-updates close, exclude and erase operations"
   assert.match(whiteFillEditorJs, /for \(const session of state\.sessions\) await requestPreview\(session\)/);
   assert.match(whiteFillEditorJs, /function markStale\(session\)[\s\S]*requestPreview\(session\)/);
   assert.match(whiteFillEditorHtml, /id="nextButton"/);
+  assert.match(whiteFillEditorHtml, /id="clearAllButton"[^>]*>すべてをクリア</);
+  assert.match(whiteFillEditorHtml, /id="clearAllButton"[\s\S]*id="downloadButton"/);
   assert.doesNotMatch(whiteFillEditorHtml, /saveNextButton|確定して次へ/);
   assert.match(whiteFillEditorJs, /async function moveNext\(\)[\s\S]*await ensureFinalResult\(session\)/);
+  assert.match(whiteFillEditorJs, /state\.completed = true/);
+  assert.match(whiteFillEditorJs, /state\.completed = false;[\s\S]*state\.index = 0/);
+  assert.match(whiteFillEditorJs, /function clearAll\(\)/);
 });
 
 test("manual white-fill editor offers ZIP or shared direct-folder saving", () => {

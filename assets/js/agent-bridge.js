@@ -1,5 +1,6 @@
 import { installOutputNaming } from "./output-name.js";
 import { installOutputSaving } from "./output-save.js";
+import { installDriveInput } from "./drive-input.js";
 
 const CATALOG_URL = "/ai/tools.json";
 const currentPath = location.pathname.replace(/^\/ja(?=\/)/, "");
@@ -17,6 +18,7 @@ const ready = fetch(CATALOG_URL, { credentials: "same-origin" })
     if (tool) {
       installOutputNaming();
       installOutputSaving();
+      installDriveInput(tool.automation?.input);
       notifyOutputOptionsIfReady(tool);
     }
     installStableHooks(tool);

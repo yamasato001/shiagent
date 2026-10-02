@@ -739,10 +739,10 @@
         "status": "#resultStatus",
         "controls": [
           {
-            "selector": "input[name=\"mode\"][value=\"auto\"]",
+            "selector": "input[name=\"mode\"][value=\"recommended\"]",
             "element": "input",
             "type": "radio",
-            "value": "auto",
+            "value": "recommended",
             "checked": true
           },
           {
@@ -2122,6 +2122,111 @@
       "paths": {
         "ja": "/ja/svg-cleaner/",
         "en": "/svg-cleaner/"
+      }
+    },
+    {
+      "id": "svg-style-editor",
+      "route": "svg-style-editor",
+      "status": "active",
+      "category": "vector",
+      "localProcessing": true,
+      "accepts": [
+        "image/svg+xml",
+        ".svg"
+      ],
+      "outputs": [
+        "image/svg+xml"
+      ],
+      "automation": {
+        "input": "#fileInput",
+        "action": "#applyAllButton",
+        "result": "#svgStage",
+        "download": "#downloadButton",
+        "status": "#fileStatus",
+        "controls": [
+          {
+            "selector": "#editedSuffixInput",
+            "element": "input",
+            "type": "checkbox",
+            "checked": true
+          },
+          {
+            "selector": "#matchedColor",
+            "element": "input",
+            "type": "color",
+            "value": "#000000"
+          },
+          {
+            "selector": "#fillColor",
+            "element": "input",
+            "type": "color",
+            "value": "#ffffff"
+          },
+          {
+            "selector": "#fillNone",
+            "element": "input",
+            "type": "checkbox",
+            "checked": false
+          },
+          {
+            "selector": "#strokeColor",
+            "element": "input",
+            "type": "color",
+            "value": "#000000"
+          },
+          {
+            "selector": "#strokeNone",
+            "element": "input",
+            "type": "checkbox",
+            "checked": false
+          },
+          {
+            "selector": "#strokeWidth",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "20",
+            "step": "0.25",
+            "value": "1"
+          },
+          {
+            "selector": "#strokeWidthNumber",
+            "element": "input",
+            "type": "number",
+            "min": "0",
+            "max": "100",
+            "step": "0.25",
+            "value": "1"
+          },
+          {
+            "selector": "#elementOpacity",
+            "element": "input",
+            "type": "range",
+            "min": "0",
+            "max": "1",
+            "step": "0.05",
+            "value": "1"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "SVGスタイルエディター",
+        "en": "SVG Style Editor"
+      },
+      "description": {
+        "ja": "SVGのパーツをクリックして、塗り色・線色・線の太さ・不透明度をブラウザ内で変更。Undo・Redo、一括適用、SVG保存に対応します。",
+        "en": "Click SVG parts to change fill, stroke color, stroke width and opacity locally in your browser. Supports multiple SVGs, undo, redo, bulk styling and SVG export."
+      },
+      "paths": {
+        "ja": "/ja/svg-style-editor/",
+        "en": "/svg-style-editor/"
       }
     },
     {

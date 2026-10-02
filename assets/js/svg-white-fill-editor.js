@@ -1,11 +1,12 @@
 import { formatBytes } from "./png-core.js";
-import { FILL_PRESETS, WHITE_FILL_ID, closedRegionMask, countMaskRegions, excludeMaskRegions, hasWhiteFillPixels, insertWhiteFill, maskToPath, newlyClosedRegionMask, viewBoxOfSvg } from "./svg-white-fill-core.js";
+import { FILL_PRESETS, WHITE_FILL_ID, closedRegionMask, countMaskRegions, excludeMaskRegions, hasWhiteFillPixels, insertWhiteFill, maskToPath, newlyClosedRegionMask, normalizeSvgRasterViewport, viewBoxOfSvg } from "./svg-white-fill-core.js";
 import { cleanSvg } from "./svg-cleaner-core.js";
 import { createZipBlob } from "./browser-runtime.js";
 import { pick } from "./i18n.js";
 import common from "./i18n/common.js";
 import vectorText from "./i18n/vector-tools.js";
 import { applyConfiguredOutputSuffix } from "./output-name.js";
+import { rememberSourceFileHandle } from "./folder-download.js";
 
 const shared = pick(common), copy = pick(vectorText).editor;
 const lineArtWorkflow = new URLSearchParams(location.search).get("workflow") === "line-art-to-svg";
@@ -13,21 +14,21 @@ const PREVIEW_LONG_SIDE = 768;
 
 const $ = selector => document.querySelector(selector);
 const elements = {
-  input: $("#fileInput"), select: $("#selectButton"), status: $("#fileStatus"), previous: $("#previousButton"),
+  input: $("#fileInput"), select: $("#selectButton"), status: $("#fileStatus"), previous: $("#previousButton"), clearAll: $("#clearAllButton"),
   next: $("#nextButton"), zoomOut: $("#zoomOutButton"), resetZoom: $("#resetZoomButton"),
   zoomIn: $("#zoomInButton"), preset: $("#presetInput"), undo: $("#undoButton"), clear: $("#clearEditsButton"),
   download: $("#downloadButton"), downloadAll: $("#downloadAllButton"), editedSuffix: $("#editedSuffixInput"),
   originalSize: $("#originalSize"), outputSize: $("#outputSize"), regions: $("#regionCount"),
   lines: $("#lineCount"), excludes: $("#excludeCount"), workspace: $("#editorDropZone"), canvas: $("#editorCanvas"),
-  empty: $("#emptyMessage"), toast: $("#toast"), closeMethods: $("#closeMethodOptions"),
+  empty: $("#emptyMessage"), emptyTitle: $("#emptyMessage strong"), emptyHint: $("#emptyMessage span"), toast: $("#toast"), closeMethods: $("#closeMethodOptions"),
   closeMethodButtons: [...document.querySelectorAll("[data-close-method]")]
 };
 const context = elements.canvas.getContext("2d");
-const state = { sessions: [], index: 0, display: null, zoom: 1, panX: 0, panY: 0, panning: null, dragLine: null, closeMethod: "segment" };
+const state = { sessions: [], index: 0, completed: false, display: null, zoom: 1, panX: 0, panY: 0, panning: null, dragLine: null, closeMethod: "segment" };
 const touchPointers = new Map();
 let touchGesture = null, touchMoved = false, suppressClickUntil = 0;
 const isSvg = file => file.type === "image/svg+xml" || /\.svg$/i.test(file.name);
-const current = () => state.sessions[state.index];
+const current = () => state.completed ? null : state.sessions[state.index];
 
 function showToast(message) {
   elements.toast.textContent = message;
@@ -56,19 +57,26 @@ function managedFillSvg(documentNode) {
   return new XMLSerializer().serializeToString(root);
 }
 
+function rasterSvg(source, viewBox) {
+  const documentNode = new DOMParser().parseFromString(source, "image/svg+xml");
+  normalizeSvgRasterViewport(documentNode.documentElement, viewBox);
+  return new XMLSerializer().serializeToString(documentNode.documentElement);
+}
+
 async function createSession(file, sourceHandle = null) {
   const original = await file.text();
   const parsed = new DOMParser().parseFromString(original, "image/svg+xml");
   if (parsed.querySelector("parsererror")) throw new Error(copy.parseFailed(file.name));
+  const viewBox = viewBoxOfSvg(parsed.documentElement);
   const managedSvg = managedFillSvg(parsed);
   const clean = insertWhiteFill(original, "");
   const [originalImage, lineImage, managedFillImage] = await Promise.all([
-    loadImage(file),
-    loadImage(new Blob([clean], { type: "image/svg+xml" })),
-    managedSvg ? loadImage(new Blob([managedSvg], { type: "image/svg+xml" })) : null
+    loadImage(new Blob([rasterSvg(original, viewBox)], { type: "image/svg+xml" })),
+    loadImage(new Blob([rasterSvg(clean, viewBox)], { type: "image/svg+xml" })),
+    managedSvg ? loadImage(new Blob([rasterSvg(managedSvg, viewBox)], { type: "image/svg+xml" })) : null
   ]);
   return {
-    file, sourceHandle, original, originalImage, lineImage, managedFillImage, viewBox: viewBoxOfSvg(parsed.documentElement),
+    file, sourceHandle, original, originalImage, lineImage, managedFillImage, viewBox,
     lines: [], excludedPoints: [], pending: null, history: [], stale: true,
     revision: 0, previewPromise: null, result: null, finalResult: null, finalRevision: -1,
     maskCanvas: null, analysisCache: new Map(), autoFillClosedRegions: null
@@ -89,6 +97,7 @@ async function addFiles(fileEntries) {
     state.sessions = [];
     for (const entry of entries) state.sessions.push(await createSession(entry.file, entry.sourceHandle));
     state.index = 0;
+    state.completed = false;
     resetViewport();
     elements.input.value = "";
     render();
@@ -108,6 +117,7 @@ async function selectFiles() {
       multiple: true,
       types: [{ description: "SVG", accept: { "image/svg+xml": [".svg"] } }]
     });
+    rememberSourceFileHandle(handles[0]);
     const entries = await Promise.all(handles.map(async sourceHandle => ({ file: await sourceHandle.getFile(), sourceHandle })));
     await addFiles(entries);
   } catch (error) {
@@ -138,14 +148,17 @@ function updateStats() {
   elements.excludes.textContent = copy.excludes(session?.excludedPoints.length || 0);
   elements.download.disabled = !session?.result || session.stale;
   elements.downloadAll.disabled = !state.sessions.length || state.sessions.some(item => !item.result || item.stale);
+  elements.clearAll.disabled = !state.sessions.length;
 }
 
 function render() {
   const session = current();
   elements.empty.hidden = !!session;
-  elements.status.textContent = session ? copy.status(state.index + 1, state.sessions.length, session.file.name, session.stale) : copy.choose;
-  elements.previous.disabled = !session || state.index === 0;
-  elements.next.disabled = !session;
+  elements.emptyTitle.textContent = state.completed ? copy.complete : copy.choose;
+  elements.emptyHint.textContent = state.completed ? copy.completeHint : "";
+  elements.status.textContent = state.completed ? copy.complete : session ? copy.status(state.index + 1, state.sessions.length, session.file.name, session.stale) : copy.choose;
+  elements.previous.disabled = !state.sessions.length || (!state.completed && state.index === 0);
+  elements.next.disabled = !state.sessions.length;
   updateStats();
   draw();
 }
@@ -583,6 +596,14 @@ async function downloadAll() {
 }
 
 async function moveNext() {
+  if (state.completed) {
+    state.completed = false;
+    state.index = 0;
+    resetViewport();
+    render();
+    requestPreview(current());
+    return;
+  }
   const session = current();
   if (!session || !await ensureFinalResult(session)) return;
   if (state.index < state.sessions.length - 1) {
@@ -590,16 +611,41 @@ async function moveNext() {
     resetViewport();
     render();
     requestPreview(current());
-  } else showToast(copy.allDone);
+  } else {
+    state.completed = true;
+    resetViewport();
+    render();
+    showToast(copy.allDone);
+  }
 }
 
 function move(offset) {
+  if (state.completed && offset < 0 && state.sessions.length) {
+    state.completed = false;
+    state.index = state.sessions.length - 1;
+    resetViewport();
+    render();
+    requestPreview(current());
+    return;
+  }
   const next = state.index + offset;
   if (next < 0 || next >= state.sessions.length) return;
   state.index = next;
   resetViewport();
   render();
   requestPreview(current());
+}
+
+function clearAll() {
+  state.sessions = [];
+  state.index = 0;
+  state.completed = false;
+  state.display = null;
+  state.dragLine = null;
+  state.panning = null;
+  elements.input.value = "";
+  resetViewport();
+  render();
 }
 
 function changeZoom(multiplier) {
@@ -663,6 +709,7 @@ elements.undo.addEventListener("click", undo);
 elements.clear.addEventListener("click", clearEdits);
 elements.download.addEventListener("click", download);
 elements.downloadAll.addEventListener("click", downloadAll);
+elements.clearAll.addEventListener("click", clearAll);
 elements.editedSuffix.addEventListener("change", publishResults);
 function resetPendingLine() {
   const session = current();

@@ -1,4 +1,4 @@
-import { analyzePixels, detectRasterFormat, formatBytes, jpegQuality, outputName, pngOptimizationLevel, savedPercent, usesColorGuard } from "./png-core.js";
+import { analyzePixels, detectRasterFormat, edgeSimilarity, formatBytes, jpegQuality, outputName, perceptualSimilarity, pngOptimizationLevel, savedPercent, usesColorGuard } from "./png-core.js";
 import { createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import "./queue-drop.js";
 
@@ -7,7 +7,7 @@ const locale = lang === "ja" ? "ja-JP" : "en-US";
 const MAX_PALETTE_PIXELS = 2_000_000;
 const copy = lang === "ja" ? {
   files: n => `${n} ファイル`,
-  ready: "待機中",
+  ready: "Ready",
   processing: "処理中…",
   done: "完了",
   kept: "元画像が最小",
@@ -21,15 +21,15 @@ const copy = lang === "ja" ? {
   downloading: "ZIPを作成しています…",
   downloaded: "ダウンロードを開始しました",
   cancelled: "処理を中止しました",
-  detection: counts => `Auto判定: 線画 ${counts.lineart} / イラスト ${counts.illustration} / 写真 ${counts.photo}`,
+  start: "圧縮を開始",
+  retry: "やり直す",
   before: "圧縮前",
   after: "圧縮後",
   comparisonTabs: "比較する画像",
   badges: {
     unchanged: "画素変更なし", lossless: "ロスレス", lines: "細線保護", alpha: "透明度維持",
     transparency: "透明度対応", palette256: "最大256色", palette64: "最大64色",
-    bounded: "省メモリ処理", original: "元画像を採用", jpeg: "JPEG再圧縮", webp: "WebP再圧縮", colorKept: "色を保つためロスレス", colorPalette: "色を保てる色数に調整", paletteN: n => `最大${n}色`,
-    auto: { lineart: "Auto: 線画", illustration: "Auto: イラスト", photo: "Auto: 写真" }
+    bounded: "省メモリ処理", original: "元画像を採用", jpeg: "JPEG再圧縮", webp: "WebP再圧縮", colorKept: "色を保つためロスレス", colorPalette: "色を保てる色数に調整", paletteN: n => `最大${n}色`
   },
   download: "保存",
   remove: "削除"
@@ -49,15 +49,15 @@ const copy = lang === "ja" ? {
   downloading: "Creating ZIP…",
   downloaded: "Download started",
   cancelled: "Compression cancelled",
-  detection: counts => `Auto detected: ${counts.lineart} Line Art / ${counts.illustration} Illustration / ${counts.photo} Photo`,
+  start: "Start compression",
+  retry: "Try again",
   before: "Before",
   after: "After",
   comparisonTabs: "Images to compare",
   badges: {
     unchanged: "Pixels unchanged", lossless: "Lossless", lines: "Fine lines protected", alpha: "Alpha preserved",
     transparency: "Transparency supported", palette256: "Up to 256 colors", palette64: "Up to 64 colors",
-    bounded: "Memory-safe path", original: "Original retained", jpeg: "JPEG recompressed", webp: "WebP recompressed", colorKept: "Lossless to keep colors", colorPalette: "Color-safe palette", paletteN: n => `Up to ${n} colors`,
-    auto: { lineart: "Auto: Line Art", illustration: "Auto: Illustration", photo: "Auto: Photo" }
+    bounded: "Memory-safe path", original: "Original retained", jpeg: "JPEG recompressed", webp: "WebP recompressed", colorKept: "Lossless to keep colors", colorPalette: "Color-safe palette", paletteN: n => `Up to ${n} colors`
   },
   download: "Download",
   remove: "Remove"
@@ -67,10 +67,10 @@ const $ = selector => document.querySelector(selector);
 const elements = {
   input: $("#fileInput"), drop: $("#dropZone"), select: $("#selectButton"), add: $("#addButton"),
   clear: $("#clearButton"), removeAll: $("#removeAllButton"), queue: $("#queuePanel"), list: $("#fileList"),
-  count: $("#fileCount"), detect: $("#detectionSummary"), compress: $("#compressButton"), cancel: $("#cancelButton"),
+  count: $("#fileCount"), compress: $("#compressButton"), cancel: $("#cancelButton"),
   results: $("#resultsPanel"), resultStatus: $("#resultStatus"), before: $("#beforeTotal"), after: $("#afterTotal"),
   saved: $("#savedTotal"), savedRate: $("#savedRate"), downloadAll: $("#downloadAllButton"), toast: $("#toast"),
-  modeGrid: $("#modeGrid"), effort: $("#effort"), comparisonTabs: $("#comparisonTabs"),
+  modeGrid: $("#modeGrid"), modeInputs: [...document.querySelectorAll('input[name="mode"]')], effort: $("#effort"), comparisonTabs: $("#comparisonTabs"),
   comparisonView: $("#comparisonView"), comparisonFileName: $("#comparisonFileName")
 };
 
@@ -116,8 +116,10 @@ function optimisePng(blob, level) {
   })).then(({ result }) => new Blob([result], { type: "image/png" }));
 }
 
-function quantizePng(imageData, width, height, mode, level, colorGuard = false) {
-  const buffer = imageData.data.buffer;
+function quantizePng(imageData, width, height, mode, level, colorGuard = false, requestedColors = null) {
+  // Recommended evaluates more than one palette, so never detach the decoded
+  // source buffer when handing pixels to the worker.
+  const buffer = new Uint8ClampedArray(imageData.data).buffer;
   return new Promise((resolve, reject) => {
     const id = ++optimizerRequestId;
     optimizerRequests.set(id, { resolve, reject });
@@ -130,7 +132,8 @@ function quantizePng(imageData, width, height, mode, level, colorGuard = false) 
       mode,
       level,
       optimiseAlpha: false,
-      colorGuard
+      colorGuard,
+      requestedColors
     }, [buffer]);
   }).then(({ result, colorGuarded, paletteColors }) => ({ blob: new Blob([result], { type: "image/png" }), colorGuarded, paletteColors }));
 }
@@ -161,7 +164,14 @@ function showToast(message) {
 }
 
 function selectedMode() {
-  return document.querySelector('input[name="mode"]:checked')?.value || "auto";
+  return document.querySelector('input[name="mode"]:checked')?.value || "recommended";
+}
+
+function modeLabel(mode) {
+  if (mode === "recommended") return lang === "ja" ? "おすすめ" : "Recommended";
+  if (mode === "smallest") return "Smallest";
+  if (mode === "lineart") return "Line Art";
+  return mode[0].toUpperCase() + mode.slice(1);
 }
 
 function makeOutputName(entry, suffix = "") { return outputName(entry.file.name, entry.format, suffix); }
@@ -183,7 +193,7 @@ function resetResults() {
     entry.error = null;
     entry.kind = null;
     entry.usedMode = null;
-    entry.autoSelected = false;
+    entry.processingMode = null;
     entry.processingStrategy = null;
     entry.keptOriginal = false;
     entry.colorGuarded = false;
@@ -195,6 +205,7 @@ async function addFiles(fileList) {
   if (running) return;
   let rejected = false;
   let duplicate = false;
+  let added = false;
   for (const file of fileList) {
     const format = detectRasterFormat(await file.slice(0, 12).arrayBuffer());
     if (!format) { rejected = true; continue; }
@@ -203,14 +214,15 @@ async function addFiles(fileList) {
     entries.push({
       id: crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`,
       key, file, format, previewUrl: URL.createObjectURL(file), resultUrl: null, resultBlob: null,
-      status: "ready", after: null, error: null, kind: null, usedMode: null,
-      autoSelected: false, processingStrategy: null, keptOriginal: false, colorGuarded: false, paletteColors: null
+      status: "ready", after: null, error: null, kind: null, usedMode: null, processingMode: null,
+      processingStrategy: null, keptOriginal: false, colorGuarded: false, paletteColors: null
     });
+    added = true;
   }
   if (rejected) showToast(copy.unsupported);
   else if (duplicate) showToast(copy.duplicate);
   elements.input.value = "";
-  resetResults();
+  if (added) resetResults();
   render();
 }
 
@@ -241,13 +253,13 @@ function resultMarkup(entry) {
 function resultBadges(entry) {
   if (entry.status !== "done") return "";
   const badges = [];
-  if (entry.autoSelected && entry.kind) badges.push(copy.badges.auto[entry.kind]);
+  const processingMode = entry.processingMode || entry.usedMode;
   if (entry.keptOriginal) {
     badges.push(copy.badges.original, copy.badges.unchanged);
     if (entry.format === "png" || entry.format === "webp") badges.push(copy.badges.alpha);
   } else if (entry.format === "jpeg" || entry.format === "webp") {
     badges.push(copy.badges[entry.format]);
-  } else if (entry.usedMode === "exact") {
+  } else if (processingMode === "exact") {
     badges.push(copy.badges.unchanged, copy.badges.lossless, copy.badges.alpha);
   } else if (entry.colorGuarded === "lossless") {
     // Too many colors for a palette (photo, gradient): kept losslessly.
@@ -255,12 +267,12 @@ function resultBadges(entry) {
   } else if (entry.colorGuarded === "palette") {
     // The preset palette shifted colors; a color-safe palette kept them.
     badges.push(copy.badges.colorPalette, copy.badges.paletteN(entry.paletteColors || 256), copy.badges.transparency);
-  } else if (entry.usedMode === "lineart") {
+  } else if (processingMode === "lineart") {
     badges.push(copy.badges.lines, copy.badges.alpha);
   } else {
     if (entry.processingStrategy === "bounded") badges.push(copy.badges.bounded);
     else if (entry.paletteColors) badges.push(copy.badges.paletteN(entry.paletteColors));
-    else badges.push(entry.usedMode === "smallest" ? copy.badges.palette64 : copy.badges.palette256);
+    else badges.push(processingMode === "smallest" ? copy.badges.palette64 : copy.badges.palette256);
     badges.push(copy.badges.transparency);
   }
   return `<div class="result-badges">${[...new Set(badges)].map(badge => `<span>${escapeHtml(badge)}</span>`).join("")}</div>`;
@@ -277,18 +289,20 @@ function render() {
   elements.queue.hidden = entries.length === 0;
   elements.count.textContent = copy.files(entries.length);
   elements.compress.disabled = entries.length === 0 || running;
+  elements.compress.innerHTML = `${entries.some(entry => entry.status === "done") ? copy.retry : copy.start} <span>→</span>`;
   elements.select.disabled = running;
   elements.add.disabled = running;
   elements.clear.disabled = running;
   elements.removeAll.disabled = running;
-  elements.modeGrid.disabled = running;
+  for (const input of elements.modeInputs) input.disabled = running;
+  elements.effort.disabled = running;
   elements.cancel.hidden = !running;
   elements.compress.hidden = running;
 
   elements.list.innerHTML = entries.map(entry => {
     const statusClass = entry.status === "done" ? "done" : entry.status === "error" ? "error" : entry.status === "processing" ? "processing" : "";
     const statusText = entry.status === "processing" ? copy.processing : entry.status === "done" ? (entry.keptOriginal ? copy.kept : copy.done) : entry.status === "error" ? copy.failed : copy.ready;
-    const modeText = entry.usedMode ? ` · ${entry.usedMode === "lineart" ? "Line Art" : entry.usedMode[0].toUpperCase() + entry.usedMode.slice(1)}` : "";
+    const modeText = entry.usedMode ? ` · ${modeLabel(entry.usedMode)}` : "";
     return `<article class="file-row ${entry.status === "done" ? "has-result" : ""}" data-id="${entry.id}">
       ${comparisonMarkup(entry)}
       <div class="file-main"><span class="file-name" title="${escapeHtml(entry.file.name)}">${escapeHtml(entry.file.name)}</span><span class="file-meta">${entry.format.toUpperCase()} · ${formatBytes(entry.file.size, locale)}${modeText}</span>${resultBadges(entry)}${entry.status === "processing" ? '<div class="progress-track"><span class="progress-bar" style="width:55%"></span></div>' : ""}</div>
@@ -318,13 +332,122 @@ async function encodeRaster(canvas, format, quality) {
   return blob;
 }
 
+async function encodeRecommendedRaster(decoded, format, kind, effort) {
+  // Try genuinely compact encodes as well. They are accepted only when both
+  // perceptual similarity and strong-edge preservation remain above the
+  // content-aware guard, so the wider search does not automatically mean a
+  // lower-quality result.
+  const qualities = [0.5, 0.56, 0.62, 0.68, 0.72, 0.76, 0.8, 0.84, 0.88, 0.92, 0.95, 0.97];
+  const baseThreshold = kind === "lineart" ? 0.995 : kind === "illustration" ? 0.991 : 0.985;
+  const threshold = Math.min(0.997, baseThreshold + (effort === "careful" ? 0.003 : 0));
+  const baseEdgeThreshold = kind === "lineart" ? 0.96 : kind === "illustration" ? 0.93 : 0.9;
+  const edgeThreshold = Math.min(0.98, baseEdgeThreshold + (effort === "careful" ? 0.02 : 0));
+  let low = 0, high = qualities.length - 1, best = null;
+  while (low <= high) {
+    const middle = Math.floor((low + high) / 2);
+    const quality = qualities[middle];
+    const blob = await encodeRaster(decoded.canvas, format, quality);
+    const comparisonCanvas = await decodeBrowserImage(blob, { willReadFrequently: true });
+    const comparisonData = comparisonCanvas.getContext("2d", { willReadFrequently: true })
+      .getImageData(0, 0, comparisonCanvas.width, comparisonCanvas.height);
+    const similarity = perceptualSimilarity(
+      decoded.imageData.data,
+      comparisonData.data,
+      decoded.canvas.width,
+      decoded.canvas.height
+    );
+    const edges = edgeSimilarity(
+      decoded.imageData.data,
+      comparisonData.data,
+      decoded.canvas.width,
+      decoded.canvas.height
+    );
+    if (similarity >= threshold && edges >= edgeThreshold) {
+      best = { blob, quality, similarity, edges };
+      high = middle - 1;
+    } else {
+      low = middle + 1;
+    }
+  }
+  if (best) return best.blob;
+  return encodeRaster(decoded.canvas, format, jpegQuality("recommended", effort, kind));
+}
+
+async function encodeRecommendedPng(decoded, sourceFile, analysis, level, effort) {
+  const graphicTexture = analysis.metrics.colorBuckets <= 64;
+  const denseColorPng = !graphicTexture && (analysis.kind === "photo" || analysis.kind === "illustration");
+  // Photos and dense illustrations start at the highest-quality palette and
+  // only step down when the 80% target cannot be reached. Flat graphics keep
+  // starting from the smallest viable palette because broad areas survive it.
+  const paletteCandidates = denseColorPng
+    ? [256, 128, 64, 32, 16, 12]
+    : [12, 16, 32, 64, 128, 256];
+  const baseThreshold = graphicTexture ? 0.9985
+    : analysis.kind === "lineart" ? 0.999
+      : analysis.kind === "photo" ? 0.985
+        : denseColorPng ? 0.975 : 0.997;
+  const carefulBoost = denseColorPng ? 0.003 : 0.0005;
+  const similarityThreshold = Math.min(0.9995, baseThreshold + (effort === "careful" ? carefulBoost : 0));
+  // Palette compression is expected to flatten weak texture. Strong-edge
+  // similarity guards the subject outline without blocking that useful loss.
+  const edgeThreshold = denseColorPng
+    ? (effort === "careful" ? 0.93 : 0.9)
+    : (effort === "careful" ? 0.82 : 0.72);
+
+  let safeFallback = null;
+  for (const colors of paletteCandidates) {
+    const candidate = await quantizePng(
+      decoded.imageData,
+      decoded.canvas.width,
+      decoded.canvas.height,
+      "balanced",
+      level,
+      false,
+      colors
+    );
+    const comparisonCanvas = await decodeBrowserImage(candidate.blob, { willReadFrequently: true });
+    const comparisonData = comparisonCanvas.getContext("2d", { willReadFrequently: true })
+      .getImageData(0, 0, comparisonCanvas.width, comparisonCanvas.height);
+    const similarity = perceptualSimilarity(
+      decoded.imageData.data,
+      comparisonData.data,
+      decoded.canvas.width,
+      decoded.canvas.height
+    );
+    const edges = edgeSimilarity(
+      decoded.imageData.data,
+      comparisonData.data,
+      decoded.canvas.width,
+      decoded.canvas.height
+    );
+    const savings = savedPercent(sourceFile.size, candidate.blob.size);
+    const qualitySafe = similarity >= similarityThreshold && edges >= edgeThreshold;
+    if (qualitySafe) {
+      const result = { ...candidate, paletteColors: candidate.paletteColors || colors, similarity, edgeSimilarity: edges };
+      if (!denseColorPng || savings >= 80) return result;
+      safeFallback = result;
+    }
+  }
+
+  // If 80% is not safely reachable, prefer the smallest candidate that still
+  // passed the visual guards instead of discarding all useful compression.
+  if (safeFallback) return safeFallback;
+
+  return {
+    blob: await optimisePng(sourceFile, level),
+    colorGuarded: "lossless",
+    paletteColors: null,
+    similarity: 1,
+    edgeSimilarity: 1
+  };
+}
+
 async function compressEntry(entry, requestedMode) {
   entry.status = "processing";
   render();
   await new Promise(resolve => requestAnimationFrame(resolve));
   let mode = requestedMode;
   let blob = entry.file;
-  entry.autoSelected = requestedMode === "auto";
   const effortLevel = pngOptimizationLevel(elements.effort.value);
 
   if (entry.format === "jpeg" || entry.format === "webp") {
@@ -335,9 +458,12 @@ async function compressEntry(entry, requestedMode) {
       const decoded = await decodeFile(entry.file);
       const analysis = analyzePixels(decoded.imageData.data, decoded.canvas.width, decoded.canvas.height);
       entry.kind = analysis.kind;
-      mode = requestedMode === "auto" ? "auto" : requestedMode;
-      blob = await encodeRaster(decoded.canvas, entry.format, jpegQuality(mode, elements.effort.value, analysis.kind));
-      entry.usedMode = mode;
+      mode = requestedMode;
+      blob = requestedMode === "recommended"
+        ? await encodeRecommendedRaster(decoded, entry.format, analysis.kind, elements.effort.value)
+        : await encodeRaster(decoded.canvas, entry.format, jpegQuality(mode, elements.effort.value, analysis.kind));
+      entry.usedMode = requestedMode;
+      entry.processingMode = mode;
       entry.processingStrategy = "jpeg";
       if (blob.size >= entry.file.size) {
         blob = entry.file;
@@ -358,9 +484,21 @@ async function compressEntry(entry, requestedMode) {
     const decoded = await decodeFile(entry.file);
     const analysis = analyzePixels(decoded.imageData.data, decoded.canvas.width, decoded.canvas.height);
     entry.kind = analysis.kind;
-    mode = requestedMode === "auto" ? analysis.preset : requestedMode;
-    if (elements.effort.value === "careful" && mode === "smallest") mode = "balanced";
-    if (mode === "balanced" || mode === "smallest" || mode === "illustration") {
+    mode = requestedMode === "recommended" ? analysis.preset : requestedMode;
+    if (requestedMode === "recommended") {
+      entry.processingStrategy = "adaptive-palette";
+      ({ blob, colorGuarded: entry.colorGuarded, paletteColors: entry.paletteColors } = await encodeRecommendedPng(
+        decoded,
+        entry.file,
+        analysis,
+        effortLevel,
+        elements.effort.value
+      ));
+    } else if (elements.effort.value === "careful" && mode === "smallest") {
+      mode = "balanced";
+      entry.processingStrategy = decoded.canvas.width * decoded.canvas.height > MAX_PALETTE_PIXELS ? "bounded" : "palette";
+      ({ blob, colorGuarded: entry.colorGuarded, paletteColors: entry.paletteColors } = await quantizePng(decoded.imageData, decoded.canvas.width, decoded.canvas.height, mode, effortLevel, usesColorGuard(requestedMode)));
+    } else if (mode === "balanced" || mode === "smallest" || mode === "illustration") {
       entry.processingStrategy = decoded.canvas.width * decoded.canvas.height > MAX_PALETTE_PIXELS ? "bounded" : "palette";
       ({ blob, colorGuarded: entry.colorGuarded, paletteColors: entry.paletteColors } = await quantizePng(decoded.imageData, decoded.canvas.width, decoded.canvas.height, mode, effortLevel, usesColorGuard(requestedMode)));
     } else {
@@ -370,12 +508,13 @@ async function compressEntry(entry, requestedMode) {
         decoded.canvas.width,
         decoded.canvas.height,
         effortLevel,
-        entry.autoSelected,
+        requestedMode === "recommended",
         usesColorGuard(requestedMode)
       ));
     }
   }
-  entry.usedMode = mode;
+  entry.usedMode = requestedMode;
+  entry.processingMode = mode;
   if (mode === "exact") blob = await optimisePng(blob, effortLevel);
   if (blob.size >= entry.file.size) {
     blob = entry.file;
@@ -404,7 +543,6 @@ async function runCompression() {
       else { entry.status = "error"; entry.error = error instanceof Error ? error.message : String(error); }
     }
     render();
-    updateDetection();
   }
 
   running = false;
@@ -417,15 +555,6 @@ async function runCompression() {
     updateSummary(completed);
     elements.results.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
-}
-
-function updateDetection() {
-  if (selectedMode() !== "auto") { elements.detect.hidden = true; return; }
-  const counts = { lineart: 0, illustration: 0, photo: 0 };
-  for (const entry of entries) if (entry.kind) counts[entry.kind] += 1;
-  const detected = counts.lineart + counts.illustration + counts.photo;
-  elements.detect.hidden = detected === 0;
-  elements.detect.textContent = copy.detection(counts);
 }
 
 function updateSummary(completed) {
@@ -533,7 +662,6 @@ elements.comparisonTabs.addEventListener("keydown", event => {
   tabs[index].click();
   elements.comparisonTabs.querySelector(`[data-comparison-id="${comparisonEntryId}"]`)?.focus();
 });
-elements.modeGrid.addEventListener("change", () => { resetResults(); updateDetection(); render(); });
 elements.list.addEventListener("click", event => {
   const remove = event.target.closest("[data-remove]");
   if (remove) removeEntry(remove.dataset.remove);

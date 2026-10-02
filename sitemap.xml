@@ -331,6 +331,12 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-cleaner/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/svg-style-editor/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-style-editor/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-style-editor/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-style-editor/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/svg-to-image/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-to-image/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-to-image/" />
@@ -485,6 +491,12 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-cleaner/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/svg-style-editor/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-style-editor/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-style-editor/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-style-editor/" />
   </url>
   <url>
     <loc>https://shiagent.com/svg-to-image/</loc>

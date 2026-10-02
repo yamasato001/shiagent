@@ -80,27 +80,28 @@ try {
   await waitFor(() => document.querySelectorAll(".file-row .file-status.done").length === 3);
 
   const modes = [...document.querySelectorAll(".file-meta")].map(node => node.textContent.split("·").pop().trim());
-  const detection = document.querySelector("#detectionSummary").textContent;
   const resultStatus = document.querySelector("#resultStatus").textContent;
   const badges = [...document.querySelectorAll(".result-badges span")].map(node => node.textContent);
   const comparisons = document.querySelectorAll(".file-row.has-result .file-compare img").length;
   const largeComparisons = document.querySelectorAll(".compression-comparison-grid img").length;
   const comparisonPanes = document.querySelectorAll(".compression-comparison-grid figure > div").length;
   const comparisonTabs = document.querySelectorAll("#comparisonTabs [role=tab]").length;
-  const autoPass = modes.includes("Line Art") && modes.includes("Illustration") && modes.includes("Balanced") &&
-    detection.includes("線画 1") && detection.includes("イラスト 1") && detection.includes("写真 1") &&
-    resultStatus.includes("3 / 3") && badges.includes("細線保護") &&
-    badges.includes("最大256色") && badges.includes("透明度維持") && comparisons === 6 &&
-    largeComparisons === 2 && comparisonPanes === 2 && comparisonTabs === 3;
+  const recommendedPass = modes.every(mode => mode === "おすすめ") &&
+    resultStatus.includes("3 / 3") && document.querySelector("#compressButton").textContent.includes("やり直す") &&
+    badges.includes("透明度対応") && comparisons === 6 && largeComparisons === 2 &&
+    comparisonPanes === 2 && comparisonTabs === 3;
 
   document.querySelector('input[name="mode"][value="exact"]').click();
+  const optionKeepsResults = document.querySelectorAll(".file-row .file-status.done").length === 3 &&
+    !document.querySelector("#resultsPanel").hidden &&
+    document.querySelector("#compressButton").textContent.includes("やり直す");
   document.querySelector("#compressButton").click();
   await waitFor(() => document.querySelectorAll(".file-row .file-status.done").length === 3);
   const exactBadges = [...document.querySelectorAll(".result-badges span")].map(node => node.textContent);
   const exactPass = exactBadges.includes("画素変更なし") && exactBadges.includes("ロスレス") &&
     exactBadges.includes("透明度維持") && document.querySelectorAll(".file-row.has-result .file-compare img").length === 6;
   result.textContent = JSON.stringify({
-    status: autoPass && exactPass ? "PASS" : "FAIL",
+    status: recommendedPass && optionKeepsResults && exactPass ? "PASS" : "FAIL",
     modes,
     badges,
     exactBadges: [...new Set(exactBadges)],
@@ -108,7 +109,7 @@ try {
     largeComparisons,
     comparisonPanes,
     comparisonTabs,
-    detection,
+    optionKeepsResults,
     resultStatus
   });
 } catch (error) {

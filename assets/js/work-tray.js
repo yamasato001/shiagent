@@ -1,8 +1,10 @@
 import { applyConfiguredOutputSuffix } from "./output-name.js";
+import { preferredOutputStartIn } from "./folder-download.js";
 
 const DATABASE_NAME = "shiagent-work-tray";
 const STORE_NAME = "files";
 const DATABASE_VERSION = 1;
+const SOURCE_HANDLE_ID = "__source-handle__";
 
 function openDatabase() {
   return new Promise((resolve, reject) => {
@@ -28,6 +30,14 @@ export async function replaceTray(files, source = "tool", options = {}) {
   const transaction = database.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
   store.clear();
+  const sourceHandle = options.sourceHandle === undefined ? preferredOutputStartIn() : options.sourceHandle;
+  if (sourceHandle?.kind === "file") {
+    try {
+      store.put({ id: SOURCE_HANDLE_ID, metadata: true, sourceHandle, source, createdAt: Date.now() });
+    } catch (error) {
+      console.debug("The source folder handle could not be stored in the work tray.", error);
+    }
+  }
   files.forEach((file, index) => store.put({
     id: `${Date.now()}-${index}`,
     name: options.applySuffix ? applyConfiguredOutputSuffix(file.name) : file.name,
@@ -50,10 +60,18 @@ export async function readTray() {
   const transaction = database.transaction(STORE_NAME, "readonly");
   const records = await requestResult(transaction.objectStore(STORE_NAME).getAll());
   database.close();
-  return records.sort((a, b) => a.order - b.order).map(record => new File([record.blob], record.name, {
+  return records.filter(record => !record.metadata).sort((a, b) => a.order - b.order).map(record => new File([record.blob], record.name, {
     type: record.type,
     lastModified: record.createdAt
   }));
+}
+
+export async function readTraySourceHandle() {
+  const database = await openDatabase();
+  const transaction = database.transaction(STORE_NAME, "readonly");
+  const record = await requestResult(transaction.objectStore(STORE_NAME).get(SOURCE_HANDLE_ID));
+  database.close();
+  return record?.sourceHandle?.kind === "file" ? record.sourceHandle : null;
 }
 
 export async function clearTray() {

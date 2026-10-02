@@ -26,18 +26,24 @@ RedirectMatch 404 ^/(\.git|\.github|\.vscode|\.pnpm-store|node_modules|src|scrip
 RedirectMatch 404 ^/(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|shiagent\.code-workspace|_headers|\.gitignore|\.htaccess|README\.md|LAUNCH\.md)$
 
 <IfModule mod_headers.c>
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self' data:; connect-src 'self' blob: https://formsubmit.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; upgrade-insecure-requests"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://www.googletagmanager.com https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; img-src 'self' blob: data: https://*.google-analytics.com https://*.googletagmanager.com https://*.googleusercontent.com https://ssl.gstatic.com https://www.gstatic.com; font-src 'self' data:; connect-src 'self' blob: https://formsubmit.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.googleapis.com https://accounts.google.com; frame-src https://accounts.google.com https://docs.google.com https://drive.google.com https://content.googleapis.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; upgrade-insecure-requests"
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
   Header always set Cross-Origin-Resource-Policy "same-origin"
   Header set Cache-Control "public, max-age=0, must-revalidate"
   # Only brand images are cached. CSS, JS and WASM are not fingerprinted, so they must be
   # revalidated on every load or a deploy could mix new and stale files.
   <If "%{REQUEST_URI} =~ m#^/assets/brand/#">
     Header set Cache-Control "public, max-age=86400"
+  </If>
+  # The PNG optimizer worker bundles imagequant, whose Emscripten embind glue
+  # builds functions with new Function() while it initialises. A worker runs
+  # under the CSP of its own script response, so only this file allows eval.
+  <If "%{REQUEST_URI} == '/assets/dist/png-optimizer-worker.js'">
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' https://www.googletagmanager.com https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; img-src 'self' blob: data: https://*.google-analytics.com https://*.googletagmanager.com https://*.googleusercontent.com https://ssl.gstatic.com https://www.gstatic.com; font-src 'self' data:; connect-src 'self' blob: https://formsubmit.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.googleapis.com https://accounts.google.com; frame-src https://accounts.google.com https://docs.google.com https://drive.google.com https://content.googleapis.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; upgrade-insecure-requests"
   </If>
 </IfModule>

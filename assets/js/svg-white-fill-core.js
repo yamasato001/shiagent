@@ -84,6 +84,12 @@ export function viewBoxOfSvg(root) {
   throw new Error(messages.svgSizeMissing);
 }
 
+export function normalizeSvgRasterViewport(root, viewBox = viewBoxOfSvg(root)) {
+  root.setAttribute("width", String(viewBox[2]));
+  root.setAttribute("height", String(viewBox[3]));
+  return root;
+}
+
 function morph(mask, width, height, radius, mode) {
   if (!radius) return mask;
   const output = new Uint8Array(mask.length);

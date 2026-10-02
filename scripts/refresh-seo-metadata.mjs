@@ -142,6 +142,10 @@ const pageCopy = {
   "ja/svg-white-fill/editor/index.html": {
     description: "SVG線画の隙間をガイド線で閉じ、白塗りから除外する領域をクリックで手動調整。変更をリアルタイムで確認できるブラウザ内SVGフィルエディターです。",
   },
+  "ja/svg-style-editor/index.html": {
+    title: "SVGスタイルエディター｜色・線の太さを変更 | SHIAGENT",
+    description: "SVGのパーツをクリックして、塗り色・線色・線の太さ・不透明度をブラウザ内で変更。Undo・Redo、一括適用、SVG保存に対応します。",
+  },
   "ja/pdf/merge/index.html": {
     description: "複数のPDFを1つに結合。ページのサムネイルを確認し、ドラッグで並べ替えてから保存できます。アップロード不要でブラウザ内処理します。",
   },
@@ -187,7 +191,7 @@ function legalFooter(file) {
 }
 
 const toolExamples = {
-  "image-compressor": ["例：Web掲載前のPNG・JPEG・WebPをAutoでまとめて圧縮し、前後容量を確認してZIP保存します。", "Example: compress PNG, JPEG and WebP files in Auto mode, compare sizes, then save a ZIP."],
+  "image-compressor": ["例：Web掲載前のPNG・JPEG・WebPを「おすすめ」でまとめて圧縮し、前後容量を確認してZIP保存します。", "Example: compress PNG, JPEG and WebP files with Recommended, compare sizes, then save a ZIP."],
   "image-converter": ["例：iPhoneのHEIC写真を追加し、JPEGを選んでWeb掲載用ファイルへ一括変換します。", "Example: add iPhone HEIC photos and batch-convert them to JPEG for the web."],
   "image-resizer": ["例：商品画像を長辺1200px・縦横比維持で揃え、WebPとして保存します。", "Example: fit product images within 1200 px, preserve aspect ratio and export WebP."],
   "image-cropper": ["例：白背景の商品画像をAuto Trimし、対象物の周囲に同じ余白を残します。", "Example: Auto Trim white product photos and keep consistent space around each object."],
@@ -203,6 +207,7 @@ const toolExamples = {
   "batch-rename": ["例：20枚の画像をworksheet-001からの連番へ変更し、ZIPで保存します。", "Example: rename 20 images from worksheet-001 onward and save them as a ZIP."],
   "svg-white-fill": ["例：線画SVGの閉領域へ白い背面パスを追加し、重ねたときの透けを防ぎます。", "Example: add white backing paths to closed SVG regions so artwork below does not show through."],
   "svg-white-fill/editor": ["例：自動白塗りで漏れた隙間を補助線で閉じ、不要な領域を除外して保存します。", "Example: close a missed gap, exclude an unwanted region and save the corrected SVG."],
+  "svg-style-editor": ["例：SVGロゴの一部をブランドカラーへ変更し、すべての輪郭線を2pxへ揃えて保存します。", "Example: recolor part of an SVG logo, set every outline to 2 px and save the edited SVG."],
   "svg-cleaner": ["例：編集ソフトから書き出したSVGのメタデータと不要属性を除去して軽量化します。", "Example: remove editor metadata and redundant attributes from exported SVG files."],
   "pdf/merge": ["例：3つのPDFを追加し、サムネイルで順番を確認して1つに結合します。", "Example: add three PDFs, verify thumbnail order and merge them into one file."],
   "pdf/split": ["例：50ページのPDFから1-5、12、30-35ページを指定して別PDFへ抽出します。", "Example: extract pages 1–5, 12 and 30–35 from a 50-page PDF."],
@@ -228,7 +233,7 @@ function installToolExample(source, contract, ja) {
   // The manual fill editor's <main> is the full-height interactive workspace.
   // Keep supporting content outside it so rebuilding metadata cannot shrink
   // the canvas area again.
-  if (contract.route === "svg-white-fill/editor") {
+  if (["svg-white-fill/editor", "svg-style-editor"].includes(contract.route)) {
     return source.replace("</main>", `</main>${section}`);
   }
   return source.replace("</main>", `${section}</main>`);

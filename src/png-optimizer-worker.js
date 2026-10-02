@@ -193,7 +193,7 @@ function quantizeLineArtCompact(pixels) {
 }
 
 self.addEventListener("message", async event => {
-  const { id, type = "optimise", buffer, width, height, mode, level = 3, optimiseAlpha = false, colorGuard = false } = event.data || {};
+  const { id, type = "optimise", buffer, width, height, mode, level = 3, optimiseAlpha = false, colorGuard = false, requestedColors = null } = event.data || {};
   try {
     await ready;
     let output;
@@ -214,7 +214,11 @@ self.addEventListener("message", async event => {
     } else {
       const pixels = new Uint8ClampedArray(buffer);
       let processed;
-      if (fullPaletteMode) {
+      if (type === "quantize" && requestedColors) {
+        const module = await getImagequantModule();
+        processed = new Uint8ClampedArray(module.quantize(new Uint8Array(buffer), width, height, requestedColors, 0));
+        paletteColors = requestedColors;
+      } else if (fullPaletteMode) {
         const module = await getImagequantModule();
         processed = new Uint8ClampedArray(module.quantize(new Uint8Array(buffer), width, height, 256, 0));
       } else if (type === "quantize" && width * height > MAX_PALETTE_PIXELS) {

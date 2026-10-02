@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { analyzePixels, COLOR_GUARD_LIMIT, createZip, crc32, detectRasterFormat, formatBytes, jpegQuality, outputName, PALETTE_REDUCTION_LIMIT, PALETTE_STEPS, pngOptimizationLevel, processPixels, savedPercent, usesColorGuard, visibleColorChange } from "../assets/js/png-core.js";
+import { analyzePixels, COLOR_GUARD_LIMIT, createZip, crc32, detectRasterFormat, edgeSimilarity, formatBytes, jpegQuality, outputName, PALETTE_REDUCTION_LIMIT, PALETTE_STEPS, perceptualSimilarity, pngOptimizationLevel, processPixels, savedPercent, usesColorGuard, visibleColorChange } from "../assets/js/png-core.js";
 
 test("PNG and JPEG are detected from file signatures", () => {
   assert.equal(detectRasterFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), "png");
@@ -16,7 +16,33 @@ test("output names and JPEG quality preserve the detected format", () => {
   assert.equal(outputName("drawing.png", "png", "-2"), "drawing-compressed-2.png");
   assert.equal(outputName("photo.webp", "webp"), "photo-compressed.webp");
   assert.equal(jpegQuality("smallest"), 0.68);
+  assert.equal(jpegQuality("recommended", "standard", "photo"), 0.9);
+  assert.equal(jpegQuality("recommended", "standard", "illustration"), 0.93);
+  assert.equal(jpegQuality("recommended", "careful", "lineart"), 0.97);
   assert.equal(jpegQuality("auto", "careful", "lineart"), 0.96);
+});
+
+test("perceptual similarity rewards identical pixels and detects visible damage", () => {
+  const original = new Uint8ClampedArray([
+    12, 24, 48, 255, 80, 110, 140, 255,
+    160, 180, 200, 255, 240, 230, 220, 255
+  ]);
+  const subtle = original.map((value, index) => index % 4 === 3 ? value : Math.min(255, value + 1));
+  const damaged = original.map((value, index) => index % 4 === 3 ? value : 255 - value);
+  assert.equal(perceptualSimilarity(original, original, 2, 2), 1);
+  assert.ok(perceptualSimilarity(original, subtle, 2, 2) > 0.99);
+  assert.ok(perceptualSimilarity(original, damaged, 2, 2) < 0.9);
+});
+
+test("edge similarity protects strong outlines while ignoring faint texture", () => {
+  const width = 3, height = 2;
+  const rgba = values => new Uint8ClampedArray(values.flatMap(value => [value, value, value, 255]));
+  const original = rgba([245, 240, 30, 245, 240, 30]);
+  const textureRemoved = rgba([243, 243, 30, 243, 243, 30]);
+  const outlineRemoved = rgba([243, 243, 170, 243, 243, 170]);
+  assert.equal(edgeSimilarity(original, original, width, height), 1);
+  assert.ok(edgeSimilarity(original, textureRemoved, width, height) > 0.95);
+  assert.ok(edgeSimilarity(original, outlineRemoved, width, height) < 0.8);
 });
 
 test("standard effort uses the fast OxiPNG level and careful spends more time", async () => {
@@ -135,7 +161,7 @@ test("ZIP output contains valid local, central and end signatures", async () => 
   assert.ok(bytes.includes(0x50));
 });
 
-test("the color guard spots visible color shifts and protects only Auto and Balanced", () => {
+test("the color guard spots visible color shifts and protects Recommended and Balanced", () => {
   const width = 200, height = 100;
   const gradient = new Uint8ClampedArray(width * height * 4);
   for (let y = 0; y < height; y += 1) for (let x = 0; x < width; x += 1) {
@@ -156,6 +182,7 @@ test("the color guard spots visible color shifts and protects only Auto and Bala
   assert.ok(COLOR_GUARD_LIMIT > 0 && COLOR_GUARD_LIMIT < 0.1);
 
   assert.equal(usesColorGuard("auto"), true);
+  assert.equal(usesColorGuard("recommended"), true);
   assert.equal(usesColorGuard("balanced"), true);
   assert.equal(usesColorGuard("smallest"), false);
   assert.equal(usesColorGuard("lineart"), false);
@@ -202,7 +229,7 @@ test("the color-safe palette picks the fewest colors that keep the image intact"
   assert.ok(PALETTE_REDUCTION_LIMIT < COLOR_GUARD_LIMIT);
 });
 
-test("the PNG worker and page use the color-safe palette for Auto and Balanced", async () => {
+test("the PNG worker and page use the color-safe palette for Recommended and Balanced", async () => {
   const worker = await readFile(new URL("../src/png-optimizer-worker.js", import.meta.url), "utf8");
   assert.match(worker, /\} else if \(colorGuard && fullPaletteMode\) \{[\s\S]*?await colorSafePalette\(pixels, width, height\)/);
   assert.match(worker, /if \(colorGuard && visibleColorChange\(pixels, processed\) > COLOR_GUARD_LIMIT\) \{\s*const safe = await colorSafePalette\(pixels, width, height\);/);
@@ -212,4 +239,20 @@ test("the PNG worker and page use the color-safe palette for Auto and Balanced",
   assert.match(script, /entry\.colorGuarded === "lossless"/);
   assert.match(script, /entry\.colorGuarded === "palette"/);
   assert.match(script, /copy\.badges\.paletteN\(entry\.paletteColors\)/);
+});
+
+test("Recommended PNG tries compact palettes and validates rendered quality", async () => {
+  const [worker, bundle, script] = await Promise.all([
+    readFile(new URL("../src/png-optimizer-worker.js", import.meta.url), "utf8"),
+    readFile(new URL("../assets/dist/png-optimizer-worker.js", import.meta.url), "utf8"),
+    readFile(new URL("../assets/js/png-compressor.js", import.meta.url), "utf8")
+  ]);
+  assert.match(worker, /requestedColors = null/);
+  assert.match(worker, /module\.quantize\(new Uint8Array\(buffer\), width, height, requestedColors, 0\)/);
+  assert.match(bundle, /requestedColors:[A-Za-z_$][\w$]*=null/);
+  assert.match(script, /denseColorPng[\s\S]*\? \[256, 128, 64, 32, 16, 12\][\s\S]*: \[12, 16, 32, 64, 128, 256\]/);
+  assert.match(script, /if \(!denseColorPng \|\| savings >= 80\) return result/);
+  assert.match(script, /if \(safeFallback\) return safeFallback/);
+  assert.match(script, /edgeSimilarity\(/);
+  assert.match(script, /similarity >= similarityThreshold && edges >= edgeThreshold/);
 });

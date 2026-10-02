@@ -11,7 +11,9 @@ test("every active tool installs the shared direct-folder save action", () => {
   assert.match(agentBridge, /installOutputSaving\(\)/);
   assert.doesNotMatch(outputSave, /id="outputDirectSave"/);
   assert.match(outputSave, /フォルダにすべて直接保存/);
-  assert.match(outputSave, /chooseOutputDirectory\(window, "downloads"\)/);
+  assert.match(outputSave, /chooseOutputDirectory\(window, preferredOutputStartIn\(\) \|\| "downloads"\)/);
+  assert.match(outputSave, /installSourceFileTracking\(window, document\)/);
+  assert.match(outputSave, /clearPreferredOutputStartIn\(\)/);
   assert.match(outputSave, /writeFilesToDirectory\(directory, files/);
   assert.match(outputSave, /latestFiles = outputItems/);
   assert.match(outputSave, /control\.hidden = true/);
@@ -24,6 +26,29 @@ test("every active tool installs the shared direct-folder save action", () => {
   assert.match(agentBridge, /notifyOutputOptionsIfReady/);
   assert.match(agentBridge, /download && !download\.disabled && isVisible\(download\)/);
   assert.match(agentBridge, /element\.closest\("\[hidden\]"\)/);
+});
+
+test("Google Drive is offered next to the file chooser and the folder save", async () => {
+  const drive = await readFile(new URL("../assets/js/google-drive.js", import.meta.url), "utf8");
+  const driveInput = await readFile(new URL("../assets/js/drive-input.js", import.meta.url), "utf8");
+  const { GOOGLE_DRIVE } = await import("../assets/js/google-drive-config.js");
+  // Only files the visitor picks or this site creates are reachable.
+  assert.match(drive, /auth\/drive\.file"/);
+  assert.doesNotMatch(drive, /auth\/drive"/);
+  // Google scripts load on hover/focus, never on page load.
+  assert.match(driveInput, /"pointerenter", preload/);
+  assert.match(outputSave, /"pointerenter", preload/);
+  assert.match(agentBridge, /installDriveInput\(tool\.automation\?\.input\)/);
+  assert.match(driveInput, /#selectButton, #pdfChoose, #pdfOrderChoose/);
+  assert.match(outputSave, /Google Driveに保存/);
+  assert.match(outputSave, /driveConfigured\(\) \?/);
+  assert.equal(typeof GOOGLE_DRIVE.clientId, "string");
+});
+
+test("Picker MIME filters keep only exact types from accept", async () => {
+  const { pickerMimeTypes } = await import("../assets/js/google-drive.js");
+  assert.deepEqual(pickerMimeTypes("image/png, image/jpeg,.png,image/*,IMAGE/PNG"), ["image/png", "image/jpeg"]);
+  assert.deepEqual(pickerMimeTypes(""), []);
 });
 
 test("ZIP blobs retain their individual files for direct folder saving", () => {

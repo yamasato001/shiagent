@@ -9,6 +9,7 @@ const pdfOutputControl = control("#pdfOutput", "select", "select", { value: "com
 export const routeOverrides = {
   "line-art-generator": { status: "pending", input: null, action: null, result: null, download: null },
   "svg-white-fill/editor": { action: "#nextButton", result: "#editorCanvas", download: "#downloadButton", statusSelector: "#fileStatus" },
+  "svg-style-editor": { action: "#applyAllButton", result: "#svgStage", download: "#downloadButton", statusSelector: "#fileStatus", outputs: ["image/svg+xml"] },
   "workflows/custom": { input: null, action: "#runWorkflow", result: "#workflowSteps", download: null, statusSelector: "#builderStatus", outputs: ["varies by selected workflow"] },
   "pdf/sort-by-page-number": { input: "#pdfOrderInput", action: "#pdfOrderRun", result: "#pdfOrderResults", download: "#pdfOrderDownloadAll", statusSelector: "#pdfOrderStatus", controls: [control("input[data-page-number]", "input", "number", { min: "0", step: "1", repeated: true })], outputs: ["application/pdf", "application/zip"] },
   "color-tool": { outputs: ["image/png", "image/jpeg", "image/webp", "image/svg+xml", "application/zip"] },
@@ -36,7 +37,7 @@ export function inferOutput(route) {
   if (route === "pdf/split") return ["application/pdf", "application/zip"];
   if (route.startsWith("pdf/")) return ["application/pdf"];
   if (route === "batch-rename") return ["application/zip", "original media types"];
-  if (route === "svg-white-fill/editor") return ["image/svg+xml"];
+  if (route === "svg-white-fill/editor" || route === "svg-style-editor") return ["image/svg+xml"];
   if (route.includes("svg-white-fill") || route === "svg-cleaner" || route === "image-to-svg" || route === "workflows/line-art-to-svg") return ["image/svg+xml", "application/zip"];
   if (route === "favicon-generator") return ["image/png", "image/x-icon", "application/manifest+json", "application/zip"];
   if (route === "image-splitter") return ["image/png", "application/zip"];

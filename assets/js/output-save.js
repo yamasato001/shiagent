@@ -1,11 +1,14 @@
-import { chooseOutputDirectory, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
+import { chooseOutputDirectory, clearPreferredOutputStartIn, installSourceFileTracking, preferredOutputStartIn, supportsFolderDownload, writeFilesToDirectory } from "./folder-download.js";
 import { applyConfiguredOutputSuffix } from "./output-name.js";
+import { chooseDriveFolder, driveConfigured, preloadDrive, uploadFilesToDrive } from "./google-drive.js";
 
 const BATCH_FILES = Symbol.for("shiagent.outputFiles");
 const objectUrls = new Map();
 let installed = false;
 let direct = false;
 let directory = null;
+// Drive folder chosen for the next batch of outputs (undefined = not saving to Drive).
+let driveFolder;
 let control = null;
 let latestFiles = [];
 
@@ -36,7 +39,7 @@ function revealControl() {
 
 function updateControl(message = "") {
   if (!control) return;
-  const button = control.querySelector("button");
+  const button = control.querySelector("#outputFolderButton");
   const status = control.querySelector("small");
   button.disabled = !supportsFolderDownload(window);
   status.textContent = message || (supportsFolderDownload(window)
@@ -49,9 +52,10 @@ export function directSaveEnabled() { return direct && Boolean(directory); }
 export async function selectDirectOutputDirectory() {
   if (!supportsFolderDownload(window)) return null;
   try {
-    const selected = await chooseOutputDirectory(window, "downloads");
+    const selected = await chooseOutputDirectory(window, preferredOutputStartIn() || "downloads");
     directory = selected;
     direct = true;
+    clearPreferredOutputStartIn();
     return selected;
   } catch (error) {
     if (error?.name !== "AbortError") console.error(error);
@@ -79,6 +83,34 @@ function outputItems(files) {
   return [...(files || [])].map(file => ({ name: file?.name, blob: file?.blob || file })).filter(file => file.name && file.blob);
 }
 
+async function saveToDrive(files) {
+  const folder = driveFolder;
+  driveFolder = undefined;
+  if (!files.length) return;
+  updateControl(ja() ? `Google Driveへ保存中… 0/${files.length}` : `Saving to Google Drive… 0/${files.length}`);
+  try {
+    const count = await uploadFilesToDrive(folder, files, (done, total) => {
+      updateControl(ja() ? `Google Driveへ保存中… ${done}/${total}` : `Saving to Google Drive… ${done}/${total}`);
+    });
+    updateControl(ja() ? `${count}件をGoogle Driveに保存しました` : `Saved ${count} file${count === 1 ? "" : "s"} to Google Drive`);
+  } catch (error) {
+    console.error(error);
+    updateControl(ja() ? "Google Driveに保存できませんでした" : "Could not save to Google Drive");
+  }
+}
+
+// Without collected outputs, the tool's own "download all" runs and its
+// download is captured by patchDownloads() instead of reaching the browser.
+function requestOutputs(cancel) {
+  const download = document.querySelector("#downloadAllButton, #downloadButton, #pdfExport, #pdfOrderDownloadAll");
+  if (!download || download.disabled) {
+    cancel();
+    updateControl(ja() ? "保存できる結果がありません" : "No results are ready to save");
+    return;
+  }
+  download.click();
+}
+
 async function saveAllDirectly() {
   if (!await selectDirectOutputDirectory()) return;
   if (latestFiles.length) {
@@ -87,13 +119,27 @@ async function saveAllDirectly() {
     await saveDirect(files);
     return;
   }
-  const download = document.querySelector("#downloadAllButton, #downloadButton, #pdfExport, #pdfOrderDownloadAll");
-  if (!download || download.disabled) {
-    direct = false;
-    updateControl(ja() ? "保存できる結果がありません" : "No results are ready to save");
+  requestOutputs(() => { direct = false; });
+}
+
+async function saveAllToDrive() {
+  let folder;
+  try {
+    folder = await chooseDriveFolder({ title: ja() ? "保存先のフォルダ" : "Save to folder" });
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      console.error(error);
+      updateControl(ja() ? "Google Driveに接続できませんでした" : "Could not connect to Google Drive");
+    }
     return;
   }
-  download.click();
+  if (!folder) return;
+  driveFolder = folder;
+  if (latestFiles.length) {
+    await saveToDrive(latestFiles);
+    return;
+  }
+  requestOutputs(() => { driveFolder = undefined; });
 }
 
 function filesForDownload(anchor, blob) {
@@ -124,6 +170,10 @@ function patchDownloads() {
   prototype.click = function patchedDirectSaveClick() {
     const blob = objectUrls.get(this.href);
     const files = filesForDownload(this, blob);
+    if (driveFolder !== undefined && files.length) {
+      void saveToDrive(files);
+      return;
+    }
     if (directSaveEnabled() && files.length) {
       direct = false;
       void saveDirect(files);
@@ -143,11 +193,19 @@ function mountControl() {
   control.dataset.outputSaveControl = "";
   control.hidden = true;
   const supported = supportsFolderDownload(window);
-  control.innerHTML = `<button class="button button-light" id="outputFolderButton" type="button" ${supported ? "" : "disabled"}>${ja() ? "フォルダにすべて直接保存" : "Save all directly to folder"}</button><small></small>`;
+  const drive = driveConfigured() ? `<button class="button button-light" id="outputDriveButton" type="button">${ja() ? "Google Driveに保存" : "Save to Google Drive"}</button>` : "";
+  control.innerHTML = `<button class="button button-light" id="outputFolderButton" type="button" ${supported ? "" : "disabled"}>${ja() ? "フォルダにすべて直接保存" : "Save all directly to folder"}</button>${drive}<small></small>`;
   if (suffix) suffix.insertAdjacentElement("afterend", control);
   else target.append(control);
   document.querySelectorAll(".folder-download-button, #pdfFolderExport, #pdfOrderFolder").forEach(button => button.remove());
-  control.querySelector("button").addEventListener("click", saveAllDirectly);
+  control.querySelector("#outputFolderButton").addEventListener("click", saveAllDirectly);
+  const driveButton = control.querySelector("#outputDriveButton");
+  if (driveButton) {
+    const preload = () => { preloadDrive().catch(() => {}); };
+    driveButton.addEventListener("pointerenter", preload, { once: true });
+    driveButton.addEventListener("focus", preload, { once: true });
+    driveButton.addEventListener("click", saveAllToDrive);
+  }
   updateControl();
   return true;
 }
@@ -155,6 +213,7 @@ function mountControl() {
 export function installOutputSaving() {
   if (installed) return;
   installed = true;
+  installSourceFileTracking(window, document);
   patchObjectUrls();
   patchDownloads();
   for (const type of ["shiagent:outputs", "shiagent:output-options-ready"]) {

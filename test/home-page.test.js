@@ -8,7 +8,7 @@ const japaneseCatalog = await readFile(new URL("../ja/tools/index.html", import.
 const englishCatalog = await readFile(new URL("../tools/index.html", import.meta.url), "utf8");
 const japaneseUseCases = await readFile(new URL("../ja/use-cases/index.html", import.meta.url), "utf8");
 const englishUseCases = await readFile(new URL("../use-cases/index.html", import.meta.url), "utf8");
-const toolSlugs = ["image-compressor", "image-converter", "image-resizer", "image-cropper", "canvas-padding", "image-joiner", "metadata-cleaner", "image-to-svg", "svg-to-image", "color-tool", "favicon-generator", "image-splitter", "background-remover", "batch-rename", "svg-white-fill", "svg-cleaner", "svg-white-fill/editor", "pdf"];
+const toolSlugs = ["image-compressor", "image-converter", "image-resizer", "image-cropper", "canvas-padding", "image-joiner", "metadata-cleaner", "image-to-svg", "svg-to-image", "color-tool", "favicon-generator", "image-splitter", "background-remover", "batch-rename", "svg-white-fill", "svg-cleaner", "svg-white-fill/editor", "svg-style-editor", "pdf"];
 
 test("home keeps its supporting sections around the compact catalog", () => {
   for (const page of [japaneseHome, englishHome]) {

@@ -26,6 +26,7 @@ export const TOOL_CATALOG = [
   { id: "image-to-svg", category: "vector", path: "/image-to-svg/", accepts: WEB_RASTER, output: ["svg"] },
   { id: "svg-white-fill", category: "vector", path: "/svg-white-fill/", accepts: ["svg"], output: ["svg"] },
   { id: "svg-white-fill-editor", category: "vector", path: "/svg-white-fill/editor/", accepts: ["svg"], output: ["svg"] },
+  { id: "svg-style-editor", category: "vector", path: "/svg-style-editor/", accepts: ["svg"], output: ["svg"] },
   { id: "svg-cleaner", category: "vector", path: "/svg-cleaner/", accepts: ["svg"], output: ["svg"] },
   { id: "svg-to-image", category: "vector", path: "/svg-to-image/", accepts: ["svg"], output: WEB_RASTER },
   { id: "pdf-merge", category: "pdf", path: "/pdf/merge/", accepts: ["pdf"], output: ["pdf"] },
