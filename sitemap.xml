@@ -259,10 +259,34 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/pdf/compare/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compare/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compare/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compare/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/compress/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compress/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compress/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compress/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/crop/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/crop/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/crop/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/crop/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/pdf/delete-pages/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/delete-pages/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/form-fill/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/form-fill/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/form-fill/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/form-fill/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/images-to-pdf/</loc>
@@ -283,6 +307,36 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/merge/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/pdf/metadata-cleaner/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/metadata-cleaner/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/metadata-cleaner/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/metadata-cleaner/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/n-up/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/n-up/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/n-up/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/n-up/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/ocr/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/ocr/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/ocr/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/ocr/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/page-numbers/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/page-numbers/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/page-numbers/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/page-numbers/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/pdf-to-images/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/pdf-to-images/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/pdf-to-images/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/pdf-to-images/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/pdf/reorder/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/reorder/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/reorder/" />
@@ -295,6 +349,12 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/rotate/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/pdf/signature/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/signature/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/signature/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/signature/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/pdf/sort-by-page-number/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/sort-by-page-number/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/sort-by-page-number/" />
@@ -305,6 +365,12 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/split/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/pdf/watermark/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/watermark/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/watermark/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/watermark/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/privacy/</loc>
@@ -397,6 +463,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/line-art-to-svg/" />
   </url>
   <url>
+    <loc>https://shiagent.com/ja/workflows/pdf-finisher/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/pdf-finisher/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/pdf-finisher/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/pdf-finisher/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/ja/workflows/scan-pdf-optimizer/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/scan-pdf-optimizer/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/ja/workflows/web-image-optimizer/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/web-image-optimizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/web-image-optimizer/" />
@@ -421,10 +499,34 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/" />
   </url>
   <url>
+    <loc>https://shiagent.com/pdf/compare/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compare/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compare/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compare/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/compress/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compress/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compress/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compress/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/crop/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/crop/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/crop/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/crop/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/pdf/delete-pages/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/delete-pages/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/form-fill/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/form-fill/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/form-fill/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/form-fill/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/images-to-pdf/</loc>
@@ -445,6 +547,36 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/merge/" />
   </url>
   <url>
+    <loc>https://shiagent.com/pdf/metadata-cleaner/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/metadata-cleaner/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/metadata-cleaner/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/metadata-cleaner/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/n-up/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/n-up/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/n-up/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/n-up/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/ocr/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/ocr/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/ocr/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/ocr/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/page-numbers/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/page-numbers/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/page-numbers/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/page-numbers/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/pdf-to-images/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/pdf-to-images/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/pdf-to-images/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/pdf-to-images/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/pdf/reorder/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/reorder/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/reorder/" />
@@ -457,6 +589,12 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/rotate/" />
   </url>
   <url>
+    <loc>https://shiagent.com/pdf/signature/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/signature/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/signature/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/signature/" />
+  </url>
+  <url>
     <loc>https://shiagent.com/pdf/sort-by-page-number/</loc>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/sort-by-page-number/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/sort-by-page-number/" />
@@ -467,6 +605,12 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/split/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/pdf/watermark/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/watermark/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/watermark/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/watermark/" />
   </url>
   <url>
     <loc>https://shiagent.com/privacy/</loc>
@@ -557,6 +701,18 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/line-art-to-svg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/line-art-to-svg/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/line-art-to-svg/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/workflows/pdf-finisher/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/pdf-finisher/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/pdf-finisher/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/pdf-finisher/" />
+  </url>
+  <url>
+    <loc>https://shiagent.com/workflows/scan-pdf-optimizer/</loc>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/scan-pdf-optimizer/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/web-image-optimizer/</loc>

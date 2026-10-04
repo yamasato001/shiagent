@@ -23,7 +23,7 @@
       <div class="section-heading"><div><p class="eyebrow" id="catalogEyebrow">TOOLS</p><h1 id="tools-title">ツール一覧</h1></div></div>
       <div class="catalog-tabs" role="tablist" aria-labelledby="tools-title">
         <button type="button" role="tab" id="tab-tools" aria-controls="panel-tools" aria-selected="true" data-tab="tools" data-eyebrow="TOOLS" data-heading="ツール一覧">ツール<span>18</span></button>
-        <button type="button" role="tab" id="tab-workflows" aria-controls="panel-workflows" aria-selected="false" tabindex="-1" data-tab="workflows" data-eyebrow="WORKFLOWS" data-heading="ワークフロー一覧">ワークフロー<span>6</span></button>
+        <button type="button" role="tab" id="tab-workflows" aria-controls="panel-workflows" aria-selected="false" tabindex="-1" data-tab="workflows" data-eyebrow="WORKFLOWS" data-heading="ワークフロー一覧">ワークフロー<span>7</span></button>
       </div>
       <div class="tool-filters" id="toolFilters" role="group" aria-label="ツールカテゴリ"><button type="button" class="is-active" data-category="all">すべて</button><button type="button" data-category="image">IMAGE</button><button type="button" data-category="vector">VECTOR</button><button type="button" data-category="pdf">PDF</button><button type="button" data-category="file">FILE</button></div>
       <div class="tool-grid" id="panel-tools" role="tabpanel" aria-labelledby="tab-tools">
@@ -119,7 +119,7 @@
         </a>
         <a class="tool-card" href="/ja/pdf/">
           <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg><span class="badge">ON DEVICE</span></div>
-          <div class="card-copy"><p class="card-type">PDF</p><h3>PDFツール</h3><p>専用ワークスペースで結合・分割・並べ替え・交互結合・回転・ページ削除を行います。</p></div>
+          <div class="card-copy"><p class="card-type">PDF</p><h3>PDFツール</h3><p>PDFの整理、画像変換、ページ番号、透かし、クロップを端末内で行います。</p></div>
         </a>
       </div>
       <div class="tool-grid" id="panel-workflows" role="tabpanel" aria-labelledby="tab-workflows" hidden>
@@ -150,6 +150,16 @@
           <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h4"/><path d="m17 14 2 2 3-4"/></svg><span class="badge">WORKFLOW</span></div>
           <div class="card-copy"><p class="card-type">PDF</p><h3>PDFのページ順を復元</h3><p>向きを補正し、四隅と端のページ番号を読み取り、複数PDFを正しい順番へ整理します。</p></div>
           <p class="card-steps">向き判定 → 外周OCR → 並べ替え</p>
+        </a>
+        <a class="tool-card" href="/ja/workflows/pdf-finisher/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/><path d="m16 19 2 2 4-5"/></svg><span class="badge">WORKFLOW</span></div>
+          <div class="card-copy"><p class="card-type">PDF</p><h3>PDF一括仕上げ</h3><p>余白・向き・ページ番号・文書情報・連番名をまとめて整えます。</p></div>
+          <p class="card-steps">余白 → 向き → 番号 → 文書情報 → 連番名 → 保存</p>
+        </a>
+        <a class="tool-card" href="/ja/workflows/scan-pdf-optimizer/">
+          <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/><path d="M3 9V5h4M21 15v4h-4"/></svg><span class="badge">WORKFLOW</span></div>
+          <div class="card-copy"><p class="card-type">PDF</p><h3>スキャンPDF最適化</h3><p>紙資料やスキャンPDFを、検索可能で軽い共有用PDFへまとめて整えます。</p></div>
+          <p class="card-steps">PDF化 → 向き・余白 → OCR → 軽量化 → 情報削除 → 保存</p>
         </a>
         <a class="tool-card" href="/ja/workflows/custom/">
           <div class="card-top"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><path d="M8 6h3c4 0 3 6 7 6M8 18h3c4 0 3-6 7-6"/></svg><span class="badge">BETA</span></div>

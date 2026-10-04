@@ -1,4 +1,8 @@
-export const PDF_MODES = Object.freeze(["merge", "split", "reorder", "interleave", "rotate", "delete-pages", "images-to-pdf"]);
+export const PDF_MODES = Object.freeze([
+  "merge", "split", "reorder", "interleave", "rotate", "delete-pages", "images-to-pdf",
+  "pdf-to-images", "page-numbers", "watermark", "crop",
+  "metadata-cleaner", "n-up", "form-fill", "signature", "pdf-finisher"
+]);
 
 export const PDF_MODE_FEATURES = Object.freeze({
   merge: Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: true, selectable: false, actions: [] }),
@@ -7,8 +11,77 @@ export const PDF_MODE_FEATURES = Object.freeze({
   interleave: Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: false, selectable: false, actions: [] }),
   rotate: Object.freeze({ selection: false, output: false, reverse: false, autoOrient: true, draggable: false, selectable: false, actions: ["left", "right"] }),
   "delete-pages": Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: false, selectable: false, actions: ["remove"] }),
-  "images-to-pdf": Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: true, selectable: false, actions: ["remove"] })
+  "images-to-pdf": Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: true, selectable: false, actions: ["remove"] }),
+  "pdf-to-images": Object.freeze({ selection: true, output: false, reverse: false, autoOrient: false, draggable: false, selectable: true, actions: [], imageOutput: true }),
+  "page-numbers": Object.freeze({ selection: true, output: false, reverse: false, autoOrient: false, draggable: false, selectable: true, actions: [], preserveAll: true }),
+  watermark: Object.freeze({ selection: true, output: false, reverse: false, autoOrient: false, draggable: false, selectable: true, actions: [], preserveAll: true }),
+  crop: Object.freeze({ selection: true, output: false, reverse: false, autoOrient: false, draggable: false, selectable: true, actions: [], preserveAll: true }),
+  "metadata-cleaner": Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: false, selectable: false, actions: [] }),
+  "n-up": Object.freeze({ selection: true, output: false, reverse: false, autoOrient: false, draggable: true, selectable: true, actions: [], nUpOutput: true }),
+  "form-fill": Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: false, selectable: false, actions: [], formOutput: true }),
+  signature: Object.freeze({ selection: true, output: false, reverse: false, autoOrient: false, draggable: false, selectable: true, actions: [], preserveAll: true }),
+  "pdf-finisher": Object.freeze({ selection: false, output: false, reverse: false, autoOrient: false, draggable: false, selectable: false, actions: [], finishWorkflow: true })
 });
+
+export function nUpGrid(layout = "2") {
+  if (String(layout) === "4") return { columns: 2, rows: 2, count: 4 };
+  if (String(layout) === "6") return { columns: 2, rows: 3, count: 6 };
+  return { columns: 1, rows: 2, count: 2 };
+}
+
+export function fitInsideBox(sourceWidth, sourceHeight, boxWidth, boxHeight) {
+  const scale = Math.min(boxWidth / Math.max(1, sourceWidth), boxHeight / Math.max(1, sourceHeight));
+  const width = sourceWidth * scale, height = sourceHeight * scale;
+  return { width, height, x: (boxWidth - width) / 2, y: (boxHeight - height) / 2, scale };
+}
+
+export function pageNumberLabel(index, total, style = "number", start = 1) {
+  const value = Number(start) + Number(index);
+  if (style === "page") return `Page ${value}`;
+  if (style === "total") return `${value} / ${Number(start) + Number(total) - 1}`;
+  return String(value);
+}
+
+export function positionInBox(width, height, itemWidth, itemHeight, position = "bottom-center", margin = 24) {
+  const horizontal = position.endsWith("left") ? margin : position.endsWith("right") ? width - itemWidth - margin : (width - itemWidth) / 2;
+  const vertical = position.startsWith("top") ? height - itemHeight - margin : position.startsWith("bottom") ? margin : (height - itemHeight) / 2;
+  return { x: horizontal, y: vertical };
+}
+
+export function cropBoxFromMargins(box, margins = {}) {
+  const left = Math.max(0, Number(margins.left) || 0);
+  const right = Math.max(0, Number(margins.right) || 0);
+  const top = Math.max(0, Number(margins.top) || 0);
+  const bottom = Math.max(0, Number(margins.bottom) || 0);
+  return {
+    x: box.x + Math.min(left, box.width - 1),
+    y: box.y + Math.min(bottom, box.height - 1),
+    width: Math.max(1, box.width - left - right),
+    height: Math.max(1, box.height - top - bottom)
+  };
+}
+
+export function detectWhiteContentBounds(imageData, threshold = 245) {
+  const { data, width, height } = imageData || {};
+  if (!data || !width || !height) return null;
+  let minX = width, minY = height, maxX = -1, maxY = -1;
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const offset = (y * width + x) * 4;
+      if (data[offset + 3] > 16 && (data[offset] < threshold || data[offset + 1] < threshold || data[offset + 2] < threshold)) {
+        minX = Math.min(minX, x); minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x); maxY = Math.max(maxY, y);
+      }
+    }
+  }
+  if (maxX < minX || maxY < minY) return null;
+  return {
+    left: minX / width,
+    top: minY / height,
+    right: (width - 1 - maxX) / width,
+    bottom: (height - 1 - maxY) / height
+  };
+}
 
 export function interleaveGroups(groups) {
   const result = [];

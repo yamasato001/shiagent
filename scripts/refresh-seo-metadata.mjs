@@ -20,6 +20,14 @@ const noindexPages = new Set([
 ]);
 
 const pageCopy = {
+  "pdf/index.html": {
+    title: "Free PDF Tools — Convert, Number, Watermark, Crop & Organize | SHIAGENT",
+    description: "Free on-device PDF tools to merge, split, reorder, convert pages to images, add page numbers or watermarks, and crop margins without uploading files.",
+  },
+  "ja/pdf/index.html": {
+    title: "無料PDFツール｜画像変換・ページ番号・透かし・クロップ | SHIAGENT",
+    description: "PDFの結合・分割・並べ替え・画像変換・ページ番号・透かし・クロップを無料で。アップロードせずブラウザ内で安全に処理できます。",
+  },
   "ja/terms/index.html": {
     title: "利用規約 | SHIAGENT",
     description: "SHIAGENTの画像・SVG・PDFツールおよびワークフローをご利用いただく際の条件を定めた利用規約です。",
@@ -164,6 +172,54 @@ const pageCopy = {
   "ja/pdf/images-to-pdf/index.html": {
     description: "PNG・JPEG・WebP画像を好きな順番へ並べ替えて1つのPDFに変換。複数画像をアップロードせず、安全にブラウザ内でまとめられます。",
   },
+  "ja/pdf/pdf-to-images/index.html": {
+    title: "PDFを画像に変換｜PNG・JPEG・WebPで一括保存 | SHIAGENT",
+    description: "PDFをPNG・JPEG・WebP画像へ一括変換。対象ページ、96・150・300 DPI、画質を指定し、アップロードせずブラウザ内でZIP保存できます。",
+  },
+  "ja/pdf/page-numbers/index.html": {
+    title: "PDFにページ番号を追加｜位置・開始番号を指定 | SHIAGENT",
+    description: "PDFへページ番号を追加。対象ページ、開始番号、1 / 全ページなどの形式、位置、余白、文字サイズを指定してブラウザ内で保存できます。",
+  },
+  "ja/pdf/watermark/index.html": {
+    title: "PDFに透かしを追加｜文字・画像を一括配置 | SHIAGENT",
+    description: "PDFへ文字・画像の透かしを追加。対象ページ、透明度、角度、位置、大きさを指定し、ファイルをアップロードせず保存できます。",
+  },
+  "ja/pdf/crop/index.html": {
+    title: "PDFの余白を削除・クロップ｜白余白を自動検出 | SHIAGENT",
+    description: "PDFの白い余白を自動検出して削除、または上下左右をmm指定してクロップ。対象ページを選び、画質を変えずブラウザ内で保存できます。",
+  },
+  "ja/pdf/metadata-cleaner/index.html": {
+    title: "PDFの文書情報を削除｜作成者・タイトルを消去 | SHIAGENT",
+    description: "PDFのタイトル、作成者、件名、キーワードなどの文書情報を端末内で削除。ファイルをアップロードせず新しいPDFとして保存できます。",
+  },
+  "ja/pdf/n-up/index.html": {
+    title: "PDFを複数ページ／1枚に配置｜2・4・6ページ面付け | SHIAGENT",
+    description: "PDFの2・4・6ページをA4用紙1枚に配置。縦横、余白、間隔、境界線を指定してブラウザ内で面付けPDFを作成できます。",
+  },
+  "ja/pdf/form-fill/index.html": {
+    title: "PDFフォームに入力｜記入・固定して保存 | SHIAGENT",
+    description: "入力可能なPDFフォームのテキスト欄、チェックボックス、選択欄へブラウザ上で記入。必要なら内容を固定して端末内で保存できます。",
+  },
+  "ja/pdf/signature/index.html": {
+    title: "PDFに署名を配置｜文字・画像・手書き対応 | SHIAGENT",
+    description: "文字入力、PNG・JPEG画像、手書きで作った署名をPDFへ配置。対象ページ、位置、大きさ、余白を指定して端末内で保存できます。",
+  },
+  "ja/pdf/compare/index.html": {
+    title: "PDF比較｜2つのPDFを左右・重ね合わせ・差分表示 | SHIAGENT",
+    description: "2つのPDFをアップロードせずブラウザ内で比較。ページ数の違いと差分率を表示し、差分強調画像をZIP保存できます。",
+  },
+  "ja/pdf/ocr/index.html": {
+    title: "OCR・検索可能PDF｜スキャンPDFへ透明文字層を追加 | SHIAGENT",
+    description: "スキャンPDFを日本語・英語OCRで認識し、元の見た目を保った検索可能PDFをブラウザ内で作成。PDFは外部へアップロードしません。",
+  },
+  "ja/pdf/compress/index.html": {
+    title: "PDF圧縮｜埋め込み画像を再圧縮して軽量化 | SHIAGENT",
+    description: "PDF内のJPEG画像をブラウザ内で再圧縮して軽量化。画質優先・おすすめ・最大圧縮を選択でき、ファイルは外部へアップロードしません。",
+  },
+  "ja/workflows/pdf-finisher/index.html": {
+    title: "PDF一括仕上げ｜余白・向き・番号・文書情報・連番名 | SHIAGENT",
+    description: "PDFの余白除去、向き自動補正、ページ番号追加、文書情報削除、連番ファイル名への整理をブラウザ内で一括処理します。",
+  },
 };
 
 async function htmlFiles(directory, prefix = "") {
@@ -216,11 +272,24 @@ const toolExamples = {
   "pdf/rotate": ["例：横向き・逆さまのページを自動判定し、必要なページだけ手動で微調整します。", "Example: auto-detect sideways pages, then manually correct only uncertain pages."],
   "pdf/delete-pages": ["例：末尾の空白ページと不要な表紙を削除し、残りを1つのPDFで保存します。", "Example: remove a blank final page and unwanted cover, then save the remaining PDF."],
   "pdf/images-to-pdf": ["例：12枚のJPEGを名前順に並べ、1つのPDF資料へまとめます。", "Example: arrange 12 JPEGs by name and bind them into one PDF."],
+  "pdf/pdf-to-images": ["例：資料PDFの全ページを150 DPIのWebPへ変換し、画像トレイから圧縮やリネームへ続けます。", "Example: render every page as 150 DPI WebP, then continue to compression or renaming from the image tray."],
+  "pdf/page-numbers": ["例：表紙を除く2ページ目から、下中央へ「1 / 12」形式の番号を追加します。", "Example: skip the cover and number the remaining pages at the bottom center in 1 / 12 format."],
+  "pdf/watermark": ["例：全ページ中央へ「社外秘」を薄い斜め文字で追加します。", "Example: place a faint diagonal CONFIDENTIAL watermark across every page."],
+  "pdf/crop": ["例：スキャンPDFの白い外周を自動検出し、内容の周囲に3mmだけ残して切り抜きます。", "Example: detect a scanned document's white border and keep 3 mm around its content."],
+  "pdf/metadata-cleaner": ["例：外部共有前の資料から、作成者名や編集ソフト名などの文書情報を削除します。", "Example: remove author and editing-software information before sharing a document externally."],
+  "pdf/n-up": ["例：講義資料をA4横の4ページ／1枚に配置し、紙の使用量を抑えて印刷します。", "Example: arrange lecture slides four per landscape A4 sheet to reduce paper use."],
+  "pdf/form-fill": ["例：申請書PDFの氏名・住所・選択項目を入力し、内容を固定して提出用に保存します。", "Example: complete an application form, flatten the values and save a submission-ready copy."],
+  "pdf/signature": ["例：最終ページの右下へ手書き署名を配置し、確認用PDFとして保存します。", "Example: place a hand-drawn signature at the bottom right of the final page and save a review copy."],
+  "pdf/compare": ["例：修正前と修正後の資料を比較し、文字や配置の変更箇所を赤色で確認します。", "Example: compare original and revised documents and review changed text or layout highlighted in red."],
+  "pdf/ocr": ["例：紙資料をスキャンしたPDFへ日本語と英語の透明文字層を追加し、文書内検索できる状態で保存します。", "Example: add a Japanese and English text layer to a scanned document and save it as a searchable PDF."],
+  "pdf/compress": ["例：写真を多く含む資料PDFを「おすすめ」で圧縮し、文字検索を維持したまま共有しやすい容量へ軽量化します。", "Example: compress a photo-heavy report with Recommended mode while keeping its text searchable."],
   "pdf/sort-by-page-number": ["例：複数のスキャンPDFから外周のページ番号を検出し、番号順へ復元します。", "Example: detect edge page numbers across scanned PDFs and restore document order."],
   "workflows/web-image-optimizer": ["例：スマホ写真をブログ用プリセットで縮小・WebP化・圧縮・連番化します。", "Example: resize phone photos with the Blog preset, convert to WebP, compress and number them."],
   "workflows/line-art-to-svg": ["例：スキャン線画をトリミングし、SVG化・白塗り・クリーニングまで一括実行します。", "Example: trim scanned line art, vectorize it, add white fill and clean the SVG."],
   "workflows/ai-asset-prep": ["例：AI生成画像20枚を正方形へ揃え、連番名とWeb向け容量へ一括調整します。", "Example: normalize 20 generated images to square canvases, numbered names and web-ready sizes."],
   "workflows/asset-normalizer": ["例：寸法の違う素材を同じCanvas・占有率・背景・ファイル名へ統一します。", "Example: standardize mixed assets to one canvas, occupancy, background and naming rule."],
+  "workflows/pdf-finisher": ["例：複数のスキャンPDFを追加し、余白と向きを整え、ページ番号を付けて document-001.pdf からの連番で保存します。", "Example: add several scanned PDFs, fix margins and orientation, add page numbers, then save them from document-001.pdf onward."],
+  "workflows/scan-pdf-optimizer": ["例：紙資料のスキャン画像をまとめ、向きと余白を整えてOCRし、軽量な検索可能PDFとして保存します。", "Example: combine document scans, correct their orientation and margins, run OCR, then save a compact searchable PDF."],
   "workflows/custom": ["例：Auto Trim→リサイズ→WebP変換→連番化を自分用ワークフローとして保存します。", "Example: save Auto Trim → Resize → WebP → Rename as a reusable workflow."],
 };
 

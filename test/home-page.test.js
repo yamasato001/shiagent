@@ -115,8 +115,12 @@ test("mobile layout uses a hamburger, two-column cards and compact workflow head
   assert.match(japaneseHome, /class="menu-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="siteNavigation"/);
   assert.match(japaneseHome, /\/assets\/js\/mobile-nav\.js/);
   assert.match(headerCss, /@media \(max-width: 760px\)[\s\S]*\.site-header \.site-search \{ grid-column: 2; grid-row: 1; width: 36px;[^}]*display: block;/);
-  assert.match(headerCss, /\.site-header \.site-search:focus-within \{ position: absolute;[^}]*right: 70px;[^}]*width: auto;/);
+  assert.match(headerCss, /\.site-header \.site-search:focus-within \{ position: fixed;[^}]*right: 12px;[^}]*left: 12px;[^}]*width: auto;/);
+  assert.match(headerCss, /\.site-header \.site-search:focus-within \.site-search-input \{[^}]*font-size: 16px;/);
   assert.doesNotMatch(headerCss, /\.site-header \.site-search, \.site-search-results \{ display: none !important; \}/);
+  assert.match(headerCss, /\.site-header \.menu-toggle \{[^}]*border: 0;[^}]*background: transparent;/);
+  assert.match(headerCss, /\.site-header nav \{ position: absolute;[^}]*width: min\(220px, 52vw\);[^}]*padding: 50px 16px 12px;[^}]*display: none;/);
+  assert.match(headerCss, /\.site-header \.language \{ position: absolute;[^}]*width: 92px;[^}]*display: none;/);
   assert.match(headerCss, /\.site-header\.is-menu-open nav \{ display: flex; \}/);
   assert.match(mobileNav, /aria-expanded/);
   assert.match(homeCss, /@media \(max-width: 720px\)[\s\S]*\.tool-grid, \.home-tool-grid, \.home-workflow-grid \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
@@ -124,5 +128,6 @@ test("mobile layout uses a hamburger, two-column cards and compact workflow head
   assert.match(siteCss, /\.workflow-pipeline, \.workflow-pipeline-five, \.workflow-pipeline-six, \.workflow-pipeline-seven \{ display: flex;[^}]*overflow-x: auto/);
   assert.match(siteCss, /\.workflow-pipeline span, \.workflow-pipeline small \{ display: none; \}/);
   assert.match(pdfCss, /\.pdf-hero h1, \.pdf-category h1 \{ font-size: 30px/);
+  assert.match(pdfCss, /@media \(max-width: 500px\)[\s\S]*\.pdf-tool-grid \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); gap: 10px; \}/);
   assert.match(pdfOrderCss, /\.pdf-order-shell h1 \{ font-size: 30px/);
 });

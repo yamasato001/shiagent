@@ -196,15 +196,15 @@ export const SEARCH_ENTRIES = [
   {
     path: "/pdf/", kind: "tool",
     name: { ja: "PDFツール", en: "PDF Tools" },
-    description: { ja: "専用ワークスペースで結合・分割・並べ替え・交互結合・回転・ページ削除を行います。", en: "Merge, split, reorder, interleave, rotate and remove pages in a dedicated workspace." },
+    description: { ja: "PDFの整理・変換・記入・署名まで端末内で行います。", en: "Organize, convert, complete and sign PDFs in a local workspace." },
     keywords: { ja: ["pdf", "pdf編集"], en: ["pdf", "pdf editor", "pdf tools"] }
   },
   {
     path: "/pdf/merge/", kind: "tool",
     name: { ja: "PDF結合", en: "Merge PDF" },
-    description: { ja: "複数のPDFを1つにまとめます。", en: "Combine several PDF files into one." },
-    keywords: { ja: ["pdf結合", "pdfをまとめ", "pdfを1つ", "pdfを一つ", "pdfをつなげ", "pdfを合体"], en: ["merge pdf", "combine pdf", "join pdf"] },
-    combos: [{ ja: [["pdf"], ["結合", "まとめ", "1つ", "一つ", "つなげ", "繋げ", "合体", "くっつけ"]] }, { en: [["pdf"], ["merge", "combine", "join"]] }]
+    description: { ja: "複数のPDFをファイル順またはページ交互にまとめます。", en: "Combine PDFs in file order or by alternating pages." },
+    keywords: { ja: ["pdf結合", "pdfをまとめ", "pdfを1つ", "pdfを一つ", "pdfをつなげ", "pdfを合体", "交互", "両面", "表と裏", "表面と裏面", "片面スキャン"], en: ["merge pdf", "combine pdf", "join pdf", "interleave", "alternate", "double-sided", "front and back", "duplex"] },
+    combos: [{ ja: [["pdf"], ["結合", "まとめ", "1つ", "一つ", "つなげ", "繋げ", "合体", "くっつけ", "交互", "両面"]] }, { en: [["pdf"], ["merge", "combine", "join", "interleave", "alternate"]] }]
   },
   {
     path: "/pdf/split/", kind: "tool",
@@ -219,12 +219,6 @@ export const SEARCH_ENTRIES = [
     description: { ja: "PDFのページ順を並べ替えます。", en: "Change the order of pages in a PDF." },
     keywords: { ja: ["並べ替え", "並び替え", "ページ順", "順番を変え"], en: ["reorder", "rearrange", "page order", "sort pages"] },
     combos: [{ ja: [["pdf", "ページ"], ["並べ替", "並び替", "順番", "入れ替"]] }]
-  },
-  {
-    path: "/pdf/interleave/", kind: "tool",
-    name: { ja: "PDF交互結合", en: "Interleave PDFs" },
-    description: { ja: "表面と裏面のPDFなどを、1ページずつ交互に結合します。", en: "Merge PDFs by alternating pages, such as front and back scans." },
-    keywords: { ja: ["交互", "両面", "表と裏", "表面と裏面", "片面スキャン"], en: ["interleave", "alternate", "double-sided", "front and back", "duplex"] }
   },
   {
     path: "/pdf/rotate/", kind: "tool",
@@ -246,6 +240,76 @@ export const SEARCH_ENTRIES = [
     description: { ja: "複数の画像を1つのPDFにまとめます。", en: "Combine images into a single PDF." },
     keywords: { ja: ["画像をpdf", "写真をpdf", "pdf化", "pdfにしたい", "pdf作成"], en: ["images to pdf", "image to pdf", "jpg to pdf", "png to pdf", "make pdf"] },
     convert: { from: ["png", "jpg", "jpeg", "webp", "heic", "画像", "image", "写真", "photo", "スキャン", "scan"], to: ["pdf"] }
+  },
+  {
+    path: "/pdf/pdf-to-images/", kind: "tool",
+    name: { ja: "PDF → 画像", en: "PDF to Images" },
+    description: { ja: "PDFページをPNG・JPEG・WebPへ一括変換します。", en: "Render PDF pages as PNG, JPEG or WebP images." },
+    keywords: { ja: ["pdfを画像", "pdfをjpg", "pdfをpng", "pdfをwebp"], en: ["pdf to image", "pdf to jpg", "pdf to png", "pdf to webp"] },
+    convert: { from: ["pdf"], to: ["png", "jpg", "jpeg", "webp", "画像", "image"] }
+  },
+  {
+    path: "/pdf/page-numbers/", kind: "tool",
+    name: { ja: "PDFにページ番号を追加", en: "Add Page Numbers to PDF" },
+    description: { ja: "PDFへ開始番号・位置・形式を指定してページ番号を追加します。", en: "Add page numbers with a chosen start, position and format." },
+    keywords: { ja: ["ページ番号", "ノンブル", "pdfに番号"], en: ["page numbers", "number pdf pages", "pagination"] }
+  },
+  {
+    path: "/pdf/watermark/", kind: "tool",
+    name: { ja: "PDFに透かしを追加", en: "Add Watermark to PDF" },
+    description: { ja: "文字・画像の透かしを透明度や角度を指定して追加します。", en: "Add text or image watermarks with opacity and angle controls." },
+    keywords: { ja: ["pdf透かし", "ウォーターマーク", "社外秘"], en: ["pdf watermark", "watermark pdf", "confidential stamp"] }
+  },
+  {
+    path: "/pdf/metadata-cleaner/", kind: "tool",
+    name: { ja: "PDF文書情報削除", en: "Remove PDF Metadata" },
+    description: { ja: "タイトル・作成者・件名など、PDFの文書情報を削除します。", en: "Remove title, author, subject and other PDF document information." },
+    keywords: { ja: ["PDF メタデータ削除", "PDF 文書情報", "作成者削除"], en: ["remove PDF metadata", "PDF privacy", "clear PDF author"] }
+  },
+  {
+    path: "/pdf/n-up/", kind: "tool",
+    name: { ja: "PDFを複数ページ／1枚に配置", en: "Multiple PDF Pages per Sheet" },
+    description: { ja: "2・4・6ページをA4用紙1枚へ面付けします。", en: "Arrange 2, 4 or 6 PDF pages on each A4 sheet." },
+    keywords: { ja: ["PDF 面付け", "複数ページ 1枚", "PDF 4in1"], en: ["n-up PDF", "multiple pages per sheet", "4 pages on one sheet"] }
+  },
+  {
+    path: "/pdf/form-fill/", kind: "tool",
+    name: { ja: "PDFフォーム入力", en: "Fill PDF Forms" },
+    description: { ja: "PDFの入力欄へ記入し、必要なら内容を固定して保存します。", en: "Complete PDF form fields and optionally flatten the result." },
+    keywords: { ja: ["PDF フォーム入力", "PDF 記入", "申請書 PDF"], en: ["fill PDF form", "complete PDF", "flatten PDF form"] }
+  },
+  {
+    path: "/pdf/signature/", kind: "tool",
+    name: { ja: "PDFに署名を配置", en: "Place a Signature on PDF" },
+    description: { ja: "文字・画像・手書きの署名をPDFへ配置します。", en: "Place a typed, uploaded or hand-drawn visual signature on a PDF." },
+    keywords: { ja: ["PDF 署名", "PDF サイン", "手書き署名"], en: ["sign PDF", "add signature to PDF", "draw signature PDF"] }
+  },
+  {
+    path: "/pdf/compare/", kind: "tool",
+    name: { ja: "PDF比較", en: "Compare PDFs" },
+    description: { ja: "2つのPDFを左右・重ね合わせ・差分強調でページ単位に比較します。", en: "Compare two PDFs page by page, side by side, overlaid or with differences highlighted." },
+    keywords: { ja: ["PDF 比較", "PDF 差分", "PDF 変更箇所", "PDF 修正前後"], en: ["compare PDFs", "PDF diff", "PDF changes", "visual PDF comparison"] },
+    combos: [{ ja: [["pdf"], ["比較", "差分", "違い", "変更"]] }, { en: [["pdf"], ["compare", "difference", "diff", "changes"]] }]
+  },
+  {
+    path: "/pdf/ocr/", kind: "tool",
+    name: { ja: "OCR・検索可能PDF", en: "OCR & Searchable PDF" },
+    description: { ja: "スキャンPDFへ透明文字層を追加し、検索・選択・コピー可能にします。", en: "Add an invisible text layer to scanned PDFs for search, selection and copy." },
+    keywords: { ja: ["PDF OCR", "スキャンPDF", "検索可能PDF", "透明文字", "文字認識", "PDFを検索"], en: ["OCR PDF", "searchable PDF", "scan to text", "invisible text layer", "recognize PDF"] },
+    combos: [{ ja: [["pdf", "スキャン"], ["ocr", "検索", "文字認識", "コピー"]] }, { en: [["pdf", "scan"], ["ocr", "search", "recognize", "copy"]] }]
+  },
+  {
+    path: "/pdf/compress/", kind: "tool",
+    name: { ja: "PDF圧縮", en: "Compress PDF" },
+    description: { ja: "PDF内の埋め込み画像を再圧縮してファイルサイズを軽量化します。", en: "Recompress embedded PDF images to reduce file size." },
+    keywords: { ja: ["PDF 圧縮", "PDF 軽量化", "PDF 容量削減", "PDF 小さく", "埋め込み画像圧縮"], en: ["compress PDF", "reduce PDF size", "shrink PDF", "recompress PDF images"] },
+    combos: [{ ja: [["pdf"], ["圧縮", "軽く", "軽量", "容量", "小さく"]] }, { en: [["pdf"], ["compress", "smaller", "reduce", "shrink"]] }]
+  },
+  {
+    path: "/pdf/crop/", kind: "tool",
+    name: { ja: "PDFの余白をクロップ", en: "Crop PDF Margins" },
+    description: { ja: "白余白を自動検出するか四辺を指定してPDFを切り抜きます。", en: "Detect white margins or crop all four PDF sides precisely." },
+    keywords: { ja: ["pdfクロップ", "pdf余白削除", "pdf切り抜き"], en: ["crop pdf", "remove pdf margins", "trim pdf"] }
   },
   {
     path: "/pdf/sort-by-page-number/", kind: "workflow",
@@ -283,6 +347,20 @@ export const SEARCH_ENTRIES = [
     description: { ja: "バラバラな画像を、同じCanvas・対象物・余白・背景・形式・連番名へまとめて統一します。", en: "Standardize a mixed batch to one canvas, object scale, padding, background, format and names." },
     keywords: { ja: ["規格統一", "サイズをそろえ", "サイズを揃え", "統一", "バラバラな画像", "そろえたい", "揃えたい"], en: ["normalize", "standardize", "consistent size", "same size", "uniform"] },
     combos: [{ ja: [["画像", "素材", "サイズ", "大きさ"], ["そろえ", "揃え", "統一", "同じ"]] }]
+  },
+  {
+    path: "/workflows/pdf-finisher/", kind: "workflow",
+    name: { ja: "PDF一括仕上げ", en: "PDF Finishing Workflow" },
+    description: { ja: "余白除去、向き補正、ページ番号、文書情報削除、連番名への整理を一括実行します。", en: "Remove margins, correct orientation, add page numbers, clear metadata and organize PDF file names in one run." },
+    keywords: { ja: ["PDF仕上げ", "PDF一括処理", "PDF余白", "PDF向き補正", "PDF連番"], en: ["finish PDF", "batch PDF cleanup", "PDF margins", "PDF page numbers", "rename PDFs"] },
+    combos: [{ ja: [["pdf"], ["仕上げ", "一括", "余白", "向き", "ページ番号", "連番"]] }, { en: [["pdf"], ["finish", "cleanup", "margin", "orient", "number", "rename"]] }]
+  },
+  {
+    path: "/workflows/scan-pdf-optimizer/", kind: "workflow",
+    name: { ja: "スキャンPDF最適化", en: "Scanned PDF Optimizer" },
+    description: { ja: "スキャン画像やPDFを、向き・余白・OCR・容量・文書情報・連番名まで一括で整えます。", en: "Turn scans into compact searchable PDFs with corrected orientation, cropped margins, clean metadata and sequential names." },
+    keywords: { ja: ["スキャンPDF", "検索可能PDF", "紙資料", "OCR", "PDF軽量化", "余白除去"], en: ["scanned PDF", "searchable PDF", "paper scan", "OCR", "compress scan", "crop margins"] },
+    combos: [{ ja: [["pdf", "スキャン", "紙資料"], ["ocr", "検索", "軽量", "最適化", "余白"]] }, { en: [["pdf", "scan"], ["ocr", "searchable", "optimize", "compress", "crop"]] }]
   },
   {
     path: "/workflows/custom/", kind: "workflow",

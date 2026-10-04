@@ -1,10 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { detectRasterOrientation, detectTextOrientation, interleaveGroups, nearestQuarterTurn, parsePageRange, PDF_MODE_FEATURES, rotateAngle, safePdfName, selectPageIndexes } from "../assets/js/pdf-core.js";
+import { cropBoxFromMargins, detectRasterOrientation, detectTextOrientation, detectWhiteContentBounds, fitInsideBox, interleaveGroups, nUpGrid, nearestQuarterTurn, pageNumberLabel, parsePageRange, PDF_MODE_FEATURES, positionInBox, rotateAngle, safePdfName, selectPageIndexes } from "../assets/js/pdf-core.js";
 
 test("interleaves PDFs while preserving each document order", () => {
   assert.deepEqual(interleaveGroups([["a1", "a2", "a3"], ["b1", "b2"]]), ["a1", "b1", "a2", "b2", "a3"]);
+});
+
+test("merge page exposes sequential and interleaved methods", async () => {
+  const source = await readFile(new URL("../src/pdf-workspace.js", import.meta.url), "utf8");
+  assert.match(source, /id="pdfMergeMethod"/);
+  assert.match(source, /value="sequential"/);
+  assert.match(source, /value="interleave"/);
 });
 
 test("parses page ranges, odd/even pages and selected pages", () => {
@@ -18,6 +25,32 @@ test("normalizes rotation and safe PDF names", () => {
   assert.equal(rotateAngle(0, -90), 270);
   assert.equal(rotateAngle(270, 180), 90);
   assert.equal(safePdfName("report:final.pdf"), "reportfinal.pdf");
+});
+
+test("positions page labels and formats their numbers", () => {
+  assert.equal(pageNumberLabel(2, 8, "number", 1), "3");
+  assert.equal(pageNumberLabel(2, 8, "page", 1), "Page 3");
+  assert.equal(pageNumberLabel(2, 8, "total", 1), "3 / 8");
+  assert.deepEqual(positionInBox(600, 800, 40, 12, "bottom-center", 20), { x: 280, y: 20 });
+  assert.deepEqual(positionInBox(600, 800, 40, 12, "top-right", 20), { x: 540, y: 768 });
+});
+
+test("calculates manual and automatic PDF crop margins", () => {
+  assert.deepEqual(cropBoxFromMargins({ x: 0, y: 0, width: 600, height: 800 }, { left: 10, right: 20, top: 30, bottom: 40 }), { x: 10, y: 40, width: 570, height: 730 });
+  const data = new Uint8ClampedArray(10 * 10 * 4).fill(255);
+  for (let y = 2; y <= 7; y += 1) for (let x = 1; x <= 8; x += 1) {
+    const offset = (y * 10 + x) * 4;
+    data[offset] = data[offset + 1] = data[offset + 2] = 0;
+  }
+  const bounds = detectWhiteContentBounds({ data, width: 10, height: 10 });
+  assert.deepEqual(bounds, { left: 0.1, top: 0.2, right: 0.1, bottom: 0.2 });
+});
+
+test("calculates N-up grids and centered page fitting", () => {
+  assert.deepEqual(nUpGrid("2"), { columns: 1, rows: 2, count: 2 });
+  assert.deepEqual(nUpGrid("4"), { columns: 2, rows: 2, count: 4 });
+  assert.deepEqual(nUpGrid("6"), { columns: 2, rows: 3, count: 6 });
+  assert.deepEqual(fitInsideBox(400, 200, 200, 200), { width: 200, height: 100, x: 0, y: 50, scale: 0.5 });
 });
 
 test("detects quarter-turn corrections from PDF text transforms", () => {
@@ -40,7 +73,7 @@ test("marks blank raster pages as unavailable for automatic orientation", () => 
 });
 
 test("PDF tools expose separate URLs and a dedicated local tray", async () => {
-  const modes = ["merge", "split", "reorder", "interleave", "rotate", "delete-pages", "images-to-pdf"];
+  const modes = ["merge", "split", "reorder", "interleave", "rotate", "delete-pages", "images-to-pdf", "pdf-to-images", "page-numbers", "watermark", "crop", "metadata-cleaner", "n-up", "form-fill", "signature"];
   for (const mode of modes) {
     for (const prefix of ["", "ja/"]) {
       const html = await readFile(new URL(`../${prefix}pdf/${mode}/index.html`, import.meta.url), "utf8");
@@ -65,6 +98,54 @@ test("PDF tools expose only the controls required by each purpose", () => {
   assert.equal(PDF_MODE_FEATURES.rotate.autoOrient, true);
   assert.deepEqual(PDF_MODE_FEATURES["delete-pages"].actions, ["remove"]);
   assert.deepEqual(PDF_MODE_FEATURES["images-to-pdf"].actions, ["remove"]);
+  assert.equal(PDF_MODE_FEATURES["pdf-to-images"].imageOutput, true);
+  assert.equal(PDF_MODE_FEATURES["page-numbers"].preserveAll, true);
+  assert.equal(PDF_MODE_FEATURES.watermark.preserveAll, true);
+  assert.equal(PDF_MODE_FEATURES.crop.preserveAll, true);
+  assert.equal(PDF_MODE_FEATURES["n-up"].nUpOutput, true);
+  assert.equal(PDF_MODE_FEATURES["form-fill"].formOutput, true);
+  assert.equal(PDF_MODE_FEATURES.signature.preserveAll, true);
+  assert.equal(PDF_MODE_FEATURES["pdf-finisher"].finishWorkflow, true);
+});
+
+test("new PDF tools expose rendering, numbering, watermark and crop controls", async () => {
+  const workspace = await readFile(new URL("../src/pdf-workspace.js", import.meta.url), "utf8");
+  assert.match(workspace, /id="pdfImageFormat"/);
+  assert.match(workspace, /replaceTray\(files, "pdf-to-images"\)/);
+  assert.match(workspace, /id="pdfNumberStart"/);
+  assert.match(workspace, /pageNumberLabel\(/);
+  assert.match(workspace, /id="pdfWatermarkImage"/);
+  assert.match(workspace, /drawImage\(image/);
+  assert.match(workspace, /id="pdfCropMode"/);
+  assert.match(workspace, /detectWhiteContentBounds\(/);
+  assert.match(workspace, /page\.setCropBox\(/);
+});
+
+test("PDF utility tools expose metadata, N-up, form and visual signature workflows", async () => {
+  const workspace = await readFile(new URL("../src/pdf-workspace.js", import.meta.url), "utf8");
+  assert.match(workspace, /metadata-cleaner/);
+  assert.match(workspace, /id="pdfNUpLayout"/);
+  assert.match(workspace, /buildNUpPdf/);
+  assert.match(workspace, /id="pdfFormFields"/);
+  assert.match(workspace, /buildFormPdf/);
+  assert.match(workspace, /id="pdfSignatureCanvas"/);
+  assert.match(workspace, /signatureAsset/);
+  assert.match(workspace, /電子証明書/);
+});
+
+test("PDF finisher runs the six requested operations as one local workflow", async () => {
+  for (const path of ["../workflows/pdf-finisher/index.html", "../ja/workflows/pdf-finisher/index.html"]) {
+    const html = await readFile(new URL(path, import.meta.url), "utf8");
+    assert.match(html, /data-pdf-mode="pdf-finisher"/);
+    assert.match(html, /workflow-pipeline-six/);
+    assert.match(html, /pdf-workspace\.js/);
+  }
+  const workspace = await readFile(new URL("../src/pdf-workspace.js", import.meta.url), "utf8");
+  assert.match(workspace, /await autoOrientPages\(\)/);
+  assert.match(workspace, /await prepareAutoCrops\(pages, targetIds\)/);
+  assert.match(workspace, /applyCrop\(page, model\); applyPageNumber/);
+  assert.match(workspace, /pdfRenameBase/);
+  assert.match(workspace, /replacePdfTray\(trayFiles\)/);
 });
 
 test("PDF loading gives visible progress and renders pages progressively", async () => {

@@ -24,6 +24,12 @@ if (header && toggle) {
     if (mobileQuery.matches && event.target.closest("nav a")) closeMenu();
   });
 
+  header.querySelector(".site-search-input")?.addEventListener("focus", () => closeMenu());
+
+  document.addEventListener("pointerdown", event => {
+    if (mobileQuery.matches && header.classList.contains("is-menu-open") && !header.contains(event.target)) closeMenu();
+  });
+
   document.addEventListener("keydown", event => {
     if (event.key === "Escape" && header.classList.contains("is-menu-open")) closeMenu({ restoreFocus: true });
   });

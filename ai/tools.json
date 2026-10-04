@@ -1643,6 +1643,212 @@
       }
     },
     {
+      "id": "pdf-compare",
+      "route": "pdf/compare",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "image/png",
+        "application/zip"
+      ],
+      "automation": {
+        "input": "#pdfCompareA",
+        "action": "#pdfCompareRun",
+        "result": "#pdfComparePages",
+        "download": "#pdfCompareDownload",
+        "status": "#pdfCompareStatus",
+        "controls": [
+          {
+            "selector": "#pdfCompareB",
+            "element": "input",
+            "type": "file",
+            "accept": "application/pdf,.pdf"
+          },
+          {
+            "selector": "#pdfCompareThreshold",
+            "element": "select",
+            "type": "select",
+            "value": "18",
+            "values": [
+              "8",
+              "18",
+              "32"
+            ]
+          },
+          {
+            "selector": "#pdfCompareDpi",
+            "element": "select",
+            "type": "select",
+            "value": "144",
+            "values": [
+              "96",
+              "144",
+              "192"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDF比較",
+        "en": "Compare PDFs"
+      },
+      "description": {
+        "ja": "2つのPDFをアップロードせずブラウザ内で比較。ページ数の違いと差分率を表示し、差分強調画像をZIP保存できます。",
+        "en": "Compare two PDFs locally in your browser, see page-count and visual differences, and download highlighted difference images as a ZIP."
+      },
+      "paths": {
+        "ja": "/ja/pdf/compare/",
+        "en": "/pdf/compare/"
+      }
+    },
+    {
+      "id": "pdf-compress",
+      "route": "pdf/compress",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfCompressorInput",
+        "action": "#pdfCompressorRun",
+        "result": "#pdfCompressorResult",
+        "download": "#pdfCompressorDownload",
+        "status": "#pdfCompressorStatus",
+        "controls": [
+          {
+            "selector": "input[name=pdfCompressionLevel]",
+            "element": "input",
+            "type": "radio",
+            "value": "recommended",
+            "values": [
+              "quality",
+              "recommended",
+              "maximum"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDF圧縮",
+        "en": "Compress PDF"
+      },
+      "description": {
+        "ja": "PDF内のJPEG画像をブラウザ内で再圧縮して軽量化。画質優先・おすすめ・最大圧縮を選択でき、ファイルは外部へアップロードしません。",
+        "en": "Recompress embedded JPEG images locally with Quality, Recommended and Maximum modes. Your PDF is never uploaded."
+      },
+      "paths": {
+        "ja": "/ja/pdf/compress/",
+        "en": "/pdf/compress/"
+      }
+    },
+    {
+      "id": "pdf-crop",
+      "route": "pdf/crop",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfSelection",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "selected",
+              "odd",
+              "even",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfRange",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfCropMode",
+            "element": "select",
+            "type": "select",
+            "value": "auto",
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          {
+            "selector": "#pdfCropPadding",
+            "element": "input",
+            "type": "number",
+            "value": "3"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFの余白をクロップ",
+        "en": "Crop PDF Margins"
+      },
+      "description": {
+        "ja": "PDFの白い余白を自動検出して削除、または上下左右をmm指定してクロップ。対象ページを選び、画質を変えずブラウザ内で保存できます。",
+        "en": "Automatically remove white PDF margins or crop each side by an exact millimeter value. Select pages and process locally without re-rendering content."
+      },
+      "paths": {
+        "ja": "/ja/pdf/crop/",
+        "en": "/pdf/crop/"
+      }
+    },
+    {
       "id": "pdf-delete-pages",
       "route": "pdf/delete-pages",
       "status": "active",
@@ -1688,6 +1894,65 @@
       "paths": {
         "ja": "/ja/pdf/delete-pages/",
         "en": "/pdf/delete-pages/"
+      }
+    },
+    {
+      "id": "pdf-form-fill",
+      "route": "pdf/form-fill",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "[data-pdf-form-field]",
+            "element": "input",
+            "type": "varies",
+            "repeated": true
+          },
+          {
+            "selector": "#pdfFormFlatten",
+            "element": "input",
+            "type": "checkbox"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFフォームに入力",
+        "en": "Fill PDF Forms"
+      },
+      "description": {
+        "ja": "入力可能なPDFフォームのテキスト欄、チェックボックス、選択欄へブラウザ上で記入。必要なら内容を固定して端末内で保存できます。",
+        "en": "Fill PDF text fields, checkboxes and choice fields locally in your browser. Optionally flatten the values before saving the completed PDF."
+      },
+      "paths": {
+        "ja": "/ja/pdf/form-fill/",
+        "en": "/pdf/form-fill/"
       }
     },
     {
@@ -1827,6 +2092,16 @@
             "element": "input",
             "type": "text",
             "value": "shiagent"
+          },
+          {
+            "selector": "#pdfMergeMethod",
+            "element": "select",
+            "type": "select",
+            "value": "sequential",
+            "values": [
+              "sequential",
+              "interleave"
+            ]
           }
         ],
         "events": {
@@ -1848,6 +2123,430 @@
       "paths": {
         "ja": "/ja/pdf/merge/",
         "en": "/pdf/merge/"
+      }
+    },
+    {
+      "id": "pdf-metadata-cleaner",
+      "route": "pdf/metadata-cleaner",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFの文書情報を削除",
+        "en": "Remove PDF Metadata"
+      },
+      "description": {
+        "ja": "PDFのタイトル、作成者、件名、キーワードなどの文書情報を端末内で削除。ファイルをアップロードせず新しいPDFとして保存できます。",
+        "en": "Remove PDF title, author, subject, keywords and other document metadata locally in your browser, then save a clean PDF without uploading it."
+      },
+      "paths": {
+        "ja": "/ja/pdf/metadata-cleaner/",
+        "en": "/pdf/metadata-cleaner/"
+      }
+    },
+    {
+      "id": "pdf-n-up",
+      "route": "pdf/n-up",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfSelection",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "selected",
+              "odd",
+              "even",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfRange",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfNUpLayout",
+            "element": "select",
+            "type": "select",
+            "value": "4",
+            "values": [
+              "2",
+              "4",
+              "6"
+            ]
+          },
+          {
+            "selector": "#pdfNUpPaper",
+            "element": "select",
+            "type": "select",
+            "value": "a4l",
+            "values": [
+              "a4p",
+              "a4l"
+            ]
+          },
+          {
+            "selector": "#pdfNUpMargin",
+            "element": "input",
+            "type": "number",
+            "value": "8"
+          },
+          {
+            "selector": "#pdfNUpGap",
+            "element": "input",
+            "type": "number",
+            "value": "4"
+          },
+          {
+            "selector": "#pdfNUpBorder",
+            "element": "input",
+            "type": "checkbox"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFを複数ページ／1枚に配置",
+        "en": "Multiple PDF Pages per Sheet"
+      },
+      "description": {
+        "ja": "PDFの2・4・6ページをA4用紙1枚に配置。縦横、余白、間隔、境界線を指定してブラウザ内で面付けPDFを作成できます。",
+        "en": "Place 2, 4 or 6 PDF pages on each A4 sheet. Choose orientation, margins, gaps and borders, and create the N-up PDF locally."
+      },
+      "paths": {
+        "ja": "/ja/pdf/n-up/",
+        "en": "/pdf/n-up/"
+      }
+    },
+    {
+      "id": "pdf-ocr",
+      "route": "pdf/ocr",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfOcrInput",
+        "action": "#pdfOcrRun",
+        "result": "#pdfOcrResult",
+        "download": "#pdfOcrDownload",
+        "status": "#pdfOcrStatus",
+        "controls": [
+          {
+            "selector": "#pdfOcrLanguage",
+            "element": "select",
+            "type": "select",
+            "value": "jpn+eng",
+            "values": [
+              "jpn+eng",
+              "jpn",
+              "eng"
+            ]
+          },
+          {
+            "selector": "#pdfOcrDpi",
+            "element": "select",
+            "type": "select",
+            "value": "200",
+            "values": [
+              "150",
+              "200",
+              "300"
+            ]
+          },
+          {
+            "selector": "#pdfOcrPageMode",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfOcrRange",
+            "element": "input",
+            "type": "text",
+            "value": ""
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "OCR・検索可能PDF",
+        "en": "OCR & Searchable PDF"
+      },
+      "description": {
+        "ja": "スキャンPDFを日本語・英語OCRで認識し、元の見た目を保った検索可能PDFをブラウザ内で作成。PDFは外部へアップロードしません。",
+        "en": "Recognize Japanese and English scans and create searchable PDFs locally in your browser while preserving the original appearance."
+      },
+      "paths": {
+        "ja": "/ja/pdf/ocr/",
+        "en": "/pdf/ocr/"
+      }
+    },
+    {
+      "id": "pdf-page-numbers",
+      "route": "pdf/page-numbers",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfSelection",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "selected",
+              "odd",
+              "even",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfRange",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfNumberStart",
+            "element": "input",
+            "type": "number",
+            "value": "1",
+            "min": "0"
+          },
+          {
+            "selector": "#pdfNumberStyle",
+            "element": "select",
+            "type": "select",
+            "value": "number",
+            "values": [
+              "number",
+              "page",
+              "total"
+            ]
+          },
+          {
+            "selector": "#pdfPosition",
+            "element": "select",
+            "type": "select",
+            "value": "bottom-center"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFにページ番号を追加",
+        "en": "Add Page Numbers to PDF"
+      },
+      "description": {
+        "ja": "PDFへページ番号を追加。対象ページ、開始番号、1 / 全ページなどの形式、位置、余白、文字サイズを指定してブラウザ内で保存できます。",
+        "en": "Add page numbers to selected PDF pages with a custom starting number, format, position, margin and font size, entirely in your browser."
+      },
+      "paths": {
+        "ja": "/ja/pdf/page-numbers/",
+        "en": "/pdf/page-numbers/"
+      }
+    },
+    {
+      "id": "pdf-pdf-to-images",
+      "route": "pdf/pdf-to-images",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "application/zip"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfSelection",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "selected",
+              "odd",
+              "even",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfRange",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfImageFormat",
+            "element": "select",
+            "type": "select",
+            "value": "webp",
+            "values": [
+              "png",
+              "jpeg",
+              "webp"
+            ]
+          },
+          {
+            "selector": "#pdfImageDpi",
+            "element": "select",
+            "type": "select",
+            "value": "150",
+            "values": [
+              "96",
+              "150",
+              "300"
+            ]
+          },
+          {
+            "selector": "#pdfImageQuality",
+            "element": "select",
+            "type": "select",
+            "value": "0.9",
+            "values": [
+              "0.8",
+              "0.9",
+              "0.95"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFを画像に変換",
+        "en": "Convert PDF to Images"
+      },
+      "description": {
+        "ja": "PDFをPNG・JPEG・WebP画像へ一括変換。対象ページ、96・150・300 DPI、画質を指定し、アップロードせずブラウザ内でZIP保存できます。",
+        "en": "Convert PDF pages to PNG, JPEG or WebP with page selection, resolution and quality controls. Process locally and download a ZIP."
+      },
+      "paths": {
+        "ja": "/ja/pdf/pdf-to-images/",
+        "en": "/pdf/pdf-to-images/"
       }
     },
     {
@@ -1955,6 +2654,100 @@
       "paths": {
         "ja": "/ja/pdf/rotate/",
         "en": "/pdf/rotate/"
+      }
+    },
+    {
+      "id": "pdf-signature",
+      "route": "pdf/signature",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfSelection",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "selected",
+              "odd",
+              "even",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfRange",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfSignatureText",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfSignatureImage",
+            "element": "input",
+            "type": "file"
+          },
+          {
+            "selector": "#pdfPosition",
+            "element": "select",
+            "type": "select",
+            "value": "bottom-right"
+          },
+          {
+            "selector": "#pdfSignatureSize",
+            "element": "input",
+            "type": "number",
+            "value": "24"
+          },
+          {
+            "selector": "#pdfMargin",
+            "element": "input",
+            "type": "number",
+            "value": "12"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFに署名を配置",
+        "en": "Place a Signature on PDF"
+      },
+      "description": {
+        "ja": "文字入力、PNG・JPEG画像、手書きで作った署名をPDFへ配置。対象ページ、位置、大きさ、余白を指定して端末内で保存できます。",
+        "en": "Add a typed, PNG/JPEG or hand-drawn visual signature to selected PDF pages with position, size and margin controls, all locally."
+      },
+      "paths": {
+        "ja": "/ja/pdf/signature/",
+        "en": "/pdf/signature/"
       }
     },
     {
@@ -2080,6 +2873,90 @@
       "paths": {
         "ja": "/ja/pdf/split/",
         "en": "/pdf/split/"
+      }
+    },
+    {
+      "id": "pdf-watermark",
+      "route": "pdf/watermark",
+      "status": "active",
+      "category": "pdf",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfName",
+            "element": "input",
+            "type": "text",
+            "value": "shiagent"
+          },
+          {
+            "selector": "#pdfSelection",
+            "element": "select",
+            "type": "select",
+            "value": "all",
+            "values": [
+              "all",
+              "selected",
+              "odd",
+              "even",
+              "range"
+            ]
+          },
+          {
+            "selector": "#pdfRange",
+            "element": "input",
+            "type": "text"
+          },
+          {
+            "selector": "#pdfWatermarkText",
+            "element": "input",
+            "type": "text",
+            "value": "CONFIDENTIAL"
+          },
+          {
+            "selector": "#pdfOpacity",
+            "element": "input",
+            "type": "number",
+            "value": "0.18"
+          },
+          {
+            "selector": "#pdfWatermarkRotation",
+            "element": "input",
+            "type": "number",
+            "value": "-35"
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDFに透かしを追加",
+        "en": "Add Watermark to PDF"
+      },
+      "description": {
+        "ja": "PDFへ文字・画像の透かしを追加。対象ページ、透明度、角度、位置、大きさを指定し、ファイルをアップロードせず保存できます。",
+        "en": "Add text or image watermarks to selected PDF pages with opacity, angle, position and size controls, processed locally in your browser."
+      },
+      "paths": {
+        "ja": "/ja/pdf/watermark/",
+        "en": "/pdf/watermark/"
       }
     },
     {
@@ -3013,6 +3890,201 @@
       "paths": {
         "ja": "/ja/workflows/line-art-to-svg/",
         "en": "/workflows/line-art-to-svg/"
+      }
+    },
+    {
+      "id": "workflows-pdf-finisher",
+      "route": "workflows/pdf-finisher",
+      "status": "active",
+      "category": "workflow",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        ".pdf"
+      ],
+      "outputs": [
+        "application/pdf",
+        "application/zip"
+      ],
+      "automation": {
+        "input": "#pdfInput",
+        "action": "#pdfExport",
+        "result": "#pdfPages",
+        "download": "#pdfExport",
+        "status": "#pdfStatus",
+        "controls": [
+          {
+            "selector": "#pdfCropPadding",
+            "element": "input",
+            "type": "number",
+            "value": "3"
+          },
+          {
+            "selector": "#pdfNumberStart",
+            "element": "input",
+            "type": "number",
+            "value": "1"
+          },
+          {
+            "selector": "#pdfNumberStyle",
+            "element": "select",
+            "type": "select",
+            "value": "total",
+            "values": [
+              "number",
+              "page",
+              "total"
+            ]
+          },
+          {
+            "selector": "#pdfPosition",
+            "element": "select",
+            "type": "select",
+            "value": "bottom-center"
+          },
+          {
+            "selector": "#pdfRenameBase",
+            "element": "input",
+            "type": "text",
+            "value": "document"
+          },
+          {
+            "selector": "#pdfRenameStart",
+            "element": "input",
+            "type": "number",
+            "value": "1"
+          },
+          {
+            "selector": "#pdfRenameDigits",
+            "element": "select",
+            "type": "select",
+            "value": "3",
+            "values": [
+              "2",
+              "3",
+              "4"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "PDF一括仕上げ",
+        "en": "PDF Finishing Workflow"
+      },
+      "description": {
+        "ja": "PDFの余白除去、向き自動補正、ページ番号追加、文書情報削除、連番ファイル名への整理をブラウザ内で一括処理します。",
+        "en": "Batch-finish PDFs locally by removing margins, correcting orientation, adding page numbers, clearing metadata and applying sequential file names."
+      },
+      "paths": {
+        "ja": "/ja/workflows/pdf-finisher/",
+        "en": "/workflows/pdf-finisher/"
+      }
+    },
+    {
+      "id": "workflows-scan-pdf-optimizer",
+      "route": "workflows/scan-pdf-optimizer",
+      "status": "active",
+      "category": "workflow",
+      "localProcessing": true,
+      "accepts": [
+        "application/pdf",
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp"
+      ],
+      "outputs": [
+        "application/pdf",
+        "application/zip"
+      ],
+      "automation": {
+        "input": "#scanPdfInput",
+        "action": "#scanPdfRun",
+        "result": "#scanPdfResults",
+        "download": "#scanPdfDownloadAll",
+        "status": "#scanPdfStatus",
+        "controls": [
+          {
+            "selector": "#scanPdfLanguage",
+            "element": "select",
+            "type": "select",
+            "value": "jpn+eng",
+            "values": [
+              "jpn+eng",
+              "jpn",
+              "eng"
+            ]
+          },
+          {
+            "selector": "#scanPdfQuality",
+            "element": "select",
+            "type": "select",
+            "value": "150",
+            "values": [
+              "150",
+              "200"
+            ]
+          },
+          {
+            "selector": "#scanPdfPadding",
+            "element": "input",
+            "type": "number",
+            "value": "3"
+          },
+          {
+            "selector": "#scanPdfBase",
+            "element": "input",
+            "type": "text",
+            "value": "scan"
+          },
+          {
+            "selector": "#scanPdfStart",
+            "element": "input",
+            "type": "number",
+            "value": "1"
+          },
+          {
+            "selector": "#scanPdfDigits",
+            "element": "select",
+            "type": "select",
+            "value": "3",
+            "values": [
+              "2",
+              "3",
+              "4"
+            ]
+          }
+        ],
+        "events": {
+          "ready": "shiagent:ready",
+          "state": "shiagent:statechange",
+          "outputs": "shiagent:outputs",
+          "tray": "shiagent:traychange",
+          "error": "shiagent:error"
+        }
+      },
+      "name": {
+        "ja": "スキャンPDF最適化",
+        "en": "Scanned PDF Optimizer"
+      },
+      "description": {
+        "ja": "スキャン画像やPDFをまとめ、向き補正、余白除去、OCR、軽量化、文書情報削除、連番名まで端末内で一括処理します。",
+        "en": "Combine scans and locally correct orientation, crop white margins, run OCR, reduce size, clear metadata and apply sequential names."
+      },
+      "paths": {
+        "ja": "/ja/workflows/scan-pdf-optimizer/",
+        "en": "/workflows/scan-pdf-optimizer/"
       }
     },
     {

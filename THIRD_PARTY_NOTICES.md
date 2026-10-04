@@ -7,6 +7,14 @@ License 2.0. Its WebAssembly codec is based on OxiPNG.
 
 https://github.com/jamsinclair/jSquash/tree/main/packages/oxipng
 
+## jSquash MozJPEG
+
+PDF image recompression uses `@jsquash/jpeg`, distributed under the Apache
+License 2.0. Its encoder is based on MozJPEG, distributed under the BSD
+3-Clause License.
+
+https://github.com/jamsinclair/jSquash/tree/main/packages/jpeg
+
 ## image-q
 
 Balanced and Smallest color quantization uses `image-q`, distributed under the
@@ -54,3 +62,22 @@ PDF parsing and page thumbnail rendering use Mozilla PDF.js (`pdfjs-dist`),
 distributed under the Apache License 2.0.
 
 https://github.com/mozilla/pdf.js
+
+## Tesseract.js / Tesseract OCR language data
+
+Searchable-PDF OCR uses `tesseract.js` and `tesseract.js-core`, distributed
+under the Apache License 2.0. Bundled Japanese and English trained-data files
+are provided by `@tesseract.js-data/jpn` and `@tesseract.js-data/eng` under the
+MIT License.
+
+https://github.com/naptha/tesseract.js
+https://github.com/naptha/tessdata
+
+## wise-pdf reference implementation
+
+The PDF image-stream inspection and safe in-place JPEG replacement approach is
+adapted from the MIT-licensed `wise-pdf` reference implementation.
+
+Copyright (c) 2026 ECgear
+
+https://github.com/ECgear/wise-pdf
