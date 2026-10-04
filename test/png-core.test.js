@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { analyzePixels, COLOR_GUARD_LIMIT, createZip, crc32, detectRasterFormat, edgeSimilarity, formatBytes, jpegQuality, outputName, PALETTE_REDUCTION_LIMIT, PALETTE_STEPS, perceptualSimilarity, pngOptimizationLevel, processPixels, savedPercent, usesColorGuard, visibleColorChange } from "../assets/js/png-core.js";
+import { analyzePixels, COLOR_GUARD_LIMIT, createZip, crc32, detectRasterFormat, edgeSimilarity, formatBytes, jpegQuality, outputName, PALETTE_REDUCTION_LIMIT, PALETTE_STEPS, perceptualSimilarity, pngOptimizationLevel, processPixels, recommendedPngQualityProfile, savedPercent, usesColorGuard, visibleColorChange } from "../assets/js/png-core.js";
 
 test("PNG and JPEG are detected from file signatures", () => {
   assert.equal(detectRasterFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), "png");
@@ -43,6 +43,24 @@ test("edge similarity protects strong outlines while ignoring faint texture", ()
   assert.equal(edgeSimilarity(original, original, width, height), 1);
   assert.ok(edgeSimilarity(original, textureRemoved, width, height) > 0.95);
   assert.ok(edgeSimilarity(original, outlineRemoved, width, height) < 0.8);
+});
+
+test("Recommended PNG quality floors retain competitor-level line art and photo candidates", () => {
+  const lineart = recommendedPngQualityProfile({ kind: "lineart", metrics: { colorBuckets: 106 } });
+  assert.equal(lineart.denseColorPng, false);
+  assert.ok(0.9971414629 >= lineart.similarityThreshold);
+  assert.ok(0.9409718158 >= lineart.edgeThreshold);
+  assert.ok(0.9966761134 < lineart.similarityThreshold);
+
+  const photo = recommendedPngQualityProfile({ kind: "photo", metrics: { colorBuckets: 1663 } });
+  assert.equal(photo.denseColorPng, true);
+  assert.ok(0.9836823752 >= photo.similarityThreshold);
+  assert.ok(0.9279159024 >= photo.edgeThreshold);
+  assert.ok(0.9779032124 < photo.similarityThreshold);
+
+  const careful = recommendedPngQualityProfile({ kind: "photo", metrics: { colorBuckets: 1663 } }, "careful");
+  assert.ok(careful.similarityThreshold > photo.similarityThreshold);
+  assert.ok(careful.edgeThreshold > photo.edgeThreshold);
 });
 
 test("standard effort uses the fast OxiPNG level and careful spends more time", async () => {
@@ -251,6 +269,7 @@ test("Recommended PNG tries compact palettes and validates rendered quality", as
   assert.match(worker, /module\.quantize\(new Uint8Array\(buffer\), width, height, requestedColors, 0\)/);
   assert.match(bundle, /requestedColors:[A-Za-z_$][\w$]*=null/);
   assert.match(script, /denseColorPng[\s\S]*\? \[256, 128, 64, 32, 16, 12\][\s\S]*: \[12, 16, 32, 64, 128, 256\]/);
+  assert.match(script, /recommendedPngQualityProfile\(analysis, effort\)/);
   assert.match(script, /if \(!denseColorPng \|\| savings >= 80\) return result/);
   assert.match(script, /if \(safeFallback\) return safeFallback/);
   assert.match(script, /edgeSimilarity\(/);

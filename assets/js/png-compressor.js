@@ -1,4 +1,4 @@
-import { analyzePixels, detectRasterFormat, edgeSimilarity, formatBytes, jpegQuality, outputName, perceptualSimilarity, pngOptimizationLevel, savedPercent, usesColorGuard } from "./png-core.js";
+import { analyzePixels, detectRasterFormat, edgeSimilarity, formatBytes, jpegQuality, outputName, perceptualSimilarity, pngOptimizationLevel, recommendedPngQualityProfile, savedPercent, usesColorGuard } from "./png-core.js";
 import { createZipBlob, decodeBrowserImage, encodeBrowserCanvas } from "./browser-runtime.js";
 import "./queue-drop.js";
 
@@ -374,26 +374,13 @@ async function encodeRecommendedRaster(decoded, format, kind, effort) {
 }
 
 async function encodeRecommendedPng(decoded, sourceFile, analysis, level, effort) {
-  const graphicTexture = analysis.metrics.colorBuckets <= 64;
-  const denseColorPng = !graphicTexture && (analysis.kind === "photo" || analysis.kind === "illustration");
+  const { denseColorPng, similarityThreshold, edgeThreshold } = recommendedPngQualityProfile(analysis, effort);
   // Photos and dense illustrations start at the highest-quality palette and
   // only step down when the 80% target cannot be reached. Flat graphics keep
   // starting from the smallest viable palette because broad areas survive it.
   const paletteCandidates = denseColorPng
     ? [256, 128, 64, 32, 16, 12]
     : [12, 16, 32, 64, 128, 256];
-  const baseThreshold = graphicTexture ? 0.9985
-    : analysis.kind === "lineart" ? 0.999
-      : analysis.kind === "photo" ? 0.985
-        : denseColorPng ? 0.975 : 0.997;
-  const carefulBoost = denseColorPng ? 0.003 : 0.0005;
-  const similarityThreshold = Math.min(0.9995, baseThreshold + (effort === "careful" ? carefulBoost : 0));
-  // Palette compression is expected to flatten weak texture. Strong-edge
-  // similarity guards the subject outline without blocking that useful loss.
-  const edgeThreshold = denseColorPng
-    ? (effort === "careful" ? 0.93 : 0.9)
-    : (effort === "careful" ? 0.82 : 0.72);
-
   let safeFallback = null;
   for (const colors of paletteCandidates) {
     const candidate = await quantizePng(

@@ -161,6 +161,32 @@ export function edgeSimilarity(original, processed, width, height, sampleLimit =
   return edges ? 1 - error / edges : 1;
 }
 
+// Quality floor for the Recommended PNG search. These values are calibrated
+// against real 1536x1024 line-art, illustration and photo-like PNGs and the
+// rendered output of iLoveIMG/TinyPNG. The standard profile accepts changes
+// that remain in the same measured range as those services; Careful keeps the
+// former conservative floor. This avoids falling all the way back to lossless
+// output when a visually safe palette misses the old threshold by a fraction.
+export function recommendedPngQualityProfile(analysis, effort = "standard") {
+  const colorBuckets = analysis?.metrics?.colorBuckets ?? Number.POSITIVE_INFINITY;
+  const kind = analysis?.kind || "illustration";
+  const graphicTexture = colorBuckets <= 64;
+  const denseColorPng = !graphicTexture && (kind === "photo" || kind === "illustration");
+
+  let similarityThreshold = graphicTexture ? 0.9985
+    : kind === "lineart" ? 0.997
+      : kind === "photo" ? 0.982
+        : denseColorPng ? 0.975 : 0.997;
+  let edgeThreshold = denseColorPng ? 0.92 : kind === "lineart" ? 0.94 : 0.72;
+
+  if (effort === "careful") {
+    similarityThreshold = Math.min(0.9995, similarityThreshold + (denseColorPng ? 0.003 : 0.001));
+    edgeThreshold = Math.min(0.98, edgeThreshold + 0.02);
+  }
+
+  return { graphicTexture, denseColorPng, similarityThreshold, edgeThreshold };
+}
+
 // The guard protects modes where the visitor did not explicitly ask for the
 // smallest file. Recommended applies a stricter profile in the worker.
 export function usesColorGuard(requestedMode) {

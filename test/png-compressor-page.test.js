@@ -30,6 +30,7 @@ test("Recommended evaluates multiple candidates while Smallest remains the aggre
   assert.match(script, /requestedMode === "recommended"[\s\S]*encodeRecommendedRaster/);
   assert.match(script, /denseColorPng[\s\S]*\? \[256, 128, 64, 32, 16, 12\][\s\S]*: \[12, 16, 32, 64, 128, 256\]/);
   assert.match(script, /encodeRecommendedPng/);
+  assert.match(script, /recommendedPngQualityProfile\(analysis, effort\)/);
   assert.match(script, /if \(!denseColorPng \|\| savings >= 80\) return result/);
   assert.match(script, /if \(safeFallback\) return safeFallback/);
 });
