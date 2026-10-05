@@ -46,6 +46,10 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 .compressor-card > .settings-panel { order: 2; }
 .compressor-card > .results-panel { order: 3; }
 .compressor-card:has(> .queue-panel:not([hidden])) > .drop-zone { display: none; }
+/* "01 Files" heading above the empty drop zone; the file list shows its own once files are added. */
+.compressor-card > .drop-heading { order: 1; display: flex; align-items: center; gap: 13px; padding: 30px 40px 4px; }
+.drop-heading h2 { font-size: 21px; }
+.compressor-card:has(> .queue-panel:not([hidden])) > .drop-heading { display: none; }
 .drop-zone { min-height: 340px; margin: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px dashed #8c8c88; background: #fafafa; transition: background-color .18s, border-color .18s; cursor: pointer; text-align: center; }
 .drop-zone.is-over { background-color: #eeeeec; border-color: var(--ink); }
 .drop-mark { width: 52px; height: 52px; display: grid; place-items: center; margin-bottom: 18px; border: 1px solid var(--ink); border-radius: 0; }
@@ -191,6 +195,7 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 .color-range output { min-width: 34px; color: var(--ink); font-weight: 700; }
 .color-presets { display: flex; gap: 8px; margin-top: 14px; }
 .favicon-source { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+.favicon-source > .queue-top { grid-column: 1 / -1; }
 .favicon-source img { width: 76px; height: 76px; object-fit: contain; border: 1px solid var(--line); background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50% / 14px 14px; }
 .favicon-source-copy { min-width: 0; display: flex; flex-direction: column; }
 .favicon-source-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -541,6 +546,7 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
   .drop-zone { min-height: 300px; margin: 10px; padding: 30px 16px; }
   .drop-zone h2 { font-size: 24px; }
   .settings-panel, .queue-panel, .results-panel { padding: 26px 18px; }
+  .compressor-card > .drop-heading { padding: 22px 18px 2px; }
   .mode-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
   .mode-option { margin: 0; }
   .mode-option:first-of-type { grid-column: 1 / -1; }
