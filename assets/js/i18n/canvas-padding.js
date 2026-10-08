@@ -8,7 +8,7 @@ export default {
     encodeFailed: label => `${label}を書き出せませんでした`,
     encodeUnsupported: label => `このブラウザは${label}出力に対応していません`,
     files: n => `${n} ファイル`,
-    status: { ready: "待機中", processing: "処理中…", done: "完了", error: "処理できませんでした" },
+    status: { ready: "Ready", processing: "処理中…", done: "完了", error: "処理できませんでした" },
     remove: "削除",
     save: "保存",
     progress: (done, total) => `${done} / ${total} 完了`,

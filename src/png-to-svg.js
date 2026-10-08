@@ -269,6 +269,10 @@ function renderResults() {
     card.append(compare, body);
     elements.resultList.append(card);
   });
+  if (state.results.length) {
+    const files = state.results.map(result => new File([result.blob], result.name, { type: result.blob.type }));
+    document.dispatchEvent(new CustomEvent("shiagent:outputs", { detail: { files, source: "image-to-svg-result" } }));
+  }
 }
 
 async function convertAll() {

@@ -14,7 +14,7 @@ const ja = document.documentElement.lang === "ja";
 const copy = ja ? {
   drop: "PDFをここにドロップ", or: "または", choose: "PDFを選択", note: "複数PDF対応・ファイルは端末の外へ送信されません。",
   files: "処理するPDF", add: "PDFを追加", clear: "すべてクリア", run: "一括ワークフローを実行", running: "解析中…", downloadAll: "結果をまとめてダウンロード", folder: "フォルダに直接保存", folderSaving: (done, total) => `フォルダへ保存中… ${done}/${total}`, folderDone: count => `${count}件をフォルダへ保存しました`,
-  ready: "待機中", processing: "処理中", done: "完了", error: "エラー", pages: count => `${count}ページ`, progress: (name, page, total) => `${name}：${page}/${total}ページを解析中`,
+  ready: "Ready", processing: "処理中", done: "完了", error: "エラー", pages: count => `${count}ページ`, progress: (name, page, total) => `${name}：${page}/${total}ページを解析中`,
   detected: "検出番号", unknown: "未検出", high: "高", medium: "中", low: "要確認", rotateLeft: "左回転", rotateRight: "右回転", download: "PDFを保存",
   summary: (detected, total) => `${total}ページ中${detected}ページの番号を検出`, unresolved: count => `未検出 ${count}`, duplicate: values => `重複 ${values.join(", ")}`, gaps: values => `飛び番 ${values.map(([a, b]) => a === b ? a : `${a}-${b}`).join(", ")}`,
   complete: "向き補正とページ番号順への並べ替えが完了しました。赤い項目を確認してから保存してください。", failed: "PDFを処理できませんでした。破損やパスワード保護を確認してください。",

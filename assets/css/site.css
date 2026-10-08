@@ -167,6 +167,7 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 .compression-comparison-grid figcaption small { color: var(--muted); font-size: 9px; font-weight: 400; }
 .compression-comparison-grid figure > div { height: clamp(300px, 42vw, 580px); padding: 14px; display: grid; place-items: center; overflow: auto; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50% / 16px 16px; }
 .compression-comparison-grid img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
+.image-before-after-placeholder { max-width: 260px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.7; text-align: center; }
 .download-row { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-top: 24px; }
 .download-row p { color: var(--muted); font-size: 10px; }
 

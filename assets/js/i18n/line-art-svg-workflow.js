@@ -6,7 +6,7 @@ export default {
     renderFailed: "SVGの白塗り用画像を生成できませんでした。",
     progress: (index, total, name, step) => `${index}/${total} ${name} — ${step}`,
     steps: { trim: "トリミング", background: "背景処理", vectorize: "SVG変換", autoFill: "自動白塗り", clean: "SVG整理" },
-    status: { ready: "待機中", processing: "処理中…", done: "完了", error: "処理できませんでした" },
+    status: { ready: "Ready", processing: "処理中…", done: "完了", error: "処理できませんでした" },
     completed: (done, total) => `${total}件中${done}件のSVG素材を作成しました。`,
     partial: (done, total) => `${total}件中${done}件を作成しました。処理できなかったファイルを確認してください。`,
     manualHandoff: count => `${count}件をSVG手動白塗りへ引き継ぎます。`,

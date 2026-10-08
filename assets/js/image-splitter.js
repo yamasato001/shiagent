@@ -224,6 +224,10 @@ function renderResults() {
     card.append(image, body);
     elements.resultList.append(card);
   });
+  if (state.results.length) {
+    const files = state.results.map(result => new File([result.blob], result.name, { type: result.blob.type }));
+    document.dispatchEvent(new CustomEvent("shiagent:outputs", { detail: { files, source: "image-splitter-result" } }));
+  }
 }
 
 async function splitAll() {

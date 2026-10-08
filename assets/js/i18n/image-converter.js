@@ -8,7 +8,7 @@ export default {
     unsupported: "対応していない画像形式が含まれていました",
     duplicate: "同じファイルはすでに追加されています",
     files: n => `${n} ファイル`,
-    status: { processing: "変換中…", done: "完了", error: "変換できませんでした", ready: "待機中" },
+    status: { processing: "変換中…", done: "完了", error: "変換できませんでした", ready: "Ready" },
     before: "変換前",
     after: "変換後",
     download: "保存",

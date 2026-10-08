@@ -9,7 +9,7 @@ export default {
     settingSummary: (size, format, quality) => `${size} / ${format} / ${quality}`,
     renameOff: "リネームなし（元の名前＋-web）",
     namePreview: (first, last) => first === last ? first : `${first} 〜 ${last}`,
-    status: { ready: "待機中", processing: "処理中…", done: "完了", error: "処理できませんでした" },
+    status: { ready: "Ready", processing: "処理中…", done: "完了", error: "処理できませんでした" },
     decoderError: "画像デコーダーでエラーが発生しました。",
     undecodable: name => `${name}: このブラウザでは読み込めない画像形式です。`,
     encodeFailed: "画像を書き出せませんでした。",

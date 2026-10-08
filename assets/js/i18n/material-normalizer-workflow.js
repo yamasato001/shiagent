@@ -11,7 +11,7 @@ export default {
     encodeFailed: "画像を書き出せませんでした。",
     cancelled: "処理を中止しました。",
     progress: (index, total, name) => `${index}/${total} ${name}`,
-    status: { ready: "待機中", processing: "処理中…", done: "完了", error: "処理できませんでした" },
+    status: { ready: "Ready", processing: "処理中…", done: "完了", error: "処理できませんでした" },
     completed: (done, total) => `${done} / ${total} 枚のAI素材を仕上げました。`,
     partial: (done, failed, total) => `${total}枚中${done}枚が完了、${failed}枚は処理できませんでした。`,
     normalized: (done, total) => `${done} / ${total} 枚を同じ規格に統一しました。`,

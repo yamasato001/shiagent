@@ -4,7 +4,7 @@ export default {
     invalidSvg: name => `${name}をSVGとして読み込めませんでした`,
     duplicate: "同じファイルはすでに追加されています",
     files: n => `${n} ファイル`,
-    status: { ready: "待機中", processing: "処理中…", done: "完了", error: "処理できませんでした" },
+    status: { ready: "Ready", processing: "処理中…", done: "完了", error: "処理できませんでした" },
     remove: "削除", download: "保存",
     progress: (done, total) => `${done} / ${total} 完了`,
     completed: (done, total) => `${done} / ${total} ファイルの処理完了`,

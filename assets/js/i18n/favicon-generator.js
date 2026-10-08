@@ -2,7 +2,7 @@ export default {
   ja: {
     unsupported: "PNG・JPEG・WebP・SVGを選択してください",
     invalidSvg: "SVGのサイズを取得できませんでした",
-    ready: "生成の準備ができました",
+    ready: "Ready",
     processing: "アイコンを生成中…",
     completed: n => `${n}ファイルを生成しました`,
     download: "保存",
@@ -14,7 +14,7 @@ export default {
   en: {
     unsupported: "Choose a PNG, JPEG, WebP, or SVG file",
     invalidSvg: "Could not read the SVG dimensions",
-    ready: "Ready to generate",
+    ready: "Ready",
     processing: "Generating icons…",
     completed: n => `Generated ${n} files`,
     download: "Download",

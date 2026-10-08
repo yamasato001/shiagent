@@ -4,7 +4,7 @@ export default {
     invalidSvg: name => `${name}のサイズを取得できませんでした`,
     duplicate: "同じファイルはすでに追加されています",
     files: n => `${n} ファイル`,
-    status: { ready: "待機中", processing: "変換中…", done: "完了", error: "変換できませんでした" },
+    status: { ready: "Ready", processing: "変換中…", done: "完了", error: "変換できませんでした" },
     remove: "削除",
     download: "保存",
     progress: (done, total) => `${done} / ${total} 完了`,

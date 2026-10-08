@@ -9,7 +9,7 @@ export default {
     encodeFailed: label => `${label}を書き出せませんでした`,
     encodeUnsupported: label => `このブラウザは${label}出力に対応していません`,
     files: n => `${n} ファイル`,
-    status: { processing: "リサイズ中…", done: "完了", error: "処理できませんでした", ready: "待機中" },
+    status: { processing: "リサイズ中…", done: "完了", error: "処理できませんでした", ready: "Ready" },
     before: "変更前",
     after: "変更後",
     download: "保存",
