@@ -2,720 +2,840 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://shiagent.com/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/" />
   </url>
   <url>
     <loc>https://shiagent.com/about/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/about/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/about/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/about/" />
   </url>
   <url>
     <loc>https://shiagent.com/accessibility/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/accessibility/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/accessibility/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/accessibility/" />
   </url>
   <url>
     <loc>https://shiagent.com/background-remover/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/background-remover/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/background-remover/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/background-remover/" />
   </url>
   <url>
     <loc>https://shiagent.com/batch-rename/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/batch-rename/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/batch-rename/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/batch-rename/" />
   </url>
   <url>
     <loc>https://shiagent.com/canvas-padding/</loc>
+    <lastmod>2026-10-19</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/canvas-padding/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/canvas-padding/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/canvas-padding/" />
   </url>
   <url>
     <loc>https://shiagent.com/changelog/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/changelog/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/changelog/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/changelog/" />
   </url>
   <url>
     <loc>https://shiagent.com/color-tool/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/color-tool/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/color-tool/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/color-tool/" />
   </url>
   <url>
     <loc>https://shiagent.com/contact/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/contact/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/contact/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/contact/" />
   </url>
   <url>
     <loc>https://shiagent.com/examples/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/examples/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/examples/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/examples/" />
   </url>
   <url>
     <loc>https://shiagent.com/faq/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/faq/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/faq/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/faq/" />
   </url>
   <url>
     <loc>https://shiagent.com/favicon-generator/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/favicon-generator/" />
   </url>
   <url>
     <loc>https://shiagent.com/feedback/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/feedback/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/feedback/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/feedback/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-compressor/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-compressor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-compressor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-compressor/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-converter/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-converter/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-converter/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-converter/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-cropper/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-cropper/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-cropper/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-cropper/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-joiner/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-joiner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-joiner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-joiner/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-resizer/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-resizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-resizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-resizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-splitter/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-splitter/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-splitter/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-splitter/" />
   </url>
   <url>
     <loc>https://shiagent.com/image-to-svg/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-to-svg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-to-svg/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-to-svg/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/about/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/about/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/about/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/about/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/accessibility/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/accessibility/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/accessibility/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/accessibility/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/background-remover/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/background-remover/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/background-remover/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/background-remover/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/batch-rename/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/batch-rename/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/batch-rename/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/batch-rename/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/canvas-padding/</loc>
+    <lastmod>2026-10-19</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/canvas-padding/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/canvas-padding/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/canvas-padding/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/changelog/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/changelog/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/changelog/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/changelog/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/color-tool/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/color-tool/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/color-tool/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/color-tool/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/contact/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/contact/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/contact/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/contact/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/examples/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/examples/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/examples/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/examples/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/faq/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/faq/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/faq/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/faq/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/favicon-generator/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/favicon-generator/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/favicon-generator/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/feedback/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/feedback/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/feedback/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/feedback/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-compressor/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-compressor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-compressor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-compressor/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-converter/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-converter/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-converter/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-converter/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-cropper/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-cropper/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-cropper/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-cropper/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-joiner/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-joiner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-joiner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-joiner/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-resizer/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-resizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-resizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-resizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-splitter/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-splitter/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-splitter/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-splitter/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/image-to-svg/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/image-to-svg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/image-to-svg/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/image-to-svg/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/local-processing/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/local-processing/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/local-processing/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/local-processing/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/metadata-cleaner/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/metadata-cleaner/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/compare/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compare/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compare/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compare/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/compress/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compress/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compress/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compress/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/crop/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/crop/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/crop/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/crop/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/delete-pages/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/delete-pages/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/form-fill/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/form-fill/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/form-fill/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/form-fill/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/images-to-pdf/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/images-to-pdf/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/images-to-pdf/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/images-to-pdf/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/interleave/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/interleave/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/interleave/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/interleave/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/merge/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/merge/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/merge/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/merge/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/metadata-cleaner/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/metadata-cleaner/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/n-up/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/n-up/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/n-up/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/n-up/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/ocr/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/ocr/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/ocr/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/ocr/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/page-numbers/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/page-numbers/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/page-numbers/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/page-numbers/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/pdf-to-images/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/pdf-to-images/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/pdf-to-images/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/pdf-to-images/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/reorder/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/reorder/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/reorder/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/reorder/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/rotate/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/rotate/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/rotate/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/rotate/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/signature/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/signature/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/signature/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/signature/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/sort-by-page-number/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/sort-by-page-number/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/sort-by-page-number/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/sort-by-page-number/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/split/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/split/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/pdf/watermark/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/watermark/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/watermark/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/watermark/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/privacy/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/privacy/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/privacy/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/privacy/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/specifications/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/specifications/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/specifications/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/specifications/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/status/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/status/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/status/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/status/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/svg-cleaner/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-cleaner/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/svg-style-editor/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-style-editor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-style-editor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-style-editor/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/svg-to-image/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-to-image/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-to-image/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-to-image/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/svg-white-fill/</loc>
+    <lastmod>2026-10-19</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-white-fill/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-white-fill/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-white-fill/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/svg-white-fill/editor/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-white-fill/editor/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/terms/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/terms/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/terms/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/terms/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/tools/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/tools/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/tools/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/tools/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/use-cases/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/use-cases/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/use-cases/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/use-cases/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/ai-asset-prep/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/ai-asset-prep/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/ai-asset-prep/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/ai-asset-prep/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/asset-normalizer/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/asset-normalizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/asset-normalizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/asset-normalizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/custom/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/custom/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/custom/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/custom/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/line-art-to-svg/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/line-art-to-svg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/line-art-to-svg/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/line-art-to-svg/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/pdf-finisher/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/pdf-finisher/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/pdf-finisher/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/pdf-finisher/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/scan-pdf-optimizer/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/scan-pdf-optimizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/ja/workflows/web-image-optimizer/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/web-image-optimizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/web-image-optimizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/web-image-optimizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/local-processing/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/local-processing/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/local-processing/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/local-processing/" />
   </url>
   <url>
     <loc>https://shiagent.com/metadata-cleaner/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/metadata-cleaner/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/compare/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compare/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compare/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compare/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/compress/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/compress/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/compress/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/compress/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/crop/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/crop/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/crop/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/crop/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/delete-pages/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/delete-pages/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/delete-pages/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/form-fill/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/form-fill/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/form-fill/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/form-fill/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/images-to-pdf/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/images-to-pdf/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/images-to-pdf/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/images-to-pdf/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/interleave/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/interleave/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/interleave/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/interleave/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/merge/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/merge/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/merge/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/merge/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/metadata-cleaner/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/metadata-cleaner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/metadata-cleaner/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/n-up/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/n-up/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/n-up/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/n-up/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/ocr/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/ocr/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/ocr/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/ocr/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/page-numbers/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/page-numbers/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/page-numbers/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/page-numbers/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/pdf-to-images/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/pdf-to-images/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/pdf-to-images/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/pdf-to-images/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/reorder/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/reorder/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/reorder/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/reorder/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/rotate/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/rotate/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/rotate/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/rotate/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/signature/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/signature/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/signature/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/signature/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/sort-by-page-number/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/sort-by-page-number/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/sort-by-page-number/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/sort-by-page-number/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/split/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/split/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/split/" />
   </url>
   <url>
     <loc>https://shiagent.com/pdf/watermark/</loc>
+    <lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/pdf/watermark/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/pdf/watermark/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/pdf/watermark/" />
   </url>
   <url>
     <loc>https://shiagent.com/privacy/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/privacy/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/privacy/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/privacy/" />
   </url>
   <url>
     <loc>https://shiagent.com/specifications/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/specifications/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/specifications/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/specifications/" />
   </url>
   <url>
     <loc>https://shiagent.com/status/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/status/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/status/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/status/" />
   </url>
   <url>
     <loc>https://shiagent.com/svg-cleaner/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-cleaner/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-cleaner/" />
   </url>
   <url>
     <loc>https://shiagent.com/svg-style-editor/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-style-editor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-style-editor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-style-editor/" />
   </url>
   <url>
     <loc>https://shiagent.com/svg-to-image/</loc>
+    <lastmod>2026-10-08</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-to-image/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-to-image/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-to-image/" />
   </url>
   <url>
     <loc>https://shiagent.com/svg-white-fill/</loc>
+    <lastmod>2026-10-19</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-white-fill/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-white-fill/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-white-fill/" />
   </url>
   <url>
     <loc>https://shiagent.com/svg-white-fill/editor/</loc>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/svg-white-fill/editor/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/svg-white-fill/editor/" />
   </url>
   <url>
     <loc>https://shiagent.com/terms/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/terms/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/terms/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/terms/" />
   </url>
   <url>
     <loc>https://shiagent.com/tools/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/tools/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/tools/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/tools/" />
   </url>
   <url>
     <loc>https://shiagent.com/use-cases/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/use-cases/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/use-cases/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/use-cases/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/ai-asset-prep/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/ai-asset-prep/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/ai-asset-prep/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/ai-asset-prep/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/asset-normalizer/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/asset-normalizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/asset-normalizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/asset-normalizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/custom/</loc>
+    <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/custom/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/custom/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/custom/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/line-art-to-svg/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/line-art-to-svg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/line-art-to-svg/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/line-art-to-svg/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/pdf-finisher/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/pdf-finisher/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/pdf-finisher/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/pdf-finisher/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/scan-pdf-optimizer/</loc>
+    <lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/scan-pdf-optimizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/scan-pdf-optimizer/" />
   </url>
   <url>
     <loc>https://shiagent.com/workflows/web-image-optimizer/</loc>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ja" href="https://shiagent.com/ja/workflows/web-image-optimizer/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://shiagent.com/workflows/web-image-optimizer/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://shiagent.com/workflows/web-image-optimizer/" />

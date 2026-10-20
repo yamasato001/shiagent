@@ -82,6 +82,23 @@
 .pdf-tool-card h2 { margin: auto 0 9px; font-size: 26px; }
 .pdf-tool-card p { margin: 0; color: #555; font-size: 12px; line-height: 1.65; }
 
+.pdf-support { margin-top: 56px; }
+.pdf-support > h2 { max-width: 760px; margin-bottom: 16px; }
+.pdf-support-summary { max-width: 780px; margin: 0 0 28px; color: #444; line-height: 1.8; }
+.pdf-support-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 0 32px; border-top: 1px solid #aaa; border-left: 1px solid #aaa; }
+.pdf-support-facts > div { min-width: 0; padding: 20px 22px; border-right: 1px solid #aaa; border-bottom: 1px solid #aaa; background: #fff; }
+.pdf-support-facts dt { margin-bottom: 8px; color: #666; font: 700 9px/1.2 ui-monospace, monospace; letter-spacing: .09em; text-transform: uppercase; }
+.pdf-support-facts dd { margin: 0; font-size: 14px; line-height: 1.65; }
+.pdf-support h3 { margin: 0 0 14px; font-size: 18px; }
+.pdf-support-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 36px; padding: 0; list-style: none; counter-reset: pdf-step; border-top: 1px solid #aaa; border-left: 1px solid #aaa; }
+.pdf-support-steps li { min-height: 96px; padding: 18px 20px; border-right: 1px solid #aaa; border-bottom: 1px solid #aaa; counter-increment: pdf-step; font-size: 13px; line-height: 1.6; }
+.pdf-support-steps li::before { content: "0" counter(pdf-step); display: block; margin-bottom: 12px; color: var(--pdf-accent); font: 700 9px/1 ui-monospace, monospace; }
+.pdf-related-tools > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pdf-related-tools a { min-width: 0; padding: 18px 20px; display: grid; gap: 8px; border: 1px solid #aaa; background: #fff; text-decoration: none; }
+.pdf-related-tools a:hover { border-color: var(--pdf-ink); background: #f1f1ed; }
+.pdf-related-tools span { color: var(--pdf-accent); font: 700 8px/1 ui-monospace, monospace; letter-spacing: .08em; }
+.pdf-related-tools strong { font-size: 14px; overflow-wrap: anywhere; }
+
 .pdf-compare-workspace { margin-top: 42px; border: 2px solid #111; background: #fff; }
 .pdf-compare-inputs { display: grid; grid-template-columns: 1fr 1fr; }
 .pdf-compare-drop { min-height: 310px; margin: 14px; padding: 28px 16px; }
@@ -156,6 +173,10 @@
   .pdf-tool-illustration svg { width: 82px; height: 58px; }
   .pdf-tool-card h2 { margin-bottom: 7px; font-size: clamp(16px, 4.8vw, 20px); overflow-wrap: anywhere; }
   .pdf-tool-card p { font-size: 11px; line-height: 1.55; }
+  .pdf-support { margin-top: 40px; }
+  .pdf-support-facts, .pdf-support-steps { grid-template-columns: 1fr; }
+  .pdf-support-facts > div, .pdf-support-steps li { min-height: 0; padding: 16px; }
+  .pdf-related-tools > div { grid-template-columns: 1fr; }
   .pdf-tray { right: 10px; bottom: 10px; width: calc(100vw - 20px); }
   .pdf-compare-inputs, .pdf-compare-setting-grid, .pdf-compare-visual { grid-template-columns: 1fr; }
   .pdf-compare-drop { min-height: 270px; margin: 10px; }

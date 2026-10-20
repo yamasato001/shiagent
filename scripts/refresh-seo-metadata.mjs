@@ -1,5 +1,8 @@
 import { readFile, readdir, writeFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import {
   excludedRoutes,
   inferCategory,
@@ -11,6 +14,8 @@ import {
 } from "./tool-contracts.mjs";
 
 const root = new URL("../", import.meta.url);
+const projectRoot = fileURLToPath(root);
+const execFileAsync = promisify(execFile);
 const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 const bingVerification = process.env.BING_SITE_VERIFICATION?.trim();
 const brandMark = '<img class="brand-mark" src="/assets/brand/shiagent-mark-black.svg" width="28" height="28" alt="" aria-hidden="true">';
@@ -293,6 +298,48 @@ const toolExamples = {
   "workflows/custom": ["例：Auto Trim→リサイズ→WebP変換→連番化を自分用ワークフローとして保存します。", "Example: save Auto Trim → Resize → WebP → Rename as a reusable workflow."],
 };
 
+const pdfSupportDetails = {
+  merge: { name: ["PDF結合", "Merge PDFs"], input: ["2つ以上のPDF", "Two or more PDF files"], output: ["ページ順を保った1つのPDF", "One PDF in the chosen page order"], note: ["パスワード保護されたPDFは読み込めません。", "Password-protected PDFs cannot be opened."], related: ["reorder", "split", "compress"] },
+  split: { name: ["PDF分割・抽出", "Split PDF"], input: ["1つのPDFと抽出するページ範囲", "One PDF and the page ranges to extract"], output: ["範囲ごとのPDF、または1ページずつのPDF", "PDFs by range or one PDF per page"], note: ["存在しないページ番号は指定できません。", "Page numbers outside the document cannot be selected."], related: ["delete-pages", "merge", "reorder"] },
+  reorder: { name: ["PDF並べ替え", "Reorder PDF"], input: ["ページ順を変更したいPDF", "A PDF whose pages need reordering"], output: ["並べ替え・複製・逆順化したPDF", "A reordered, duplicated or reversed PDF"], note: ["ページ内容そのものは編集しません。", "The content inside each page is not edited."], related: ["delete-pages", "merge", "page-numbers"] },
+  interleave: { name: ["PDF交互結合", "Interleave PDFs"], input: ["交互に並べたい2つ以上のPDF", "Two or more PDFs to alternate"], output: ["各PDFのページを交互に配置したPDF", "One PDF with pages alternated between inputs"], note: ["原稿によっては片側のページ順を逆にしてから結合します。", "Some scan workflows require reversing one input before interleaving."], related: ["merge", "reorder", "sort-by-page-number"] },
+  rotate: { name: ["PDF向き補正", "Rotate PDF"], input: ["横向き・逆向きページを含むPDF", "A PDF containing sideways or upside-down pages"], output: ["向きを補正したPDF", "A PDF with corrected page orientation"], note: ["文字が少ないページは自動判定の確度が下がるため、プレビュー確認が必要です。", "Automatic detection is less reliable on pages with little text, so review the preview."], related: ["crop", "ocr", "reorder"] },
+  "delete-pages": { name: ["PDFページ削除", "Delete PDF Pages"], input: ["不要ページを含むPDF", "A PDF containing unwanted pages"], output: ["選択したページを除いたPDF", "A PDF without the selected pages"], note: ["すべてのページを削除することはできません。", "At least one page must remain."], related: ["split", "reorder", "merge"] },
+  "images-to-pdf": { name: ["画像をPDFに変換", "Images to PDF"], input: ["PNG・JPEG・WebP画像", "PNG, JPEG or WebP images"], output: ["画像を選択順に配置したPDF", "A PDF containing images in the chosen order"], note: ["画像の解像度と縦横比によってページ余白が変わります。", "Page margins vary with image resolution and aspect ratio."], related: ["pdf-to-images", "compress", "merge"] },
+  "pdf-to-images": { name: ["PDFを画像に変換", "PDF to Images"], input: ["1つのPDFと対象ページ", "One PDF and selected pages"], output: ["PNG・JPEG・WebP画像、複数時はZIP", "PNG, JPEG or WebP images, with ZIP for multiple files"], note: ["高いDPIほど鮮明になりますが、処理時間と容量も増えます。", "Higher DPI improves detail but increases processing time and file size."], related: ["images-to-pdf", "compress", "crop"] },
+  "page-numbers": { name: ["PDFページ番号追加", "Add PDF Page Numbers"], input: ["PDFと開始番号・位置・形式", "A PDF plus starting number, position and format"], output: ["ページ番号を追加したPDF", "A PDF with page numbers added"], note: ["既存のページ番号は自動では削除されません。", "Existing page numbers are not removed automatically."], related: ["reorder", "n-up", "watermark"] },
+  watermark: { name: ["PDF透かし追加", "Add PDF Watermark"], input: ["PDFと文字または画像の透かし", "A PDF and a text or image watermark"], output: ["指定ページへ透かしを配置したPDF", "A PDF with watermarks on selected pages"], note: ["電子署名ではなく、表示用の文字・画像を追加する機能です。", "This adds a visible mark; it is not a cryptographic signature."], related: ["signature", "page-numbers", "metadata-cleaner"] },
+  crop: { name: ["PDF余白クロップ", "Crop PDF Margins"], input: ["余白を調整したいPDF", "A PDF whose page margins need adjustment"], output: ["表示範囲を変更したPDF", "A PDF with adjusted visible page bounds"], note: ["自動検出は白い余白を対象とします。色付き背景は手動指定が適しています。", "Automatic detection targets white margins; colored backgrounds are better handled manually."], related: ["rotate", "ocr", "n-up"] },
+  "metadata-cleaner": { name: ["PDF文書情報削除", "Remove PDF Metadata"], input: ["文書情報を含むPDF", "A PDF containing document metadata"], output: ["タイトル・作成者等を削除したPDF", "A PDF with title, author and related metadata removed"], note: ["ページ本文に書かれた氏名や注釈は削除されません。", "Names or notes visible in page content are not removed."], related: ["compress", "watermark", "signature"] },
+  "n-up": { name: ["PDF面付け", "PDF Pages per Sheet"], input: ["印刷用にまとめたいPDF", "A PDF to arrange for compact printing"], output: ["1枚に2・4・6ページを配置したA4 PDF", "An A4 PDF with 2, 4 or 6 source pages per sheet"], note: ["小さい文字は縮小されるため、保存前に倍率を確認してください。", "Small text is reduced, so check legibility before saving."], related: ["page-numbers", "crop", "compress"] },
+  "form-fill": { name: ["PDFフォーム入力", "Fill PDF Forms"], input: ["入力欄が設定されたPDFフォーム", "A PDF containing interactive form fields"], output: ["入力済み、または内容を固定したPDF", "A completed PDF, optionally with flattened values"], note: ["スキャン画像だけの申請書には入力欄がないため、この機能では直接記入できません。", "Scanned forms without interactive fields cannot be filled directly with this tool."], related: ["signature", "metadata-cleaner", "compress"] },
+  signature: { name: ["PDF署名配置", "Place Signature on PDF"], input: ["PDFと文字・画像・手書きの署名", "A PDF and a typed, image or drawn signature"], output: ["選択位置へ署名画像を配置したPDF", "A PDF with a visual signature placed on selected pages"], note: ["これは電子署名証明書を付与する機能ではありません。", "This does not apply a certificate-based digital signature."], related: ["form-fill", "watermark", "metadata-cleaner"] },
+  compare: { name: ["PDF比較", "Compare PDFs"], input: ["比較する2つのPDF", "Two PDF files to compare"], output: ["左右・重ね合わせ・差分強調表示と差分画像", "Side-by-side, overlay and highlighted visual differences"], note: ["文字の意味ではなく、同じ位置の画素差を比較します。", "The comparison is visual and does not interpret the meaning of text."], related: ["ocr", "pdf-to-images", "compress"] },
+  ocr: { name: ["OCR・検索可能PDF", "OCR Searchable PDF"], input: ["画像としてスキャンされたPDF", "An image-based scanned PDF"], output: ["透明文字層を持つ検索可能PDF", "A searchable PDF with an invisible text layer"], note: ["手書き・縦書き・低解像度・傾きや汚れの大きい原稿は認識精度が下がります。", "Accuracy drops for handwriting, vertical text, low resolution, skewed or dirty scans."], related: ["rotate", "crop", "compress"] },
+  compress: { name: ["PDF圧縮", "Compress PDF"], input: ["写真・スキャン画像を含むPDF", "A PDF containing photos or scanned images"], output: ["画像容量を抑えたPDF", "A PDF with recompressed image data"], note: ["文字・図形中心、または既に最適化済みのPDFは小さくならない場合があります。", "Text-heavy or already optimized PDFs may not become smaller."], related: ["ocr", "metadata-cleaner", "pdf-to-images"] },
+  "sort-by-page-number": { name: ["ページ番号でPDF整列", "Sort PDF by Page Number"], input: ["ページ番号が外周にあるPDFまたはスキャン群", "PDFs or scans with page numbers near an edge"], output: ["検出した番号順に並べたPDF", "A PDF ordered by detected page numbers"], note: ["番号が不鮮明なページは、検出結果を手動確認・修正してください。", "Review and correct pages whose numbers are faint or misdetected."], related: ["interleave", "reorder", "ocr"] },
+};
+
+function installPdfSupportContent(source, contract, ja) {
+  source = source.replace(/<section class="content-section pdf-support" data-pdf-support>[\s\S]*?<\/section>/g, "");
+  if (!contract?.route.startsWith("pdf/")) return source;
+  const slug = contract.route.slice("pdf/".length);
+  const details = pdfSupportDetails[slug];
+  if (!details) return source;
+  const languageIndex = ja ? 0 : 1;
+  const description = source.match(/<meta name="description" content="([^"]*)">/)?.[1] || "";
+  const prefix = ja ? "/ja" : "";
+  const related = details.related.map(relatedSlug => {
+    const relatedDetails = pdfSupportDetails[relatedSlug];
+    return `<a href="${prefix}/pdf/${relatedSlug}/"><span>PDF TOOL</span><strong>${relatedDetails.name[languageIndex]}</strong></a>`;
+  }).join("");
+  const section = `<section class="content-section pdf-support" data-pdf-support><div class="section-kicker">${ja ? "ツール詳細" : "Tool details"}</div><h2>${ja ? "処理内容と注意点" : "What it does and what to expect"}</h2><p class="pdf-support-summary">${description}</p><dl class="pdf-support-facts"><div><dt>${ja ? "入力" : "Input"}</dt><dd>${details.input[languageIndex]}</dd></div><div><dt>${ja ? "出力" : "Output"}</dt><dd>${details.output[languageIndex]}</dd></div><div><dt>${ja ? "処理場所" : "Processing"}</dt><dd>${ja ? "ファイルを送信せず、このブラウザ内で処理します。" : "Files stay on this device and are processed in the browser."}</dd></div><div><dt>${ja ? "注意点" : "Limit"}</dt><dd>${details.note[languageIndex]}</dd></div></dl><h3>${ja ? "使い方" : "How to use it"}</h3><ol class="pdf-support-steps"><li>${ja ? "対象ファイルを追加します。" : "Add the source file or files."}</li><li>${ja ? "設定とプレビューを確認します。" : "Choose settings and review the preview."}</li><li>${ja ? "結果を新しいファイルとして保存します。" : "Save the result as a new file."}</li></ol><nav class="pdf-related-tools" aria-label="${ja ? "関連PDFツール" : "Related PDF tools"}"><h3>${ja ? "関連するPDFツール" : "Related PDF tools"}</h3><div>${related}</div></nav></section>`;
+  const example = source.match(/<section class="content-section tool-example" data-site-example>/);
+  return example
+    ? source.replace(example[0], `${section}${example[0]}`)
+    : source.replace("</main>", `${section}</main>`);
+}
+
 function installToolExample(source, contract, ja) {
   source = source.replace(/<section class="content-section tool-example" data-site-example>[\s\S]*?<\/section>/g, "");
   if (!contract || contract.status !== "active") return source;
@@ -518,6 +565,7 @@ for (const file of await htmlFiles(root)) {
 
   const contract = pageContract(file, source);
   source = installToolExample(source, contract, file.startsWith("ja/"));
+  source = installPdfSupportContent(source, contract, file.startsWith("ja/"));
   if (contract) {
     const locale = file.startsWith("ja/") ? "ja" : "en";
     const heading = textContent(source.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1]) || textContent(title.replace(/\s*[|—].*$/, ""));
@@ -582,6 +630,7 @@ for (const file of await htmlFiles(root)) {
   await writeFile(url, source);
   if (!noindexPages.has(file)) {
     sitemapPages.push({
+      file,
       canonical,
       alternates: [...source.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)">/g)]
         .map(([, lang, href]) => ({ lang, href })),
@@ -590,14 +639,54 @@ for (const file of await htmlFiles(root)) {
 }
 
 const xmlEscape = (value) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+async function pageLastModifiedDates() {
+  const dates = new Map();
+  try {
+    const { stdout: history } = await execFileAsync(
+      "git",
+      ["log", "--name-only", "--format=@@%cs", "--diff-filter=AM", "--", "*.html"],
+      { cwd: projectRoot, maxBuffer: 10 * 1024 * 1024 },
+    );
+    let commitDate = null;
+    for (const line of history.split(/\r?\n/)) {
+      if (line.startsWith("@@")) {
+        commitDate = line.slice(2).trim();
+      } else if (commitDate && line.endsWith("index.html") && !dates.has(line.trim())) {
+        dates.set(line.trim().replaceAll("\\", "/"), commitDate);
+      }
+    }
+    const { stdout: status } = await execFileAsync(
+      "git",
+      ["status", "--porcelain=v1", "--untracked-files=all"],
+      { cwd: projectRoot, maxBuffer: 10 * 1024 * 1024 },
+    );
+    const today = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+    for (const line of status.split(/\r?\n/)) {
+      if (!line) continue;
+      const file = line.slice(3).replaceAll("\\", "/").replace(/^"|"$/g, "");
+      if (file.endsWith("index.html")) dates.set(file, today);
+    }
+  } catch (error) {
+    console.warn(`Could not derive sitemap lastmod dates from Git: ${error.message}`);
+  }
+  return dates;
+}
+
+const lastModifiedDates = await pageLastModifiedDates();
 const sitemap = [
   '<?xml version="1.0" encoding="UTF-8"?>',
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
   ...sitemapPages
     .sort((a, b) => a.canonical.localeCompare(b.canonical))
-    .map(({ canonical, alternates }) => [
+    .map(({ file, canonical, alternates }) => [
       "  <url>",
       `    <loc>${xmlEscape(canonical)}</loc>`,
+      ...(lastModifiedDates.get(file) ? [`    <lastmod>${lastModifiedDates.get(file)}</lastmod>`] : []),
       ...alternates.map(({ lang, href }) => `    <xhtml:link rel="alternate" hreflang="${xmlEscape(lang)}" href="${xmlEscape(href)}" />`),
       "  </url>",
     ].join("\n")),

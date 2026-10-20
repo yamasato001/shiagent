@@ -87,6 +87,21 @@ test("PDF tools expose separate URLs and a dedicated local tray", async () => {
   assert.doesNotMatch(tray, /shiagent-work-tray/);
 });
 
+test("every PDF tool publishes crawlable details and contextual related links", async () => {
+  const modes = ["merge", "split", "reorder", "interleave", "rotate", "delete-pages", "images-to-pdf", "pdf-to-images", "page-numbers", "watermark", "crop", "metadata-cleaner", "n-up", "form-fill", "signature", "compare", "ocr", "compress", "sort-by-page-number"];
+  for (const mode of modes) {
+    for (const prefix of ["", "ja/"]) {
+      const page = `${prefix}pdf/${mode}/index.html`;
+      const html = await readFile(new URL(`../${page}`, import.meta.url), "utf8");
+      const support = html.match(/<section class="content-section pdf-support" data-pdf-support>[\s\S]*?<\/section>/)?.[0];
+      assert.ok(support, `${page} needs static supporting content`);
+      assert.match(support, /class="pdf-support-facts"/, `${page} needs input, output and limitation facts`);
+      assert.match(support, /class="pdf-support-steps"/, `${page} needs visible usage steps`);
+      assert.equal((support.match(/<a href="\/(?:ja\/)?pdf\/[^\"]+\/">/g) || []).length, 3, `${page} needs three related PDF links`);
+    }
+  }
+});
+
 test("PDF tools expose only the controls required by each purpose", () => {
   assert.deepEqual(PDF_MODE_FEATURES.merge.actions, []);
   assert.equal(PDF_MODE_FEATURES.merge.draggable, true);
