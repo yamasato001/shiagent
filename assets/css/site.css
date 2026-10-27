@@ -733,6 +733,8 @@ h1 { font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -.04em; }
 body > .picker[role="dialog"] { position: absolute; top: 0; left: 0; }
 .drop-zone .drive-input-button { margin-top: 8px; background: var(--surface, #fff); }
 .drive-input-button:not(.drop-zone *) { margin-left: 8px; }
+.drive-input-status { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.drive-input-status.is-error { color: var(--danger, #a1281d); }
 .output-save-setting small,
 .editor-direct-save small { color: var(--muted); font-size: 8px; font-weight: 400; }
 .output-save-setting .button { min-height: 32px; padding: 5px 9px; }

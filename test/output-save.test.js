@@ -50,11 +50,24 @@ test("the Google Picker dialog is positioned before it takes focus", async () =>
   assert.match(css, /body > \.picker\[role="dialog"\] \{ position: absolute;/);
 });
 
-test("the recently selected tab opens first once Drive files were picked", async () => {
+test("Drive file selection uses the recommended view and reports download failures", async () => {
   const drive = await readFile(new URL("../assets/js/google-drive.js", import.meta.url), "utf8");
+  const driveInput = await readFile(new URL("../assets/js/drive-input.js", import.meta.url), "utf8");
+  const { downloadableDriveDocuments } = await import("../assets/js/google-drive.js");
+  assert.match(drive, /setSelectFolderEnabled\(false\)/);
+  assert.match(drive, /setMode\(picker\.DocsViewMode\.LIST\)/);
+  assert.match(drive, /setOrigin\(window\.location\.origin\)/);
+  assert.match(drive, /action === picker\.Action\.ERROR/);
   assert.match(drive, /new picker\.View\(picker\.ViewId\.RECENTLY_PICKED\)/);
-  assert.match(drive, /pickedBefore\(\) \? \[recent, view\] : \[view, recent\]/);
-  assert.match(drive, /if \(files\.length\) rememberPicked\(\)/);
+  assert.match(drive, /requestUrl\.searchParams\.set\("key", GOOGLE_DRIVE\.apiKey\)/);
+  assert.throws(
+    () => downloadableDriveDocuments([{ id: "folder", mimeType: "application/vnd.google-apps.folder" }]),
+    error => error.code === "DRIVE_FOLDER_SELECTED",
+  );
+  assert.deepEqual(downloadableDriveDocuments([{ id: "image", mimeType: "image/png" }]), [{ id: "image", mimeType: "image/png" }]);
+  assert.match(driveInput, /フォルダーを開いて、ファイルを選択してください/);
+  assert.match(driveInput, /Google Driveへのアクセスが拒否されました/);
+  assert.match(driveInput, /drive-input-status/);
 });
 
 test("Picker MIME filters keep only exact types from accept", async () => {

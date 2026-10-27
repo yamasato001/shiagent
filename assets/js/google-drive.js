@@ -93,14 +93,21 @@ async function authorise() {
 // Tabs appear in the order given; the first one is shown when the Picker opens.
 function showPicker(accessToken, views, { multiselect = false, title = "" } = {}) {
   const { picker } = window.google;
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const builder = new picker.PickerBuilder()
       .setOAuthToken(accessToken)
       .setDeveloperKey(GOOGLE_DRIVE.apiKey)
+      .setOrigin(window.location.origin)
       .setLocale(document.documentElement.lang === "ja" ? "ja" : "en")
       .setCallback(data => {
-        if (data[picker.Response.ACTION] === picker.Action.PICKED) resolve(data[picker.Response.DOCUMENTS] || []);
-        else if (data[picker.Response.ACTION] === picker.Action.CANCEL) resolve([]);
+        const action = data[picker.Response.ACTION];
+        if (action === picker.Action.PICKED) resolve(data[picker.Response.DOCUMENTS] || []);
+        else if (action === picker.Action.CANCEL) resolve([]);
+        else if (action === picker.Action.ERROR) {
+          const error = new Error(typeof data.error === "string" ? data.error : data.error?.message || "Google Picker failed");
+          error.code = "DRIVE_PICKER_ERROR";
+          reject(error);
+        }
       });
     [views].flat().forEach(view => builder.addView(view));
     if (GOOGLE_DRIVE.appId) builder.setAppId(GOOGLE_DRIVE.appId);
@@ -117,35 +124,56 @@ export function pickerMimeTypes(accept = "") {
 }
 
 async function driveFetch(url, accessToken, options = {}) {
-  const response = await fetch(url, { ...options, headers: { Authorization: `Bearer ${accessToken}`, ...options.headers } });
+  const requestUrl = new URL(url);
+  if (requestUrl.hostname === "www.googleapis.com" && GOOGLE_DRIVE.apiKey) requestUrl.searchParams.set("key", GOOGLE_DRIVE.apiKey);
+  const response = await fetch(requestUrl, { ...options, headers: { Authorization: `Bearer ${accessToken}`, ...options.headers } });
   if (response.status === 401) token = null;
-  if (!response.ok) throw new Error(`Google Drive request failed (${response.status})`);
+  if (!response.ok) {
+    let detail = null;
+    try { detail = await response.json(); } catch { /* Non-JSON Google response. */ }
+    const error = new Error(detail?.error?.message || `Google Drive request failed (${response.status})`);
+    error.code = `DRIVE_API_${response.status}`;
+    error.status = response.status;
+    error.reason = detail?.error?.errors?.[0]?.reason || detail?.error?.status || "";
+    throw error;
+  }
   return response;
 }
 
 // Opens the Picker and downloads the chosen files into File objects.
-// Remembers (per browser) that Drive files were picked here before, so the
-// "Recently selected" tab is only put first once it has something to show.
 const PICKED_KEY = "shiagent-drive-picked";
 function pickedBefore() {
   try { return localStorage.getItem(PICKED_KEY) === "1"; } catch { return false; }
 }
 function rememberPicked() {
-  try { localStorage.setItem(PICKED_KEY, "1"); } catch { /* storage unavailable */ }
+  try { localStorage.setItem(PICKED_KEY, "1"); } catch { /* Storage unavailable. */ }
+}
+
+export function downloadableDriveDocuments(documents = []) {
+  const files = documents.filter(doc => doc.mimeType !== FOLDER_MIME && !String(doc.mimeType).startsWith("application/vnd.google-apps."));
+  if (documents.length && !files.length) {
+    const folderOnly = documents.every(doc => doc.mimeType === FOLDER_MIME);
+    const error = new Error(folderOnly ? "Open the folder and select files" : "Select downloadable files");
+    error.code = folderOnly ? "DRIVE_FOLDER_SELECTED" : "DRIVE_UNSUPPORTED_SELECTION";
+    throw error;
+  }
+  return files;
 }
 
 export async function pickDriveFiles({ accept = "", multiple = true, title = "", onProgress = () => {} } = {}) {
   const accessToken = await authorise();
   const { picker } = window.google;
-  const view = new picker.DocsView(picker.ViewId.DOCS).setIncludeFolders(true).setSelectFolderEnabled(false);
-  const mimeTypes = pickerMimeTypes(accept);
+  const view = new picker.DocsView(picker.ViewId.DOCS)
+    .setIncludeFolders(true)
+    .setSelectFolderEnabled(false)
+    .setMode(picker.DocsViewMode.LIST);
   const recent = new picker.View(picker.ViewId.RECENTLY_PICKED);
+  const mimeTypes = pickerMimeTypes(accept);
   if (mimeTypes.length) {
     view.setMimeTypes(mimeTypes.join(","));
     recent.setMimeTypes(mimeTypes.join(","));
   }
-  const docs = (await showPicker(accessToken, pickedBefore() ? [recent, view] : [view, recent], { multiselect: multiple, title }))
-    .filter(doc => doc.mimeType !== FOLDER_MIME && !String(doc.mimeType).startsWith("application/vnd.google-apps."));
+  const docs = downloadableDriveDocuments(await showPicker(accessToken, pickedBefore() ? [recent, view] : [view, recent], { multiselect: multiple, title }));
   const files = [];
   for (const doc of docs) {
     onProgress(files.length, docs.length, doc.name);
