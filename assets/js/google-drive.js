@@ -160,20 +160,39 @@ export function downloadableDriveDocuments(documents = []) {
   return files;
 }
 
+export function selectedDriveFolderId(documents = []) {
+  if (!documents.length || !documents.every(doc => doc.mimeType === FOLDER_MIME || doc.type === "folder")) return null;
+  return documents[0]?.id || null;
+}
+
+async function browseDriveFiles(accessToken, { accept, multiple, title }) {
+  const { picker } = window.google;
+  const mimeTypes = pickerMimeTypes(accept);
+  let parentId = null;
+  while (true) {
+    const view = new picker.DocsView(picker.ViewId.DOCS)
+      .setIncludeFolders(true)
+      .setSelectFolderEnabled(true)
+      .setMode(picker.DocsViewMode.LIST);
+    if (parentId) view.setParent(parentId);
+    const recent = parentId ? null : new picker.View(picker.ViewId.RECENTLY_PICKED);
+    if (mimeTypes.length) {
+      view.setMimeTypes(mimeTypes.join(","));
+      recent?.setMimeTypes(mimeTypes.join(","));
+    }
+    const views = recent ? (pickedBefore() ? [recent, view] : [view, recent]) : view;
+    const documents = await showPicker(accessToken, views, { multiselect: multiple, title });
+    const selectedFolder = selectedDriveFolderId(documents);
+    if (!selectedFolder) return documents;
+    // Google Picker highlights a folder on a single click. Treat its Select
+    // button as "open this folder", then reopen the file picker inside it.
+    parentId = selectedFolder;
+  }
+}
+
 export async function pickDriveFiles({ accept = "", multiple = true, title = "", onProgress = () => {} } = {}) {
   const accessToken = await authorise();
-  const { picker } = window.google;
-  const view = new picker.DocsView(picker.ViewId.DOCS)
-    .setIncludeFolders(true)
-    .setSelectFolderEnabled(false)
-    .setMode(picker.DocsViewMode.LIST);
-  const recent = new picker.View(picker.ViewId.RECENTLY_PICKED);
-  const mimeTypes = pickerMimeTypes(accept);
-  if (mimeTypes.length) {
-    view.setMimeTypes(mimeTypes.join(","));
-    recent.setMimeTypes(mimeTypes.join(","));
-  }
-  const docs = downloadableDriveDocuments(await showPicker(accessToken, pickedBefore() ? [recent, view] : [view, recent], { multiselect: multiple, title }));
+  const docs = downloadableDriveDocuments(await browseDriveFiles(accessToken, { accept, multiple, title }));
   const files = [];
   for (const doc of docs) {
     onProgress(files.length, docs.length, doc.name);

@@ -53,9 +53,11 @@ test("the Google Picker dialog is positioned before it takes focus", async () =>
 test("Drive file selection uses the recommended view and reports download failures", async () => {
   const drive = await readFile(new URL("../assets/js/google-drive.js", import.meta.url), "utf8");
   const driveInput = await readFile(new URL("../assets/js/drive-input.js", import.meta.url), "utf8");
-  const { downloadableDriveDocuments } = await import("../assets/js/google-drive.js");
-  assert.match(drive, /setSelectFolderEnabled\(false\)/);
+  const { downloadableDriveDocuments, selectedDriveFolderId } = await import("../assets/js/google-drive.js");
+  assert.match(drive, /setSelectFolderEnabled\(true\)/);
   assert.match(drive, /setMode\(picker\.DocsViewMode\.LIST\)/);
+  assert.match(drive, /if \(parentId\) view\.setParent\(parentId\)/);
+  assert.match(drive, /parentId = selectedFolder/);
   assert.match(drive, /setOrigin\(window\.location\.origin\)/);
   assert.match(drive, /action === picker\.Action\.ERROR/);
   assert.match(drive, /new picker\.View\(picker\.ViewId\.RECENTLY_PICKED\)/);
@@ -65,6 +67,8 @@ test("Drive file selection uses the recommended view and reports download failur
     error => error.code === "DRIVE_FOLDER_SELECTED",
   );
   assert.deepEqual(downloadableDriveDocuments([{ id: "image", mimeType: "image/png" }]), [{ id: "image", mimeType: "image/png" }]);
+  assert.equal(selectedDriveFolderId([{ id: "folder", mimeType: "application/vnd.google-apps.folder" }]), "folder");
+  assert.equal(selectedDriveFolderId([{ id: "image", mimeType: "image/png" }]), null);
   assert.match(driveInput, /フォルダーを開いて、ファイルを選択してください/);
   assert.match(driveInput, /Google Driveへのアクセスが拒否されました/);
   assert.match(driveInput, /drive-input-status/);
