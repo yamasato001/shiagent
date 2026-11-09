@@ -27,12 +27,13 @@ test("legal pages describe the actual local-first data flow", async () => {
   }
 });
 
-test("every public footer links to terms, privacy and contact", async () => {
+test("every public footer links to PDF tools, terms, privacy and contact", async () => {
   for (const page of await publicPages()) {
     const html = await readFile(new URL(page, root), "utf8");
     const footer = html.match(/<footer(?:\s[^>]*)?>([\s\S]*?)<\/footer>/)?.[1];
     assert.ok(footer, `${page} needs a footer`);
     const ja = page.startsWith("ja/");
+    assert.ok(footer.includes(ja ? 'href="/ja/pdf/"' : 'href="/pdf/"'), `${page} needs PDF tools`);
     assert.ok(footer.includes(ja ? 'href="/ja/terms/"' : 'href="/terms/"'), `${page} needs Terms`);
     assert.ok(footer.includes(ja ? 'href="/ja/privacy/"' : 'href="/privacy/"'), `${page} needs Privacy`);
     assert.ok(footer.includes(ja ? 'href="/ja/contact/"' : 'href="/contact/"'), `${page} needs Contact`);

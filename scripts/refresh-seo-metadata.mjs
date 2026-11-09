@@ -247,8 +247,8 @@ function replaceElement(source, pattern, replacement, file) {
 function legalFooter(file) {
   const ja = file.startsWith("ja/");
   return ja
-    ? `<footer><div class="footer-intro"><a class="brand footer-brand" href="/ja/">${brandMark}<span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div class="footer-groups"><details class="footer-group"><summary>SHIAGENTについて</summary><div class="footer-links"><a href="/ja/about/">このサイトについて</a><a href="/ja/specifications/">対応環境</a><a href="/ja/local-processing/">ローカル処理</a><a href="/ja/changelog/">更新履歴</a><a href="/ja/examples/">事例</a><a href="/ja/accessibility/">アクセシビリティ</a></div></details><details class="footer-group"><summary>サポート</summary><div class="footer-links"><a href="/ja/faq/">FAQ</a><a href="/ja/status/">障害・既知の問題</a><a href="/ja/feedback/">フィードバック</a><a href="/ja/contact/">お問い合わせ</a></div></details><details class="footer-group"><summary>リーガル</summary><div class="footer-links"><a href="/ja/terms/">利用規約</a><a href="/ja/privacy/">プライバシーポリシー</a></div></details></div><small>© 2026 SHIAGENT</small></footer>`
-    : `<footer><div class="footer-intro"><a class="brand footer-brand" href="/">${brandMark}<span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div class="footer-groups"><details class="footer-group"><summary>About SHIAGENT</summary><div class="footer-links"><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/changelog/">Changelog</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a></div></details><details class="footer-group"><summary>Support</summary><div class="footer-links"><a href="/faq/">FAQ</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/contact/">Contact</a></div></details><details class="footer-group"><summary>Legal</summary><div class="footer-links"><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a></div></details></div><small>© 2026 SHIAGENT</small></footer>`;
+    ? `<footer><div class="footer-intro"><a class="brand footer-brand" href="/ja/">${brandMark}<span>SHIAGENT</span></a><p>つくる。整える。仕上げる。</p></div><div class="footer-groups"><details class="footer-group"><summary>SHIAGENTについて</summary><div class="footer-links"><a href="/ja/about/">このサイトについて</a><a href="/ja/specifications/">対応環境</a><a href="/ja/local-processing/">ローカル処理</a><a href="/ja/pdf/">PDFツール</a><a href="/ja/changelog/">更新履歴</a><a href="/ja/examples/">事例</a><a href="/ja/accessibility/">アクセシビリティ</a></div></details><details class="footer-group"><summary>サポート</summary><div class="footer-links"><a href="/ja/faq/">FAQ</a><a href="/ja/status/">障害・既知の問題</a><a href="/ja/feedback/">フィードバック</a><a href="/ja/contact/">お問い合わせ</a></div></details><details class="footer-group"><summary>リーガル</summary><div class="footer-links"><a href="/ja/terms/">利用規約</a><a href="/ja/privacy/">プライバシーポリシー</a></div></details></div><small>© 2026 SHIAGENT</small></footer>`
+    : `<footer><div class="footer-intro"><a class="brand footer-brand" href="/">${brandMark}<span>SHIAGENT</span></a><p>Generate. Refine. Finish.</p></div><div class="footer-groups"><details class="footer-group"><summary>About SHIAGENT</summary><div class="footer-links"><a href="/about/">About</a><a href="/specifications/">Compatibility</a><a href="/local-processing/">Local processing</a><a href="/pdf/">PDF tools</a><a href="/changelog/">Changelog</a><a href="/examples/">Examples</a><a href="/accessibility/">Accessibility</a></div></details><details class="footer-group"><summary>Support</summary><div class="footer-links"><a href="/faq/">FAQ</a><a href="/status/">Status</a><a href="/feedback/">Feedback</a><a href="/contact/">Contact</a></div></details><details class="footer-group"><summary>Legal</summary><div class="footer-links"><a href="/terms/">Terms</a><a href="/privacy/">Privacy</a></div></details></div><small>© 2026 SHIAGENT</small></footer>`;
 }
 
 const toolExamples = {
@@ -669,7 +669,24 @@ async function pageLastModifiedDates() {
     for (const line of status.split(/\r?\n/)) {
       if (!line) continue;
       const file = line.slice(3).replaceAll("\\", "/").replace(/^"|"$/g, "");
-      if (file.endsWith("index.html")) dates.set(file, today);
+      if (!file.endsWith("index.html")) continue;
+
+      // Shared navigation changes make every generated page dirty, but they do
+      // not represent a meaningful update to every page's primary content.
+      // Keep historical lastmod dates for footer-only changes so crawlers can
+      // spend their limited refresh activity on pages that actually changed.
+      let primaryContentChanged = true;
+      try {
+        const [{ stdout: committed }, working] = await Promise.all([
+          execFileAsync("git", ["show", `HEAD:${file}`], { cwd: projectRoot, maxBuffer: 10 * 1024 * 1024 }),
+          readFile(new URL(file, root), "utf8"),
+        ]);
+        const withoutFooter = value => value.replace(/<footer(?:\s[^>]*)?>[\s\S]*?<\/footer>/, "");
+        primaryContentChanged = withoutFooter(committed) !== withoutFooter(working);
+      } catch {
+        // New pages have no committed version and need today's date.
+      }
+      if (primaryContentChanged) dates.set(file, today);
     }
   } catch (error) {
     console.warn(`Could not derive sitemap lastmod dates from Git: ${error.message}`);

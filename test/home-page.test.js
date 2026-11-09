@@ -9,6 +9,7 @@ const englishCatalog = await readFile(new URL("../tools/index.html", import.meta
 const japaneseUseCases = await readFile(new URL("../ja/use-cases/index.html", import.meta.url), "utf8");
 const englishUseCases = await readFile(new URL("../use-cases/index.html", import.meta.url), "utf8");
 const toolSlugs = ["image-compressor", "image-converter", "image-resizer", "image-cropper", "canvas-padding", "image-joiner", "metadata-cleaner", "image-to-svg", "svg-to-image", "color-tool", "favicon-generator", "image-splitter", "background-remover", "batch-rename", "svg-white-fill", "svg-cleaner", "svg-white-fill/editor", "svg-style-editor", "pdf"];
+const primaryPdfSlugs = ["merge", "split", "compress", "pdf-to-images", "images-to-pdf", "ocr"];
 
 test("home keeps its supporting sections around the compact catalog", () => {
   for (const page of [japaneseHome, englishHome]) {
@@ -49,6 +50,7 @@ test("complete tool and workflow tabs live on the catalog pages", () => {
     assert.match(page, /id="panel-workflows" role="tabpanel"[^>]*hidden/);
     assert.match(page, /home-tabs\.js/);
     for (const slug of toolSlugs) assert.match(page, new RegExp(`href="${prefix}/${slug}/"`));
+    for (const slug of primaryPdfSlugs) assert.match(page, new RegExp(`href="${prefix}/pdf/${slug}/"`));
   }
 });
 
@@ -96,6 +98,8 @@ test("footer groups become three mobile accordions", async () => {
   for (const page of [japaneseHome, englishHome]) {
     assert.equal((page.match(/<details class="footer-group">/g) ?? []).length, 3);
   }
+  assert.match(japaneseHome, /<footer>[\s\S]*href="\/ja\/pdf\/">PDFツール<\/a>/);
+  assert.match(englishHome, /<footer>[\s\S]*href="\/pdf\/">PDF tools<\/a>/);
   for (const label of ["SHIAGENTについて", "サポート", "リーガル"]) assert.match(japaneseHome, new RegExp(`<summary>${label}<\\/summary>`));
   const css = await readFile(new URL("../assets/css/header.css", import.meta.url), "utf8");
   assert.match(css, /@media \(max-width: 760px\)[\s\S]*\.footer-group:not\(\[open\]\) > \.footer-links \{ display: none; \}/);
